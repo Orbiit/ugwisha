@@ -2,8 +2,8 @@
   background-color: rgba(0, 0, 0, 0.2);
   padding: 10px 0;
   margin: 10px 0;
-  border-top-right-radius: 5px;
-  border-bottom-right-radius: 5px;
+  border-top-right-radius: 10px;
+  border-bottom-right-radius: 10px;
   --colour: transparent;
   border-left: 5px solid var(--colour);
 }
@@ -18,12 +18,12 @@
   font: inherit;
   color: rgba(255, 255, 255, 0.8);
   font-size: 24px;
-  width: 90%;
+  width: calc(100% - 10px);
   cursor: pointer;
   padding: 5px 10px;
   box-sizing: border-box;
-  border-top-right-radius: 2px;
-  border-bottom-right-radius: 2px;
+  border-top-right-radius: 5px;
+  border-bottom-right-radius: 5px;
 }
 .period.transparent {
   border-radius: 2px;
@@ -37,7 +37,33 @@
   cursor: auto;
 }
 .period .time {
+  display: block;
   color: rgba(255, 255, 255, 0.5);
   font-size: 16px;
   margin: 0 10px;
+}
+.period-chip {
+  background-color: rgba(0, 0, 0, 0.2);
+  padding: 5px 10px;
+  padding-right: 15px;
+  border-radius: 1em;
+  --colour: transparent;
+  color: rgba(255, 255, 255, 0.9);
+}
+.period-chip::before {
+  content: '';
+  display: inline-block;
+  height: 0.5em;
+  width: 0.5em;
+  background-color: var(--colour);
+  border-radius: 50%;
+  margin: 0.1em;
+  margin-right: 10px;
+}
+.period-chip.transparent {
+  background-color: transparent;
+  padding: 0;
+}
+.period-chip.transparent::before {
+  display: none;
 }

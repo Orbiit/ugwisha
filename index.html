@@ -16,12 +16,27 @@
     <script src="./js/ripple.js" charset="utf-8"></script>
   </head>
   <body>
+    <div class="preview">
+      <span id="preview-time">0:50</span>
+      <span id="preview-msg">left in <span class="period-chip" style="--colour: #f44336;">Period A</span></span>
+    </div>
     <div class="content">
-      <button class="button ripples">select date</button>
+      <div id="date-nav-button-wrapper">
+        <button class="icon-btn ripples" id="back-day"></button>
+        <button class="button ripples">select date</button>
+        <button class="icon-btn ripples" id="forth-day"></button>
+      </div>
+      <div id="date-wrapper">
+        <span id="date">november 5</span>
+        <span id="weekday">monday</span>
+        <!-- TODO: abbreviate Wednesday -> "wed." -->
+      </div>
       <div id="periods">
         <div class="period" style="--colour: #f44336;">
           <input type="text" placeholder="Period name" value="Period A">
           <span class="time">8:25 am &ndash; 9:50 am</span>
+          <!-- <span class="time">80 minutes long</span> -->
+          <!-- TODO: option to show duration as well -->
         </div>
         <div class="period transparent">
           <input type="text" placeholder="Period name" value="Brunch">
@@ -44,6 +59,8 @@
           <span class="time">1:20 pm &ndash; 2:35 pm</span>
         </div>
       </div>
+      <h2>Settings</h2>
+      <!-- <input type="checkbox" id="work-offline"><label for="work-offline">Work offline?</label> -->
     </div>
   </body>
 </html>
