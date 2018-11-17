@@ -1,0 +1,43 @@
+.period {
+  background-color: rgba(0, 0, 0, 0.2);
+  padding: 10px 0;
+  margin: 10px 0;
+  border-top-right-radius: 5px;
+  border-bottom-right-radius: 5px;
+  --colour: transparent;
+  border-left: 5px solid var(--colour);
+}
+.period.transparent {
+  background-color: transparent;
+  padding: 0;
+}
+.period input {
+  display: block;
+  border: none;
+  background: none;
+  font: inherit;
+  color: rgba(255, 255, 255, 0.8);
+  font-size: 24px;
+  width: 90%;
+  cursor: pointer;
+  padding: 5px 10px;
+  box-sizing: border-box;
+  border-top-right-radius: 2px;
+  border-bottom-right-radius: 2px;
+}
+.period.transparent {
+  border-radius: 2px;
+}
+.period input:hover {
+  background-color: rgba(255, 255, 255, 0.05);
+}
+.period input:focus {
+  outline: none;
+  background-color: rgba(255, 255, 255, 0.1);
+  cursor: auto;
+}
+.period .time {
+  color: rgba(255, 255, 255, 0.5);
+  font-size: 16px;
+  margin: 0 10px;
+}

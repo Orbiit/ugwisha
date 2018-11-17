@@ -10,7 +10,7 @@ body {
   background-position: center;
   background-repeat: no-repeat;
   background-attachment: fixed;
-  color: white;
+  color: rgba(255, 255, 255, 0.5);
   background-color: #212121;
 }
 .content {
@@ -20,6 +20,7 @@ body {
   margin-left: 15%;
   box-sizing: border-box;
   height: 100%;
+  overflow: auto;
 }
 @media (max-width: 550px) {
   .content {
