@@ -1,0 +1,21 @@
+.button {
+  -webkit-appearance: none;
+  border: 1px solid rgba(255, 255, 255, 0.5);
+  background: none;
+  border-radius: 3px;
+  font: inherit;
+  font-size: 14px;
+  padding: 5px 15px;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.8);
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+  -webkit-tap-highlight-color: transparent;
+}
+.button:focus {
+  outline: none; /* TODO: detect tab focus and then give separate class */
+}
+.button:active {
+  box-shadow: 0 1px 5px rgba(0, 0, 0, 0.5);
+}

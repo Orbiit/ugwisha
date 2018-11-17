@@ -27,3 +27,7 @@ Ugwisha will probably not have:
 - club and staff lists
 - barcode generator
 - campus map
+
+## Etymology of "Ugwisha"
+
+`Ugwisha` (**/uˈɡwɪʃa/** or **/uˈɡwiʃa/**) is a portmanteau of `Ugwita` (`Ugwa`&mdash;an alternative letter case form of `UGWA`, which stands for `Unofficial Gunn Web App`&mdash;with the Spanish feminine diminutive `-ita`) and `-ish` because of how Ugwisha is not as functional... *ish*.
