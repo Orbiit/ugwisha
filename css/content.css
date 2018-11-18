@@ -18,6 +18,10 @@
 .button:focus, .icon-btn:focus {
   outline: none; /* TODO: detect tab focus and then give separate class */
 }
+.button:disabled, .icon-btn:disabled {
+  opacity: 0.5;
+  cursor: default;
+}
 .button:active {
   box-shadow: 0 1px 5px rgba(0, 0, 0, 0.5);
 }

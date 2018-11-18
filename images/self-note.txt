@@ -1,0 +1,17 @@
+december 6th and 7th have assembly days with multiple flexes; some periods have SELF, some don't, and when there is SELF only one grade has it
+
+this will complicate SELF detection
+
+options:
+a. assume all SELF as flex
+  - this will remove the app's ability to tell which period is SELF on these confusing assembly days
+b. continue assuming days with SELF event have SELF all flex periods
+  - this is misleading and will make people think there's double SELF when there isn't
+c. only detect SELF if it says SELF in the period name
+  - will not work on normal weeks
+d. do option b, but if the schedule itself already mentions SELF, do option c
+  - (applies to above options as well) cannot distinguish between 9th and 10th grade SELF (a problem on these assembly days)
+e. do option b, but if the schedule mentions SELF, detect the grade and show it in the schedule; otherwise, SELF for everyone
+  - requires extra UI design and changing how periods are stored
+
+down with self.

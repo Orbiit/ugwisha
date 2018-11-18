@@ -60,3 +60,45 @@ function identifyPeriod(name) {
   else if (~name.indexOf("LUNCH") || ~name.indexOf("TURKEY")) return "l";
   else return;
 }
+
+const firstDay = '2018-08-13T00:00:00.000-07:00';
+const lastDay = '2019-05-31T23:59:59.999-07:00';
+const keywords = ['self', 'schedule', 'extended', 'holiday', 'no students', 'break', 'development'];
+const calendarURL = 'https://www.googleapis.com/calendar/v3/calendars/'
+  + encodeURIComponent('u5mgb2vlddfj70d7frf3r015h0@group.calendar.google.com')
+  + '/events?singleEvents=true&fields='
+  + encodeURIComponent('items(description,end(date,dateTime),start(date,dateTime),summary)')
+  + '&key=AIzaSyDBYs4DdIaTjYx5WDz6nfdEAftXuctZV0o'
+  + `&timeMin=${encodeURIComponent(firstDay)}&timeMax=${encodeURIComponent(lastDay)}`;
+
+function fetchAlternates() {
+  Promise.all(keywords.map(k => fetch(calendarURL + '&q=' + k).then(r => r.json()))).then(alts => {
+    localStorage.setItem('[ugwisha] test.rawAlts', JSON.stringify(alts));
+    alts = alts.map(({items}) => {
+      const events = [];
+      item.forEach(ev => {
+        if (ev.start.dateTime) events.push({
+          summary: ev.summary,
+          description: ev.description,
+          date: ev.start.dateTime.slice(5, 10)
+        });
+        else {
+          const dateObj = new Date(ev.start.date);
+          const endDate = new Date(ev.end.date).getTime();
+          while (dateObj.getTime() < endDate) {
+            events.push({
+              summary: ev.summary,
+              description: ev.description,
+              date: dateObj.toISOString().slice(5, 10)
+            });
+            dateObj.setUTCDate(dateObj.getUTCDate() + 1);
+          }
+        }
+      });
+      return events;
+    });
+    const alternates = {};
+    alts.slice(1).forEach(moreAlts => moreAlts.forEach(alt => alternates[alt.date] = parseAlternate(alt.summary, alt.description)));
+    // TODO: deal with SELF
+  });
+}

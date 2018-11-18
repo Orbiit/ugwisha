@@ -77,7 +77,7 @@ function formatDuration(minutes, short) {
   //   + (mins !== 0 ? mins + ' minute' + (mins === 1 ? '' : 's') : '');
   return Math.floor(minutes / 60) + ':' + ('0' + minutes % 60).slice(-2);
 }
-const alternateRegex = /([A-Gblf])(\d+)\.(\d+)/g;
+const alternateRegex = /([A-Gblf])(\d{3})(\d{3})/g;
 function decodeStoredAlternates(string = storage.getItem('[ugwisha] alternates')) {
   const lines = string.split('|');
   const firstLine = lines.shift();
@@ -95,8 +95,8 @@ function decodeStoredAlternates(string = storage.getItem('[ugwisha] alternates')
       if (d.length > 1) {
         d.slice(1).replace(alternateRegex, (_, period, start, end) => schedule.push({
           period: period,
-          start: +start,
-          end: +end
+          start: parseInt(start, 12),
+          end: parseInt(end, 12)
         }));
       }
       schedules[month + '-' + parseInt(d[0], 36)] = schedule;
@@ -127,7 +127,7 @@ function encodeStoredAlternates({lastGenerated, selfDays, schedules}) {
     else schedMonths[month] = month;
     schedMonths[month] += date;
     if (schedules[day])
-      schedMonths[month] += schedules[day].map(({period, start, end}) => period + start + '.' + end).join('');
+      schedMonths[month] += schedules[day].map(({period, start, end}) => period + start.toString(12).padStart(3, '0') + end.toString(12).padStart(3, '0')).join('');
   });
   result += Object.values(schedMonths).join('|');
   return result;
