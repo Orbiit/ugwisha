@@ -75,9 +75,33 @@ input[type=checkbox] {
   border-radius: 2px;
   margin-right: 10px;
   background-position: center;
-  background-size: contain;
+  background-size: calc(400% / 3);
   background-repeat: no-repeat;
 }
 input[type=checkbox]:checked {
   background-image: url('../images/material-check_box.svg');
+}
+input[type=checkbox]:focus {
+  outline: none;
+  box-shadow: 0 0 0 0.1em rgba(255, 255, 255, 0.3);
+}
+textarea {
+  width: 100%;
+  border: none;
+  background: none;
+  box-sizing: border-box;
+  padding: 10px;
+  font: inherit;
+  height: 0;
+  font-size: 16px;
+  color: rgba(255, 255, 255, 0.7);
+  border-radius: 5px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  cursor: pointer;
+  resize: none;
+}
+textarea:focus {
+  outline: none;
+  cursor: auto;
+  border-color: rgba(255, 255, 255, 0.3);
 }

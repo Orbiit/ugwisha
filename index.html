@@ -14,17 +14,24 @@
     <!-- /REMOVE -->
     <script src="./js/main.js" charset="utf-8"></script>
     <script src="./js/ripple.js" charset="utf-8"></script>
+    <script src="./js/periods.js" charset="utf-8"></script>
   </head>
   <body>
     <div class="preview">
       <span id="preview-time">0:50</span>
       <span id="preview-msg">left in <span class="period-chip" style="--colour: #f44336;">Period A</span></span>
+      <div id="progress"></div>
     </div>
     <div class="content">
       <div id="date-nav-button-wrapper">
-        <button class="icon-btn ripples" id="back-day"></button>
-        <button class="button ripples">select date</button>
-        <button class="icon-btn ripples" id="forth-day"></button>
+        <div>
+          <button class="button ripples">today</button>
+        </div>
+        <div>
+          <button class="icon-btn ripples" id="back-day"></button>
+          <button class="button ripples">select date</button>
+          <button class="icon-btn ripples" id="forth-day"></button>
+        </div>
       </div>
       <div id="date-wrapper">
         <span id="date">november 5</span>
@@ -35,8 +42,7 @@
         <div class="period" style="--colour: #f44336;">
           <input type="text" placeholder="Period name" value="Period A">
           <span class="time">8:25 am &ndash; 9:50 am</span>
-          <!-- <span class="time">80 minutes long</span> -->
-          <!-- TODO: option to show duration as well -->
+          <span class="duration">80 minutes long</span>
         </div>
         <div class="period transparent">
           <input type="text" placeholder="Period name" value="Brunch">
@@ -60,7 +66,14 @@
         </div>
       </div>
       <h2>Settings</h2>
-      <!-- <input type="checkbox" id="work-offline"><label for="work-offline">Work offline?</label> -->
+      <p><input class="toggle-setting" data-option="offline" data-default="false" type="checkbox" id="work-offline"><label for="work-offline">Work offline?</label></p>
+      <p><input class="toggle-setting" data-option="showTime" data-default="true" type="checkbox" id="show-time"><label for="show-time">Show period times?</label></p>
+      <p><input class="toggle-setting" data-option="showDuration" data-default="false" type="checkbox" id="show-duration"><label for="show-duration">Show period length?</label></p>
+      <p><input class="toggle-setting" data-option="showSELF" data-default="true" type="checkbox" id="show-self"><label for="show-self">Show SELF?</label></p>
+      <p><input class="toggle-setting" data-option="metricTime" data-default="false" type="checkbox" id="24-hour"><label for="24-hour">24-hour time?</label></p>
+      <p><button class="button ripples">get alternate schedules</button></p>
+      <h2>Notes</h2>
+      <textarea id="notes"></textarea>
     </div>
   </body>
 </html>

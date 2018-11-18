@@ -1,4 +1,6 @@
 body {
   background-image: linear-gradient(120deg, #5db553, #293e3c);
   /* background-image: url(../images/hot.png); */
+  background-image: url(https://images.unsplash.com/37/IHLjdHdzSvi0rgUMMlSK_TE3_0286.jpg?ixlib=rb-0.3.5&q=80&fm=jpg&crop=entropy&cs=tinysrgb&w=1600&h=900&fit=crop&s=c5ccdbe2d0d2fa436724e2366f32661c);
+  /* background-image: url(https://wallpapercave.com/wp/wc1729538.jpg); */
 }

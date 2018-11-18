@@ -25,8 +25,8 @@
   border-top-right-radius: 5px;
   border-bottom-right-radius: 5px;
 }
-.period.transparent {
-  border-radius: 2px;
+.period.transparent input {
+  border-radius: 5px;
 }
 .period input:hover {
   background-color: rgba(255, 255, 255, 0.05);
@@ -36,11 +36,17 @@
   background-color: rgba(255, 255, 255, 0.1);
   cursor: auto;
 }
-.period .time {
-  display: block;
+.time, .duration {
+  display: none;
   color: rgba(255, 255, 255, 0.5);
   font-size: 16px;
   margin: 0 10px;
+}
+.show-time .time {
+  display: block;
+}
+.show-duration .duration {
+  display: block;
 }
 .period-chip {
   background-color: rgba(0, 0, 0, 0.2);

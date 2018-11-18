@@ -17,7 +17,7 @@ Perhaps Ugwisha may also support:
 
 - custom period colours and a colour picker
 - period descriptions
-- zero and H period support
+- zero, H, and staff periods support
 - show week previews (like UGWA)
 - have things that
 - better date selector
