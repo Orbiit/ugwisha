@@ -71,12 +71,13 @@ function timeLeft(schedule, offset = 0) {
       status.value = period.end - minutes;
       status.progress = (minutes - period.start) / (period.end - period.start);
     }
-    if (status.value < 1) {
+    // console.log(status.value);
+    if (status.value <= 1) {
       status.secondCounter = () => {
-        const now = Date.now();
+        const now = Date.now() + offset;
         return {
           secondsLeft: 60 - now / 1000 % 60,
-          stop: Math.floor((now / 60000 - timezone) % 1440) > period
+          stop: Math.floor((now / 60000 - timezone) % 1440) >= (period.start > minutes ? period.start : period.end)
         };
       };
     }
@@ -101,15 +102,29 @@ function getPeriodChipHTML(period) {
 let previewTime, previewMsg, progressBar;
 function updateStatus(startInterval = false) {
   const status = timeLeft(tempSchedule);
-  previewTime.textContent = formatDuration(status.value, true);
-  previewMsg.innerHTML = status.type + ' ' + getPeriodChipHTML(status.period);
   if (status.type === 'left in') {
     progressBar.style.opacity = 1;
     progressBar.style.setProperty('--progress', status.progress * 100 + '%');
   } else {
     progressBar.style.opacity = 0;
   }
-  if (startInterval) setTimeout(updateStatus, status.nextMinute);
+  previewMsg.innerHTML = status.type + ' ' + getPeriodChipHTML(status.period);
+  if (status.secondCounter) {
+    function seconds() {
+      const {secondsLeft, stop} = status.secondCounter();
+      if (!stop) {
+        const str = Math.round(secondsLeft * 10) / 10 + '';
+        document.title = (previewTime.textContent = str + (str.includes('.') ? '0'.repeat(2 - str.length + str.indexOf('.')) : '.0') + 's')
+          + ' ' + status.type + ' ' + options['periodName_' + status.period] + ' - Ugwisha';
+      }
+      window.requestAnimationFrame(startInterval && !stop ? seconds : updateStatus);
+    }
+    seconds();
+  } else {
+    document.title = (previewTime.textContent = formatDuration(status.value, true))
+      + ' ' + status.type + ' ' + options['periodName_' + status.period] + ' - Ugwisha';
+  }
+  if (startInterval) setTimeout(() => updateStatus(true), status.nextMinute);
 }
 
 ready.push(() => {
