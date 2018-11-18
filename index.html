@@ -9,18 +9,16 @@
     <link rel="stylesheet" href="./css/main.css">
     <link rel="stylesheet" href="./css/content.css">
     <link rel="stylesheet" href="./css/periods.css">
-    <!-- REMOVE LATER -->
-    <link rel="stylesheet" href="./css/temp.css">
-    <!-- /REMOVE -->
     <script src="./js/main.js" charset="utf-8"></script>
     <script src="./js/ripple.js" charset="utf-8"></script>
     <script src="./js/periods.js" charset="utf-8"></script>
-    <script src="./js/alternate-getter.js" charset="utf-8"></script>
+    <script src="./js/schedules.js" charset="utf-8"></script>
   </head>
-  <body>
+  <body style="background-image: linear-gradient(0deg, #000, #000);">
+    <div id="transition-background"></div>
     <div class="preview">
-      <span id="preview-time">0:50</span>
-      <span id="preview-msg">left in <span class="period-chip" style="--colour: #f44336;">Period A</span></span>
+      <span id="preview-time"></span>
+      <span id="preview-msg"></span>
       <div id="progress"></div>
     </div>
     <div class="content">
@@ -30,52 +28,24 @@
         </div>
         <div>
           <button class="icon-btn ripples" id="back-day"></button>
-          <button class="button ripples" id="select-date">select date</button>
+          <button class="button ripples" id="select-date" disabled>select date</button>
           <button class="icon-btn ripples" id="forth-day"></button>
         </div>
       </div>
       <div id="date-wrapper">
         <span id="date">november 5</span>
         <span id="weekday">monday</span>
-        <!-- TODO: abbreviate Wednesday -> "wed." -->
       </div>
-      <div id="periods">
-        <div class="period" style="--colour: #f44336;">
-          <input type="text" placeholder="Period name" value="Period A">
-          <span class="time">8:25 am &ndash; 9:50 am</span>
-          <span class="duration">80 minutes long</span>
-        </div>
-        <div class="period transparent">
-          <input type="text" placeholder="Period name" value="Brunch">
-          <span class="time">9:45 am &ndash; 9:50 am</span>
-        </div>
-        <div class="period" style="--colour: #3F51B5;">
-          <input type="text" placeholder="Period name" value="Period B">
-          <span class="time">10:00 am &ndash; 11:15 am</span>
-        </div>
-        <div class="period" style="--colour: #FFEB3B;">
-          <input type="text" placeholder="Period name" value="Period C">
-          <span class="time">11:25 am &ndash; 12:40 pm</span>
-        </div>
-        <div class="period transparent">
-          <input type="text" placeholder="Period name" value="Lunch">
-          <span class="time">12:40 pm &ndash; 1:10 pm</span>
-        </div>
-        <div class="period" style="--colour: #9C27B0;">
-          <input type="text" placeholder="Period name" value="Period F">
-          <span class="time">1:20 pm &ndash; 2:35 pm</span>
-        </div>
-      </div>
+      <div id="periods"></div>
       <h2>Settings</h2>
-      <p><button class="button ripples">get alternate schedules</button></p>
-      <p><input class="toggle-setting" data-option="offline" data-default="false" type="checkbox" id="work-offline"><label for="work-offline">Work offline?</label></p>
+      <p><button class="button ripples" id="fetch-alts">get alternate schedules</button></p>
       <p><input class="toggle-setting" data-option="showTime" data-default="true" type="checkbox" id="show-time"><label for="show-time">Show period times?</label></p>
       <p><input class="toggle-setting" data-option="showDuration" data-default="false" type="checkbox" id="show-duration"><label for="show-duration">Show period length?</label></p>
       <p><input class="toggle-setting" data-option="showSELF" data-default="true" type="checkbox" id="show-self"><label for="show-self">Show SELF?</label></p>
       <p><input class="toggle-setting" data-option="metricTime" data-default="false" type="checkbox" id="24-hour"><label for="24-hour">24-hour time?</label></p>
       <p><input class="toggle-setting" data-option="natureBackground" data-default="false" type="checkbox" id="nature-back"><label for="nature-back">Random image background?</label></p>
-      <p><button class="button ripples">set background URL</button></p>
-      <p><button class="button ripples" disabled>reset background</button></p>
+      <p><button class="button ripples" id="set-back">set background URL</button></p>
+      <p><button class="button ripples" id="reset-back" disabled>reset background</button></p>
       <h2>Notes</h2>
       <textarea id="notes"></textarea>
     </div>

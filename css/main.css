@@ -70,6 +70,9 @@ body {
   height: 100%;
   border-radius: 3px;
 }
+.abbrev-wednesday {
+  display: none;
+}
 @media (max-width: 700px) {
 
   .content {
@@ -124,9 +127,6 @@ body {
   color: rgba(255, 255, 255, 0.8);
   float: right;
 }
-.abbrev-wednesday {
-  display: none;
-}
 #date-nav-button-wrapper {
   text-align: center;
   margin-bottom: 10px;
@@ -139,4 +139,25 @@ body {
 }
 #select-date {
   margin: 0 5px;
+}
+#transition-background {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: -1;
+  pointer-events: none;
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  display: none;
+}
+#transition-background.animating {
+  display: block;
+  animation: fade-out .5s forwards;
+}
+@keyframes fade-out {
+  from { opacity: 1; }
+  to { opacity: 0; }
 }

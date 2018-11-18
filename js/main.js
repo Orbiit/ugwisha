@@ -59,7 +59,7 @@ function createElement(tag, data = {}) {
 }
 function createFragment(elems) {
   const frag = document.createDocumentFragment();
-  elems.forEach(e => frag.appendChild(e));
+  deundefine(elems).forEach(e => frag.appendChild(e));
   return frag;
 }
 
@@ -77,72 +77,37 @@ function formatDuration(minutes, short) {
   //   + (mins !== 0 ? mins + ' minute' + (mins === 1 ? '' : 's') : '');
   return Math.floor(minutes / 60) + ':' + ('0' + minutes % 60).slice(-2);
 }
-const alternateRegex = /([A-Gblf])(\d{3})(\d{3})/g;
-function decodeStoredAlternates(string = storage.getItem('[ugwisha] alternates')) {
-  const lines = string.split('|');
-  const firstLine = lines.shift();
-  const lastGeneratedDate = new Date(Date.UTC(+firstLine.slice(0, 4), parseInt(firstLine[4], 36), parseInt(firstLine[5], 36)));
-  const selfDays = [];
-  firstLine.slice(6).split('!').forEach(m => {
-    const month = parseInt(m[0], 36) + 1;
-    selfDays.push(...m.slice(1).split('').map(d => month + '-' + parseInt(d, 36)));
-  });
-  const schedules = {};
-  lines.forEach(m => {
-    const month = parseInt(m[0], 36) + 1;
-    m.slice(1).split('!').forEach(d => {
-      const schedule = d.length > 1 ? [] : null;
-      if (d.length > 1) {
-        d.slice(1).replace(alternateRegex, (_, period, start, end) => schedule.push({
-          period: period,
-          start: parseInt(start, 12),
-          end: parseInt(end, 12)
-        }));
-      }
-      schedules[month + '-' + parseInt(d[0], 36)] = schedule;
-    });
-  });
-  return {
-    lastGenerated: lastGeneratedDate,
-    selfDays: selfDays,
-    schedules: schedules
-  };
+
+function randomInt(int) {
+  return Math.floor(Math.random() * int);
 }
-function encodeStoredAlternates({lastGenerated, selfDays, schedules}) {
-  let result = lastGenerated.getUTCFullYear() + lastGenerated.getUTCMonth().toString(36) + lastGenerated.getUTCDate().toString(36);
-  const selfMonths = {};
-  selfDays.forEach(day => {
-    let [month, date] = day.split('-').map(Number);
-    month = (month - 1).toString(36);
-    date = date.toString(36);
-    selfMonths[month] = (selfMonths[month] || month) + date;
-  });
-  result += Object.values(selfMonths).join('!') + '|';
-  const schedMonths = {};
-  Object.keys(schedules).forEach(day => {
-    let [month, date] = day.split('-').map(Number);
-    month = (month - 1).toString(36);
-    date = date.toString(36);
-    if (schedMonths[month]) schedMonths[month] += '!';
-    else schedMonths[month] = month;
-    schedMonths[month] += date;
-    if (schedules[day])
-      schedMonths[month] += schedules[day].map(({period, start, end}) => period + start.toString(12).padStart(3, '0') + end.toString(12).padStart(3, '0')).join('');
-  });
-  result += Object.values(schedMonths).join('|');
-  return result;
+function randomGradient() {
+  const colour1 = [randomInt(256), randomInt(256), randomInt(256)];
+  // const colour2 = colour1.map(c => Math.max(Math.min(c + randomInt(101) - 5, 255), 0));
+  const colour2 = [randomInt(256), randomInt(256), randomInt(256)];
+  return `linear-gradient(${Math.random() * 360}deg, rgb(${colour1.join(',')}), rgb(${colour2.join(',')}))`;
+}
+let backgroundTransitioner, transitioning = false;
+function setBackground(css) {
+  if (transitioning) {
+    document.body.style.backgroundImage = css;
+    return;
+  }
+  transitioning = true;
+  backgroundTransitioner.style.backgroundImage = document.body.style.backgroundImage;
+  backgroundTransitioner.classList.add('animating');
+  document.body.style.backgroundImage = css;
+  setTimeout(() => {
+    backgroundTransitioner.classList.remove('animating');
+    transitioning = false;
+  }, 500);
 }
 
-window.tempSchedule = [ // TEMP
-  {period: "A", start: 505, end: 585},
-  {period: "b", start: 585, end: 590},
-  {period: "B", start: 600, end: 675},
-  {period: "C", start: 685, end: 760},
-  {period: "l", start: 760, end: 790},
-  {period: "F", start: 800, end: 875}
-];
-
-document.addEventListener('DOMContentLoaded', e => {
+let viewingDate = getToday();
+function getToday() {
+  return new Date(Date.UTC(...(d => [d.getFullYear(), d.getMonth(), d.getDate()])(new Date())));
+}
+document.addEventListener('DOMContentLoaded', async e => {
   if (navigator.platform.includes('Win')) document.body.classList.add('windows');
   const notes = document.getElementById('notes');
   notes.value = storage.getItem('[ugwisha] notes');
@@ -152,10 +117,46 @@ document.addEventListener('DOMContentLoaded', e => {
     notes.style.height = notes.scrollHeight + 2 + 'px';
     storage.setItem('[ugwisha] notes', notes.value);
   });
+  let windowWidth = window.innerWidth, windowHeight = window.innerHeight;
   window.addEventListener('resize', e => {
     notes.style.height = '0';
     notes.style.height = notes.scrollHeight + 2 + 'px';
+    windowWidth = window.innerWidth, windowHeight = window.innerHeight;
   });
+  const resetBackground = document.getElementById('reset-back');
+  backgroundTransitioner = document.getElementById('transition-background');
+  let randomGradientTimer = null;
+  function startRandomGradients() {
+    if (randomGradientTimer) clearInterval(randomGradientTimer);
+    randomGradientTimer = setInterval(() => {
+      setBackground(randomGradient());
+    }, 5000);
+    setBackground(randomGradient());
+  }
+  if (options.backgroundURL) {
+    setBackground(`url(${options.backgroundURL})`);
+    resetBackground.disabled = false;
+  } else if (options.natureBackground) {
+    //
+  } else {
+    startRandomGradients();
+  }
+  document.getElementById('set-back').addEventListener('click', e => {
+    const url = prompt('URL of image: (sorry for lack of proper UI)');
+    if (url) {
+      setBackground(`url(${options.backgroundURL = url})`);
+      save();
+    }
+    resetBackground.disabled = false;
+    if (randomGradientTimer) clearInterval(randomGradientTimer);
+  });
+  resetBackground.addEventListener('click', e => {
+    options.backgroundURL = null;
+    save();
+    resetBackground.disabled = true;
+    startRandomGradients();
+  });
+  await Promise.all(window.ready.map(r => r()));
   const optionChange = {
     showDuration(yes) {
       if (yes) document.body.classList.add('show-duration');
@@ -166,11 +167,16 @@ document.addEventListener('DOMContentLoaded', e => {
       else document.body.classList.remove('show-time');
     },
     metricTime() {
-      // also update schedule
-      updateStatus();
+      updateView();
+    },
+    natureBackground(yes) {
+      if (yes) {
+        if (randomGradientTimer) clearInterval(randomGradientTimer);
+        // setBackground(`url("https://source.unsplash.com/featured/${windowWidth}x${windowHeight}/?nature")`);
+      }
+      else startRandomGradients();
     }
   };
-  window.ready.forEach(r => r());
   Array.from(document.getElementsByClassName('toggle-setting')).forEach(toggle => {
     const prop = toggle.dataset.option;
     if (options[prop] === undefined) options[prop] = toggle.dataset.default === 'true';
@@ -182,5 +188,19 @@ document.addEventListener('DOMContentLoaded', e => {
       save();
     });
   });
-  setSchedule(tempSchedule);
+  const backDay = document.getElementById('back-day');
+  const forthDay = document.getElementById('forth-day');
+  backDay.addEventListener('click', e => {
+    viewingDate.setUTCDate(viewingDate.getUTCDate() - 1);
+    updateView();
+  });
+  forthDay.addEventListener('click', e => {
+    viewingDate.setUTCDate(viewingDate.getUTCDate() + 1);
+    updateView();
+  });
+  document.getElementById('today').addEventListener('click', e => {
+    viewingDate = getToday();
+    updateView();
+  });
+  updateStatus(true);
 }, {once: true});

@@ -8,15 +8,16 @@ Ugwisha currently supports:
 - show time 'til next period in tab title
 - custom period colours
 - show time left in favicon as well (so Ugwisha can be pinned)
+- show alternate schedules and SELF
+- preview other days
+- look better than Ugwita
 
 Ugwisha will:
 
-- look better than Ugwita
-  - this will include nature images, though this is opt-in; otherwise it'll show random gradients
+- nature images, though this is opt-in; otherwise it'll show random gradients
 - work offline
-- show alternate schedules and SELF
-  - SELF can be turned off, and you will be commended for doing so
-- preview other days
+- automatically change date when there's a new day
+- let you turn off SELF, and you will be commended for doing so
 
 Perhaps Ugwisha may also support:
 
@@ -25,6 +26,10 @@ Perhaps Ugwisha may also support:
 - zero, H, and staff periods support
 - show week previews (like UGWA)
 - better date selector
+- split double flex
+- remove passing periods from brunch/lunch
+- show events
+- randomly selected sheep doodles
 
 Ugwisha will probably not have:
 - club and staff lists

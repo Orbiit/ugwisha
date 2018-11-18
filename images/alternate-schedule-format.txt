@@ -9,3 +9,15 @@
 2018aha8g|adA505.590b590.605B605.685C695.775l775.815F815.895!eD505.590b590.605f605.685E695.775l775.815G815.895!j
 
 # CHANGE: the times are in base 12 and are 3 digits long (thus the dots are redundant) (not shown here)
+
+# periods:
+# A-G: normal periods
+# b: brunch
+# l: lunch
+# f: flex
+# I-W: self for grade combinations 0001 (freshmen only) to 1111 (all grades)
+# s: self [deprecated]
+# 0: zero period [reserved]
+# H: h period [reserved]
+# c: staff collab [reserved]
+# m: staff meetings [reserved]

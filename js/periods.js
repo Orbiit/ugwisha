@@ -12,8 +12,26 @@ const defaultColours = {
 };
 let scheduleWrapper;
 let inputs;
+const gradeName = ['freshmen', 'sophomores', 'juniors', 'seniors'];
 function setSchedule(schedule) {
   scheduleWrapper.innerHTML = '';
+  if (schedule.alternate) {
+    scheduleWrapper.appendChild(createElement('p', {
+      classes: 'alternate-note',
+      html: 'This is an alternate schedule'
+    }));
+  }
+  if (schedule.noSchool) {
+    scheduleWrapper.appendChild(createElement('div', {
+      classes: 'no-school',
+      children: [
+        createElement('span', {
+          html: 'No school!'
+        })
+      ]
+    }));
+    return;
+  }
   inputs = {};
   scheduleWrapper.appendChild(createFragment(schedule.map(pd => {
     const periodName = createElement('input', {
@@ -50,7 +68,11 @@ function setSchedule(schedule) {
         createElement('span', {
           classes: 'duration',
           html: formatDuration(pd.end - pd.start, false) + ' long'
-        })
+        }),
+        pd.period === 's' ? createElement('span', {
+          classes: 'note',
+          html: 'For ' + (pd.selfGrades || defaultSelf).toString(2).split('').reverse().map((n, i) => n === '1' ? gradeName[i] : '').filter(n => n).join(', ')
+        }) : undefined
       ]
     });
   })));
@@ -110,8 +132,19 @@ function setFavicon(text) {
 }
 
 let previewTime, previewMsg, progressBar, favicon, faviconCanvas, fc;
+let todaySchedule, todayDate;
 function updateStatus(startInterval = false) {
-  const status = timeLeft(tempSchedule);
+  const today = new Date().toISOString().slice(0, 10);
+  if (todayDate !== today) {
+    todayDate = today;
+    todaySchedule = getSchedule(getToday());
+  }
+  if (todaySchedule.noSchool) {
+    if (startInterval) setTimeout(() => updateStatus(true), 5000);
+    progressBar.style.opacity = 0;
+    return;
+  }
+  const status = timeLeft(todaySchedule);
   if (status.type === 'left in') {
     progressBar.style.opacity = 1;
     progressBar.style.setProperty('--progress', status.progress * 100 + '%');
@@ -167,5 +200,4 @@ ready.push(() => {
   fc.textBaseline = 'middle';
   fc.fillStyle = '#ff5959';
   document.head.appendChild(favicon);
-  updateStatus(true);
 });
