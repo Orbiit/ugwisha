@@ -13,7 +13,7 @@
   position: relative;
   overflow: hidden;
   -webkit-tap-highlight-color: transparent;
-  margin-right: 5px;
+  word-wrap: break-word;
 }
 .button:focus, .icon-btn:focus {
   outline: none; /* TODO: detect tab focus and then give separate class */
@@ -38,7 +38,6 @@
   background-repeat: no-repeat;
   background-position: center;
   background-size: 24px;
-  margin-right: 5px;
 }
 
 h2 {
