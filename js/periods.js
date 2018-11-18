@@ -1,3 +1,5 @@
+const FAVICON_SIZE = 32;
+
 const defaultNames = {
   A: 'Period A', B: 'Period B', C: 'Period C', D: 'Period D',
   E: 'Period E', F: 'Period F', G: 'Period G',
@@ -98,8 +100,16 @@ function getPeriodChipHTML(period) {
   str += `>${options['periodName_' + period]}</span>`;
   return str;
 }
+function setFavicon(text) {
+  fc.clearRect(0, 0, FAVICON_SIZE, FAVICON_SIZE);
+  fc.font = `100px 'Roboto Condensed', sans-serif`;
+  const {width} = fc.measureText(text);
+  fc.font = `${FAVICON_SIZE / (width / 100)}px 'Roboto Condensed', sans-serif`;
+  fc.fillText(text, FAVICON_SIZE / 2, FAVICON_SIZE / 2);
+  favicon.setAttribute('href', faviconCanvas.toDataURL());
+}
 
-let previewTime, previewMsg, progressBar;
+let previewTime, previewMsg, progressBar, favicon, faviconCanvas, fc;
 function updateStatus(startInterval = false) {
   const status = timeLeft(tempSchedule);
   if (status.type === 'left in') {
@@ -109,6 +119,7 @@ function updateStatus(startInterval = false) {
     progressBar.style.opacity = 0;
   }
   previewMsg.innerHTML = status.type + ' ' + getPeriodChipHTML(status.period);
+  setFavicon(formatDuration(status.value, true));
   if (status.secondCounter) {
     function seconds() {
       const {secondsLeft, stop} = status.secondCounter();
@@ -140,5 +151,21 @@ ready.push(() => {
   previewTime = document.getElementById('preview-time');
   previewMsg = document.getElementById('preview-msg');
   progressBar = document.getElementById('progress');
+  favicon = createElement('link', {
+    attributes: {
+      rel: 'icon'
+    }
+  });
+  faviconCanvas = createElement('canvas', {
+    attributes: {
+      width: FAVICON_SIZE,
+      height: FAVICON_SIZE
+    }
+  });
+  fc = faviconCanvas.getContext('2d');
+  fc.textAlign = 'center';
+  fc.textBaseline = 'middle';
+  fc.fillStyle = '#ff5959';
+  document.head.appendChild(favicon);
   updateStatus(true);
 });
