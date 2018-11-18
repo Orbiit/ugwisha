@@ -77,6 +77,61 @@ function formatDuration(minutes, short) {
   //   + (mins !== 0 ? mins + ' minute' + (mins === 1 ? '' : 's') : '');
   return Math.floor(minutes / 60) + ':' + ('0' + minutes % 60).slice(-2);
 }
+const alternateRegex = /([A-Gblf])(\d+)\.(\d+)/g;
+function decodeStoredAlternates(string = storage.getItem('[ugwisha] alternates')) {
+  const lines = string.split('|');
+  const firstLine = lines.shift();
+  const lastGeneratedDate = new Date(Date.UTC(+firstLine.slice(0, 4), parseInt(firstLine[4], 36), parseInt(firstLine[5], 36)));
+  const selfDays = [];
+  firstLine.slice(6).split('!').forEach(m => {
+    const month = parseInt(m[0], 36) + 1;
+    selfDays.push(...m.slice(1).split('').map(d => month + '-' + parseInt(d, 36)));
+  });
+  const schedules = {};
+  lines.forEach(m => {
+    const month = parseInt(m[0], 36) + 1;
+    m.slice(1).split('!').forEach(d => {
+      const schedule = d.length > 1 ? [] : null;
+      if (d.length > 1) {
+        d.slice(1).replace(alternateRegex, (_, period, start, end) => schedule.push({
+          period: period,
+          start: +start,
+          end: +end
+        }));
+      }
+      schedules[month + '-' + parseInt(d[0], 36)] = schedule;
+    });
+  });
+  return {
+    lastGenerated: lastGeneratedDate,
+    selfDays: selfDays,
+    schedules: schedules
+  };
+}
+function encodeStoredAlternates({lastGenerated, selfDays, schedules}) {
+  let result = lastGenerated.getUTCFullYear() + lastGenerated.getUTCMonth().toString(36) + lastGenerated.getUTCDate().toString(36);
+  const selfMonths = {};
+  selfDays.forEach(day => {
+    let [month, date] = day.split('-').map(Number);
+    month = (month - 1).toString(36);
+    date = date.toString(36);
+    selfMonths[month] = (selfMonths[month] || month) + date;
+  });
+  result += Object.values(selfMonths).join('!') + '|';
+  const schedMonths = {};
+  Object.keys(schedules).forEach(day => {
+    let [month, date] = day.split('-').map(Number);
+    month = (month - 1).toString(36);
+    date = date.toString(36);
+    if (schedMonths[month]) schedMonths[month] += '!';
+    else schedMonths[month] = month;
+    schedMonths[month] += date;
+    if (schedules[day])
+      schedMonths[month] += schedules[day].map(({period, start, end}) => period + start + '.' + end).join('');
+  });
+  result += Object.values(schedMonths).join('|');
+  return result;
+}
 
 window.tempSchedule = [ // TEMP
   {period: "A", start: 505, end: 585},
