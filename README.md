@@ -6,19 +6,22 @@ Feel free to fork this repository and make your own app; just credit me somewher
 
 Ugwisha currently supports:
 
-- custom period names
-- show time 'til next period in tab title
-- custom period colours
-- show time left in favicon as well (so Ugwisha can be pinned)
-- show alternate schedules and SELF
-- preview other days
-- look better than Ugwita
-- nature images, though this is opt-in; otherwise it'll show random gradients
-- work offline
-- automatically change date when there's a new day
-- let you turn off SELF, and you will be commended for doing so
-- PSA system
-- cache custom background
+- features all Gunn apps have:
+  - working offline
+  - time until next period in tab title
+  - alternate schedules
+  - previewing other days
+- UGWA features:
+  - custom period names and colours
+  - PSA system
+  - optional SELF
+- Ugwita features
+  - automatically change date when there's a new day
+  - linking to dates by URL: `?day=yyyy-mm-dd`
+- unique features:
+  - better design than Ugwita
+  - nature, custom, or gradient backgrounds that work offline
+  - time until next period in favicon (so Ugwisha can be pinned)
 
 Perhaps Ugwisha may also support:
 
