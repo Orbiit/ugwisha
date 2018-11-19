@@ -12,7 +12,7 @@ const gradeToInt = {'9': 1, '10': 2, '11': 4, '12': 8};
 const defaultSelf = 0b11;
 
 function parseAlternate(summary, description) {
-  if (/schedule|extended/i.test(summary)) {
+  if (/schedule|extended|lunch/i.test(summary)) {
     if (!description) return;
     description = '\n' + description.replace(HTMLnewlineRegex, '\n').replace(noHTMLRegex, '').replace(noNbspRegex, ' ');
     let periods = [];
@@ -153,14 +153,14 @@ function decodeStoredAlternates(string = storage.getItem('[ugwisha] alternates')
   const lastGeneratedDate = new Date(Date.UTC(+firstLine.slice(0, 4), parseInt(firstLine[4], 36), parseInt(firstLine[5], 36)));
   const selfDays = {};
   firstLine.slice(6).split('!').forEach(m => {
-    const month = parseInt(m[0], 36) + 1;
+    const month = String(parseInt(m[0], 36) + 1).padStart(2, '0');
     for (let i = 1; i < m.length; i += 2) {
-      selfDays[month + '-' + parseInt(m[i], 36)] = m[i + 1].charCodeAt() - selfCharOffset;
+      selfDays[month + '-' + String(parseInt(m[i], 36)).padStart(2, '0')] = m[i + 1].charCodeAt() - selfCharOffset;
     }
   });
   const schedules = {};
   lines.forEach(m => {
-    const month = parseInt(m[0], 36) + 1;
+    const month = String(parseInt(m[0], 36) + 1).padStart(2, '0');
     m.slice(1).split('!').forEach(d => {
       const schedule = d.length > 1 ? [] : null;
       if (d.length > 1) {
@@ -177,7 +177,7 @@ function decodeStoredAlternates(string = storage.getItem('[ugwisha] alternates')
           schedule.push(periodData);
         });
       }
-      schedules[month + '-' + parseInt(d[0], 36)] = schedule;
+      schedules[month + '-' + String(parseInt(d[0], 36)).padStart(2, '0')] = schedule;
     });
   });
   return {
@@ -205,7 +205,7 @@ function encodeStoredAlternates({lastGenerated, selfDays, schedules}) {
     else schedMonths[month] = month;
     schedMonths[month] += date;
     if (schedules[day])
-      schedMonths[month] += schedules[day].map(({period, start, end}) => (period === 's' ? String.fromCharCode((period.selfGrades || defaultSelf) + selfCharOffset) : period)
+      schedMonths[month] += schedules[day].map(({period, start, end, selfGrades}) => (period === 's' ? String.fromCharCode((selfGrades || defaultSelf) + selfCharOffset) : period)
         + start.toString(12).padStart(3, '0') + end.toString(12).padStart(3, '0')).join('');
   });
   result += Object.values(schedMonths).join('|');
@@ -274,6 +274,10 @@ function getSchedule(dateObj) {
   }
   if (schedule === null) {
     schedule = { noSchool: true };
+  } else if (!options.showSELF) {
+    schedule.forEach(pd => {
+      if (pd.period === 's') pd.period = 'f';
+    });
   }
   if (scheduleData.schedules[string] !== undefined) {
     schedule.alternate = true;

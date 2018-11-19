@@ -6,6 +6,7 @@
   border-bottom-right-radius: 10px;
   --colour: transparent;
   border-left: 5px solid var(--colour);
+  position: relative;
 }
 .period.transparent {
   background-color: transparent;
@@ -47,6 +48,14 @@
 }
 .show-duration .duration {
   display: block;
+}
+.note {
+  position: absolute;
+  font-size: 8px;
+  top: 0;
+  right: 0;
+  margin: 5px;
+  color: rgba(255, 255, 255, 0.3);
 }
 .period-chip {
   background-color: rgba(0, 0, 0, 0.2);

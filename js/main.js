@@ -248,6 +248,9 @@ document.addEventListener('DOMContentLoaded', async e => {
         else newNatureBackground();
       }
       else startRandomGradients();
+    },
+    showSELF() {
+      updateView();
     }
   };
   Array.from(document.getElementsByClassName('toggle-setting')).forEach(toggle => {
