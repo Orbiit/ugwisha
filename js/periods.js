@@ -11,8 +11,90 @@ const defaultColours = {
   b: null, l: null, f: '607D8B', s: '9E9E9E'
 };
 let scheduleWrapper;
-let inputs;
+let inputs, periodCards;
 const gradeName = ['freshmen', 'sophomores', 'juniors', 'seniors'];
+const hexColourRegex = /([0-9a-f]{6})|([0-9a-f])([0-9a-f])([0-9a-f])/;
+let colourPickerInput, colourPickerCheckbox;
+function checkThenDestroy() {
+  setTimeout(() => {
+    if (!scheduleWrapper.contains(document.activeElement)) {
+      colourPicker.parentNode.removeChild(colourPicker);
+      periodBeingColoured = null;
+    }
+  }, 0);
+}
+function parseColour(val) {
+  const regexified = hexColourRegex.exec(val.toLowerCase());
+  if (regexified) {
+    let colour;
+    if (regexified[1]) return regexified[1];
+    else {
+      return regexified.slice(2, 5).map(c => c + c).join('');
+    }
+  }
+}
+const colourPicker = createElement('div', {
+  classes: 'colour-picker',
+  attributes: {
+    tabindex: 0
+  },
+  children: [
+    colourPickerInput = createElement('input', {
+      classes: 'colour-input',
+      attributes: {
+        type: 'text',
+        placeholder: '#123ABC'
+      },
+      listeners: {
+        change() {
+          const colour = parseColour(colourPickerInput.value);
+          if (colour) {
+            options['periodColour_' + periodBeingColoured] = colour;
+            periodCards[periodBeingColoured].forEach(p => p.style.setProperty('--colour', '#' + colour));
+          } else {
+            colourPickerInput.value = '#' + options['periodColour_' + periodBeingColoured];
+          }
+        },
+        blur: checkThenDestroy
+      }
+    }),
+    colourPickerCheckbox = createElement('input', {
+      attributes: {
+        type: 'checkbox',
+        name: 'colour-picker-checkbox'
+      },
+      listeners: {
+        change() {
+          colourPickerInput.disabled = colourPickerCheckbox.checked;
+          if (colourPickerCheckbox.checked) {
+            options['periodColour_' + periodBeingColoured] = null;
+            periodCards[periodBeingColoured].forEach(p => {
+              p.classList.add('transparent');
+              p.style.setProperty('--colour', null);
+            });
+          } else {
+            options['periodColour_' + periodBeingColoured] = parseColour(colourPickerInput.value) || defaultColours[periodBeingColoured] || '000';
+            periodCards[periodBeingColoured].forEach(p => {
+              p.classList.remove('transparent');
+              p.style.setProperty('--colour', '#' + options['periodColour_' + periodBeingColoured]);
+            });
+          }
+        },
+        blur: checkThenDestroy
+      }
+    }),
+    createElement('label', {
+      attributes: {
+        for: 'colour-picker-checkbox'
+      },
+      html: 'Transparent?'
+    })
+  ],
+  listeners: {
+    blur: checkThenDestroy
+  }
+});
+let periodBeingColoured = null;
 function setSchedule(schedule) {
   scheduleWrapper.innerHTML = '';
   if (schedule.alternate) {
@@ -33,8 +115,10 @@ function setSchedule(schedule) {
     return;
   }
   inputs = {};
+  periodCards = {};
   scheduleWrapper.appendChild(createFragment(schedule.map(pd => {
     const periodName = createElement('input', {
+      classes: 'period-name',
       attributes: {
         type: 'text',
         placeholder: defaultNames[pd.period],
@@ -46,12 +130,20 @@ function setSchedule(schedule) {
           save();
           updateStatus();
           inputs[pd.period].forEach(input => input !== periodName && (input.value = periodName.value));
-        }
+        },
+        focus() {
+          if (colourPicker.parentNode) colourPicker.parentNode.removeChild(colourPicker);
+          periodName.parentNode.insertBefore(colourPicker, periodName.nextElementSibling);
+          colourPickerInput.value = '#' + (options['periodColour_' + pd.period] || defaultColours[pd.period] || '000');
+          colourPickerInput.disabled = colourPickerCheckbox.checked = options['periodColour_' + pd.period] === null;
+          periodBeingColoured = pd.period;
+        },
+        blur: checkThenDestroy
       }
     });
     if (!inputs[pd.period]) inputs[pd.period] = [];
     inputs[pd.period].push(periodName);
-    return createElement('div', {
+    const wrapper = createElement('div', {
       classes: [
         'period',
         options['periodColour_' + pd.period] === null ? 'transparent' : undefined
@@ -75,6 +167,9 @@ function setSchedule(schedule) {
         }) : undefined
       ]
     });
+    if (!periodCards[pd.period]) periodCards[pd.period] = [];
+    periodCards[pd.period].push(wrapper);
+    return wrapper;
   })));
 }
 
