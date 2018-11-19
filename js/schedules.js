@@ -285,8 +285,8 @@ function getSchedule(dateObj) {
   return schedule;
 }
 
-const months = 'january february march april may june july august september october november december'.split(' ');
-const days = ['sunday', 'monday', 'tuesday', 'wed<span class="abbrev-wednesday">nesday</span>', 'thursday', 'friday', 'saturday'];
+const months = 'jan. feb. mar. apr. may jun. jul. aug. sept. oct. nov. dec.'.split(' ');
+const days = ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'];
 let dateElem, dayElem, altFetchBtn;
 function updateView() {
   setSchedule(getSchedule(viewingDate));

@@ -23,6 +23,9 @@
     </div>
     <div class="content">
       <div id="date-nav-button-wrapper">
+        <div id="jump-btn-wrapper">
+          <button class="icon-btn ripples" id="jump"></button>
+        </div>
         <div>
           <button class="button ripples" id="today">today</button>
         </div>
@@ -38,13 +41,14 @@
       </div>
       <div id="periods"></div>
       <h2>Settings</h2>
+      <p class="hidden" id="offline-msg">You're offline, so some features won't work. When you come back online, <a href="#" id="reload" tabindex="-1">reload</a>.</p>
       <p><button class="button ripples" id="fetch-alts">get alternate schedules</button></p>
       <p><input class="toggle-setting" data-option="showTime" data-default="true" type="checkbox" id="show-time"><label for="show-time">Show period times?</label></p>
       <p><input class="toggle-setting" data-option="showDuration" data-default="false" type="checkbox" id="show-duration"><label for="show-duration">Show period length?</label></p>
       <p><input class="toggle-setting" data-option="showSELF" data-default="true" type="checkbox" id="show-self"><label for="show-self">Show SELF?</label></p>
       <p><input class="toggle-setting" data-option="metricTime" data-default="false" type="checkbox" id="24-hour"><label for="24-hour">24-hour time?</label></p>
-      <p><input class="toggle-setting" data-option="natureBackground" data-default="false" type="checkbox" id="nature-back"><label for="nature-back">Random image background?</label></p>
-      <p><button class="button ripples" id="next-back" disabled>new nature background</button></p>
+      <p><input class="toggle-setting" data-option="natureBackground" data-default="false" type="checkbox" id="nature-back"><label for="nature-back">Use nature backgrounds?</label></p>
+      <p><button class="button ripples" id="next-back" disabled>next nature background</button></p>
       <p><button class="button ripples" id="set-back">set background URL</button></p>
       <p><button class="button ripples" id="reset-back" disabled>reset background</button></p>
       <h2>Notes</h2>

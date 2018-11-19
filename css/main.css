@@ -25,6 +25,9 @@ body {
 .windows ::-webkit-scrollbar-thumb {
   background-color: rgba(255, 255, 255, 0.8);
 }
+.hidden {
+  display: none;
+}
 .content {
   background-color: rgba(0, 0, 0, 0.3);
   width: 250px;
@@ -70,8 +73,20 @@ body {
   height: 100%;
   border-radius: 3px;
 }
-.abbrev-wednesday {
+#jump-btn-wrapper {
+  position: relative;
+}
+#jump {
   display: none;
+  position: absolute;
+  background-image: url("../images/material-keyboard_arrow_up.svg");
+  bottom: 25px;
+  transform: translateX(-50%);
+  transition: bottom .2s;
+}
+#jump.up {
+  background-image: url("../images/material-keyboard_arrow_down.svg");
+  bottom: 15px;
 }
 @media (max-width: 700px) {
 
@@ -105,6 +120,10 @@ body {
 
   .abbrev-wednesday {
     display: inline;
+  }
+
+  #jump {
+    display: inline-block;
   }
 
 }

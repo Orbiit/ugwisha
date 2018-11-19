@@ -18,7 +18,7 @@ Ugwisha currently supports:
 
 Perhaps Ugwisha may also support:
 
-- a colour picker
+- a better colour picker
 - period descriptions
 - zero, H, and staff periods support
 - show week previews (like UGWA)
@@ -28,6 +28,8 @@ Perhaps Ugwisha may also support:
 - show events
 - randomly selected sheep doodles
 - warning the user if it has been too long since they fetched the alternate schedules
+- keeping the user from viewing summer break/next year
+- weather
 
 Ugwisha will probably not have:
 - club and staff lists

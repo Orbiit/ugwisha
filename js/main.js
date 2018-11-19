@@ -184,6 +184,7 @@ document.addEventListener('DOMContentLoaded', async e => {
     notes.style.height = notes.scrollHeight + 2 + 'px';
     windowWidth = window.innerWidth, windowHeight = window.innerHeight;
   });
+  const setBackgroundBtn = document.getElementById('set-back');
   const resetBackground = document.getElementById('reset-back');
   const nextBackground = document.getElementById('next-back');
   backgroundTransitioner = document.getElementById('transition-background');
@@ -204,7 +205,7 @@ document.addEventListener('DOMContentLoaded', async e => {
   } else {
     startRandomGradients();
   }
-  document.getElementById('set-back').addEventListener('click', e => {
+  setBackgroundBtn.addEventListener('click', e => {
     const url = prompt('URL of image: (sorry for lack of proper UI)');
     if (url) {
       setBackground(`url(${options.backgroundURL = url})`);
@@ -226,6 +227,51 @@ document.addEventListener('DOMContentLoaded', async e => {
     else startRandomGradients();
   });
   nextBackground.addEventListener('click', newNatureBackground);
+  fetch('./images/am-i-online.txt?=' + Date.now()).catch(() => {
+    document.getElementById('offline-msg').classList.remove('hidden');
+    const reloadBtn = document.getElementById('reload');
+    reloadBtn.tabindex = 0;
+    reloadBtn.addEventListener('click', e => {
+      window.location.reload();
+      e.preventDefault();
+    });
+    altFetchBtn.disabled = nextBackground.disabled = setBackgroundBtn.disabled = true;
+    if (!options.natureLoaded) {
+      document.getElementById('nature-back').disabled = true;
+    }
+  });
+  const jumpBtn = document.getElementById('jump');
+  let smoothScrolling = false;
+  function smoothScroll(stopY) {
+    let y = window.scrollY;
+    function scroll() {
+      if (Math.abs(y - stopY) > 1) {
+        y += (stopY - y) / 5;
+        window.scrollTo(0, y);
+        smoothScrolling = window.requestAnimationFrame(scroll);
+      } else {
+        window.scrollTo(0, stopY);
+        smoothScrolling = false;
+      }
+    }
+    scroll();
+  }
+  document.addEventListener('wheel', e => {
+    window.cancelAnimationFrame(smoothScrolling);
+    smoothScrolling = false;
+  });
+  document.addEventListener('touchstart', e => {
+    window.cancelAnimationFrame(smoothScrolling);
+    smoothScrolling = false;
+  });
+  document.addEventListener('scroll', e => {
+    if (window.scrollY > windowHeight / 3) jumpBtn.classList.add('up');
+    else jumpBtn.classList.remove('up');
+  });
+  jumpBtn.addEventListener('click', e => {
+    if (smoothScrolling) window.cancelAnimationFrame(smoothScrolling);
+    smoothScroll(jumpBtn.classList.contains('up') ? 0 : windowHeight - 50);
+  });
   await Promise.all(window.ready.map(r => r()));
   const optionChange = {
     showDuration(yes) {
