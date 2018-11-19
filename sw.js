@@ -20,6 +20,15 @@ urlsToCache = [
 function send(data) {
   self.clients.matchAll().then(clients => clients.forEach(c => c.postMessage(data)));
 }
+function cacheImage(source, path) {
+  fetch(source).then(res => {
+    caches.open(CACHE_NAME).then(cache => {
+      const deletePromise = cache.delete(new Request(path));
+      // deletePromise.then(console.log);
+      return deletePromise.then(() => cache.put(new Request(path), res));
+    }).then(() => send({type: 'background-ok', path: path}));
+  });
+}
 
 self.addEventListener('install', e => {
   self.skipWaiting();
@@ -35,13 +44,10 @@ self.addEventListener('activate', e => {
 self.addEventListener('message', ({data}) => {
   switch (data.type) {
     case 'nature-image':
-      fetch('https://source.unsplash.com/featured/1600x900/?nature').then(res => {
-        caches.open(CACHE_NAME).then(cache => {
-          const deletePromise = cache.delete(new Request('happy'));
-          // deletePromise.then(console.log);
-          return deletePromise.then(() => cache.put(new Request('happy'), res));
-        }).then(() => send({type: 'nature-image-ok'}));
-      });
+      cacheImage('https://source.unsplash.com/featured/1600x900/?nature', 'happy');
+      break;
+    case 'custom-image':
+      cacheImage(data.url, 'fluffy');
       break;
   }
 });

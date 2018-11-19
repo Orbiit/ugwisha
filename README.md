@@ -17,6 +17,8 @@ Ugwisha currently supports:
 - work offline
 - automatically change date when there's a new day
 - let you turn off SELF, and you will be commended for doing so
+- PSA system
+- cache custom background
 
 Perhaps Ugwisha may also support:
 
@@ -32,12 +34,10 @@ Perhaps Ugwisha may also support:
 - warning the user if it has been too long since they fetched the alternate schedules
 - keeping the user from viewing summer break/next year
 - weather
-- cache custom background
-- PSA system
+- barcode generator
 
 Ugwisha will probably not have:
 - club and staff lists
-- barcode generator
 - campus map
 
 ## Etymology of "Ugwisha"

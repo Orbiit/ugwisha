@@ -63,9 +63,9 @@ if ("serviceWorker" in navigator) {
           case 'version':
             console.log('Service worker version ' + data.version);
             break;
-          case 'nature-image-ok':
-            setBackground(`url("happy?n=${Date.now()}")`);
-            options.natureLoaded = true;
+          case 'background-ok':
+            setBackground(`url("${data.path}?n=${Date.now()}")`);
+            if (data.path === 'happy') options.natureLoaded = true;
             break;
           default:
             console.log(data);
@@ -216,7 +216,7 @@ document.addEventListener('DOMContentLoaded', async e => {
   setBackgroundBtn.addEventListener('click', e => {
     const url = prompt('URL of image: (sorry for lack of proper UI)');
     if (url) {
-      setBackground(`url(${options.backgroundURL = url})`);
+      navigator.serviceWorker.controller.postMessage({type: 'custom-image', url: options.backgroundURL = url});
       save();
       resetBackground.disabled = false;
       nextBackground.disabled = true;
