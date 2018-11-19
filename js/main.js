@@ -170,7 +170,10 @@ if (params.day) {
   viewingDate = new Date(params.day);
 }
 document.addEventListener('DOMContentLoaded', async e => {
+  // thinner scrollbar for windows
   if (navigator.platform.includes('Win')) document.body.classList.add('windows');
+
+  // notes
   const notes = document.getElementById('notes');
   notes.value = storage.getItem('[ugwisha] notes');
   setTimeout(() => notes.style.height = notes.scrollHeight + 2 + 'px', 0);
@@ -179,12 +182,16 @@ document.addEventListener('DOMContentLoaded', async e => {
     notes.style.height = notes.scrollHeight + 2 + 'px';
     storage.setItem('[ugwisha] notes', notes.value);
   });
+
+  // window size
   let windowWidth = window.innerWidth, windowHeight = window.innerHeight;
   window.addEventListener('resize', e => {
     notes.style.height = '0';
     notes.style.height = notes.scrollHeight + 2 + 'px';
     windowWidth = window.innerWidth, windowHeight = window.innerHeight;
   });
+
+  // background
   const setBackgroundBtn = document.getElementById('set-back');
   const resetBackground = document.getElementById('reset-back');
   const nextBackground = document.getElementById('next-back');
@@ -228,7 +235,33 @@ document.addEventListener('DOMContentLoaded', async e => {
     else startRandomGradients();
   });
   nextBackground.addEventListener('click', newNatureBackground);
-  fetch('./images/am-i-online.txt?=' + Date.now()).catch(() => {
+
+  // psa & offline detection
+  const psaDialog = document.getElementById('psa');
+  const psaContent = document.getElementById('psa-content');
+  const psaClose = document.getElementById('psa-close');
+  const psaOpen = document.getElementById('last-psa');
+  fetch('./psa.html?=' + Date.now()).then(r => r.text()).then(html => {
+    psaContent.innerHTML = html;
+    const version = html.slice(6, 9);
+    if (options.lastPSA && options.lastPSA !== version) {
+      psaDialog.classList.remove('hidden');
+    }
+    if (!options.lastPSA) {
+      options.lastPSA = version;
+      save();
+    }
+    psaClose.addEventListener('click', e => {
+      psaDialog.classList.add('hidden');
+      if (options.lastPSA !== version) {
+        options.lastPSA = version;
+        save();
+      }
+    });
+    psaOpen.addEventListener('click', e => {
+      psaDialog.classList.remove('hidden');
+    });
+  }).catch(() => {
     document.getElementById('offline-msg').classList.remove('hidden');
     const reloadBtn = document.getElementById('reload');
     reloadBtn.tabindex = 0;
@@ -236,11 +269,13 @@ document.addEventListener('DOMContentLoaded', async e => {
       window.location.reload();
       e.preventDefault();
     });
-    altFetchBtn.disabled = nextBackground.disabled = setBackgroundBtn.disabled = true;
+    altFetchBtn.disabled = nextBackground.disabled = setBackgroundBtn.disabled = psaOpen.disabled = true;
     if (!options.natureLoaded) {
       document.getElementById('nature-back').disabled = true;
     }
   });
+
+  // jump button
   const jumpBtn = document.getElementById('jump');
   let smoothScrolling = false;
   function smoothScroll(stopY) {
@@ -273,7 +308,21 @@ document.addEventListener('DOMContentLoaded', async e => {
     if (smoothScrolling) window.cancelAnimationFrame(smoothScrolling);
     smoothScroll(jumpBtn.classList.contains('up') ? 0 : windowHeight - 50);
   });
+
+  // settings wrapper
+  const settingsWrapper = document.getElementById('settings');
+  const toggleSettings = document.getElementById('toggle-settings');
+  const btnText = document.createTextNode('show settings');
+  toggleSettings.appendChild(btnText);
+  toggleSettings.addEventListener('click', e => {
+    settingsWrapper.classList.toggle('hidden');
+    btnText.nodeValue = settingsWrapper.classList.contains('hidden') ? 'show settings' : 'hide settings';
+  });
+
+  // ready functions
   await Promise.all(window.ready.map(r => r()));
+
+  // checkboxes
   const optionChange = {
     showDuration(yes) {
       if (yes) document.body.classList.add('show-duration');
@@ -311,6 +360,8 @@ document.addEventListener('DOMContentLoaded', async e => {
       save();
     });
   });
+
+  // simple date navegation buttons
   const backDay = document.getElementById('back-day');
   const forthDay = document.getElementById('forth-day');
   backDay.addEventListener('click', e => {
@@ -326,12 +377,4 @@ document.addEventListener('DOMContentLoaded', async e => {
     updateView();
   });
   updateStatus(true);
-  const settingsWrapper = document.getElementById('settings');
-  const toggleSettings = document.getElementById('toggle-settings');
-  const btnText = document.createTextNode('show settings');
-  toggleSettings.appendChild(btnText);
-  toggleSettings.addEventListener('click', e => {
-    settingsWrapper.classList.toggle('hidden');
-    btnText.nodeValue = settingsWrapper.classList.contains('hidden') ? 'show settings' : 'hide settings';
-  });
 }, {once: true});
