@@ -136,10 +136,12 @@ function parseEvents(events) {
   };
 }
 function fetchAlternates() {
+  altFetchBtn.disabled = true;
   return Promise.all(keywords.map(k => fetch(calendarURL + '&q=' + k).then(r => r.json()))).then(alts => {
     // localStorage.setItem('[ugwisha] test.rawAlts', JSON.stringify(alts));
     scheduleData = parseEvents(alts);
     storage.setItem('[ugwisha] alternates', encodeStoredAlternates(scheduleData));
+    altFetchBtn.disabled = false;
   });
 }
 
@@ -281,7 +283,7 @@ function getSchedule(dateObj) {
 
 const months = 'january february march april may june july august september october november december'.split(' ');
 const days = ['sunday', 'monday', 'tuesday', 'wed<span class="abbrev-wednesday">nesday</span>', 'thursday', 'friday', 'saturday'];
-let dateElem, dayElem;
+let dateElem, dayElem, altFetchBtn;
 function updateView() {
   setSchedule(getSchedule(viewingDate));
   dateElem.innerHTML = months[viewingDate.getUTCMonth()] + ' ' + viewingDate.getUTCDate();
@@ -290,13 +292,19 @@ function updateView() {
 ready.push(async () => {
   dateElem = document.getElementById('date');
   dayElem = document.getElementById('weekday');
+  altFetchBtn = document.getElementById('fetch-alts');
   if (localStorage.getItem('[ugwisha] alternates')) {
     scheduleData = decodeStoredAlternates(localStorage.getItem('[ugwisha] alternates'));
+    if (params['get-alts']) {
+      await fetchAlternates();
+      if (params.then) window.location.replace(params.then);
+    }
   } else {
     await fetchAlternates();
+    if (params.then) window.location.replace(params.then);
   }
   updateView();
-  document.getElementById('fetch-alts').addEventListener('click', async e => {
+  altFetchBtn.addEventListener('click', async e => {
     await fetchAlternates();
     updateView();
   });

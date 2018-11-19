@@ -11,12 +11,12 @@ Ugwisha currently supports:
 - show alternate schedules and SELF
 - preview other days
 - look better than Ugwita
-
-Ugwisha will:
-
 - nature images, though this is opt-in; otherwise it'll show random gradients
 - work offline
 - automatically change date when there's a new day
+
+Ugwisha will:
+
 - let you turn off SELF, and you will be commended for doing so
 
 Perhaps Ugwisha may also support:

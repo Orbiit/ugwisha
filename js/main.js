@@ -20,6 +20,61 @@ function save() {
   storage.setItem('[ugwisha] options', JSON.stringify(window.options));
 }
 
+// URL PARAMETERS
+// destroy-sw - destroys service workers
+// get-alts   - fetches alternate schedules
+// then       - URL to redirect to after fetching alternate schedules
+// day        - date to view (yyyy-mm-dd)
+const params = {};
+if (window.location.search) {
+  window.location.search.slice(1).split('&').forEach(entry => {
+    const equalSignLoc = entry.indexOf('=');
+    if (~equalSignLoc) {
+      params[entry.slice(0, equalSignLoc)] = entry.slice(equalSignLoc + 1);
+    } else {
+      params[entry] = true;
+    }
+  });
+}
+
+if ("serviceWorker" in navigator) {
+  if (params['destroy-sw']) {
+    navigator.serviceWorker.getRegistrations()
+      .then(regis => regis.map(regis => regis.unregister()))
+      .catch(err => console.log(err));
+  } else {
+    window.addEventListener("load", () => {
+      navigator.serviceWorker.register('./sw.js').then(regis => {
+        regis.onupdatefound = () => {
+          const installingWorker = regis.installing;
+          installingWorker.onstatechange = () => {
+            if (installingWorker.state === 'installed' && navigator.serviceWorker.controller) {
+              console.log('New update! Redirecting you away and back');
+              options.natureLoaded = false;
+              window.location.replace('/ugwisha-updater.html');
+            }
+          };
+        };
+      }, err => {
+        console.log(':( Couldn\'t register service worker', err);
+      });
+      navigator.serviceWorker.addEventListener('message', ({data}) => {
+        switch (data.type) {
+          case 'version':
+            console.log('Service worker version ' + data.version);
+            break;
+          case 'nature-image-ok':
+            setBackground(`url("happy?n=${Date.now()}")`);
+            options.natureLoaded = true;
+            break;
+          default:
+            console.log(data);
+        }
+      });
+    }, {once: true});
+  }
+}
+
 function deundefine(obj) {
   if (Array.isArray(obj)) return obj.filter(i => i !== undefined);
   else {
@@ -102,10 +157,16 @@ function setBackground(css) {
     transitioning = false;
   }, 500);
 }
+function newNatureBackground() {
+  navigator.serviceWorker.controller.postMessage({type: 'nature-image'});
+}
 
 let viewingDate = getToday();
 function getToday() {
   return new Date(Date.UTC(...(d => [d.getFullYear(), d.getMonth(), d.getDate()])(new Date())));
+}
+if (params.day) {
+  viewingDate = new Date(params.day);
 }
 document.addEventListener('DOMContentLoaded', async e => {
   if (navigator.platform.includes('Win')) document.body.classList.add('windows');
@@ -124,6 +185,7 @@ document.addEventListener('DOMContentLoaded', async e => {
     windowWidth = window.innerWidth, windowHeight = window.innerHeight;
   });
   const resetBackground = document.getElementById('reset-back');
+  const nextBackground = document.getElementById('next-back');
   backgroundTransitioner = document.getElementById('transition-background');
   let randomGradientTimer = null;
   function startRandomGradients() {
@@ -137,7 +199,8 @@ document.addEventListener('DOMContentLoaded', async e => {
     setBackground(`url(${options.backgroundURL})`);
     resetBackground.disabled = false;
   } else if (options.natureBackground) {
-    //
+    setBackground(`url("happy?n=${Date.now()}")`);
+    nextBackground.disabled = false;
   } else {
     startRandomGradients();
   }
@@ -146,16 +209,23 @@ document.addEventListener('DOMContentLoaded', async e => {
     if (url) {
       setBackground(`url(${options.backgroundURL = url})`);
       save();
+      resetBackground.disabled = false;
+      nextBackground.disabled = true;
+      if (randomGradientTimer) clearInterval(randomGradientTimer);
     }
-    resetBackground.disabled = false;
-    if (randomGradientTimer) clearInterval(randomGradientTimer);
   });
   resetBackground.addEventListener('click', e => {
     options.backgroundURL = null;
     save();
     resetBackground.disabled = true;
-    startRandomGradients();
+    nextBackground.disabled = !options.natureBackground;
+    if (options.natureBackground) {
+      if (options.natureLoaded) setBackground(`url("happy?n=${Date.now()}")`);
+      else newNatureBackground();
+    }
+    else startRandomGradients();
   });
+  nextBackground.addEventListener('click', newNatureBackground);
   await Promise.all(window.ready.map(r => r()));
   const optionChange = {
     showDuration(yes) {
@@ -170,9 +240,12 @@ document.addEventListener('DOMContentLoaded', async e => {
       updateView();
     },
     natureBackground(yes) {
+      if (options.backgroundURL) return;
+      nextBackground.disabled = !yes;
       if (yes) {
         if (randomGradientTimer) clearInterval(randomGradientTimer);
-        // setBackground(`url("https://source.unsplash.com/featured/${windowWidth}x${windowHeight}/?nature")`);
+        if (options.natureLoaded) setBackground(`url("happy?n=${Date.now()}")`);
+        else newNatureBackground();
       }
       else startRandomGradients();
     }
