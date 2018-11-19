@@ -163,6 +163,7 @@ function newNatureBackground() {
 
 let viewingDate = getToday();
 function getToday() {
+  // return new Date('2018-11-16');
   return new Date(Date.UTC(...(d => [d.getFullYear(), d.getMonth(), d.getDate()])(new Date())));
 }
 if (params.day) {

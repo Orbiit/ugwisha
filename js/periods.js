@@ -52,6 +52,7 @@ const colourPicker = createElement('div', {
             options['periodColour_' + periodBeingColoured] = colour;
             periodCards[periodBeingColoured].forEach(p => p.style.setProperty('--colour', '#' + colour));
             save();
+            updateStatus();
           } else {
             colourPickerInput.value = '#' + options['periodColour_' + periodBeingColoured];
           }
@@ -81,6 +82,7 @@ const colourPicker = createElement('div', {
             });
           }
           save();
+          updateStatus();
         },
         blur: checkThenDestroy
       }
