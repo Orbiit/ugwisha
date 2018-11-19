@@ -2,6 +2,8 @@
 
 Ugwisha is the descendent of [Ugwita](https://orbiit.github.io/gunn-web-app/lite/) and aims to simply be more visually appealing and have more functionality than Ugwita (though still less than [UGWA](https://orbiit.github.io/gunn-web-app/)); one of the major complaints about Ugwita is its ugliness (it seems most people judge apps by their appearance).
 
+Feel free to fork this repository and make your own app; just credit me somewhere.
+
 Ugwisha currently supports:
 
 - custom period names
@@ -31,6 +33,7 @@ Perhaps Ugwisha may also support:
 - keeping the user from viewing summer break/next year
 - weather
 - cache custom background
+- PSA system
 
 Ugwisha will probably not have:
 - club and staff lists

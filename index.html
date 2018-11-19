@@ -22,7 +22,7 @@
       <div id="progress"></div>
     </div>
     <div class="content">
-      <div id="date-nav-button-wrapper">
+      <div id="date-nav-button-wrapper" class="center">
         <div id="jump-btn-wrapper">
           <button class="icon-btn ripples" id="jump"></button>
         </div>
@@ -31,8 +31,19 @@
         </div>
         <div>
           <button class="icon-btn ripples" id="back-day"></button>
-          <button class="button ripples" id="select-date" disabled>select date</button>
+          <button class="button ripples" id="select-date">select date</button>
           <button class="icon-btn ripples" id="forth-day"></button>
+        </div>
+      </div>
+      <div id="date-selector" class="hidden">
+        <select id="months" disabled>
+          <option value="CHOOSE">Choose</option>
+        </select>
+        <input type="text" id="date-input" placeholder="dd" disabled>
+        <p id="error"></p>
+        <div>
+          <button class="button ripples" id="cancel-select-date">Cancel</button>
+          <button class="button ripples" id="actually-select-date" disabled>Select</button>
         </div>
       </div>
       <div id="date-wrapper">
@@ -40,19 +51,31 @@
         <span id="weekday">monday</span>
       </div>
       <div id="periods"></div>
-      <h2>Settings</h2>
-      <p class="hidden" id="offline-msg">You're offline, so some features won't work. When you come back online, <a href="#" id="reload" tabindex="-1">reload</a>.</p>
-      <p><button class="button ripples" id="fetch-alts">get alternate schedules</button></p>
-      <p><input class="toggle-setting" data-option="showTime" data-default="true" type="checkbox" id="show-time"><label for="show-time">Show period times?</label></p>
-      <p><input class="toggle-setting" data-option="showDuration" data-default="false" type="checkbox" id="show-duration"><label for="show-duration">Show period length?</label></p>
-      <p><input class="toggle-setting" data-option="showSELF" data-default="true" type="checkbox" id="show-self"><label for="show-self">Show SELF?</label></p>
-      <p><input class="toggle-setting" data-option="metricTime" data-default="false" type="checkbox" id="24-hour"><label for="24-hour">24-hour time?</label></p>
-      <p><input class="toggle-setting" data-option="natureBackground" data-default="false" type="checkbox" id="nature-back"><label for="nature-back">Use nature backgrounds?</label></p>
-      <p><button class="button ripples" id="next-back" disabled>next nature background</button></p>
-      <p><button class="button ripples" id="set-back">set background URL</button></p>
-      <p><button class="button ripples" id="reset-back" disabled>reset background</button></p>
       <h2>Notes</h2>
       <textarea id="notes"></textarea>
+      <hr>
+      <div class="center">
+        <button class="button ripples" id="toggle-settings"></button>
+      </div>
+      <div id="settings" class="hidden">
+        <h2>Settings</h2>
+        <p class="hidden" id="offline-msg">You're offline, so some features won't work. When you come back online, <a href="#" id="reload" tabindex="-1">reload</a>.</p>
+        <p><button class="button ripples" id="fetch-alts">get alternate schedules</button></p>
+        <p><input class="toggle-setting" data-option="showTime" data-default="true" type="checkbox" id="show-time"><label for="show-time">Show period times?</label></p>
+        <p><input class="toggle-setting" data-option="showDuration" data-default="false" type="checkbox" id="show-duration"><label for="show-duration">Show period length?</label></p>
+        <p><input class="toggle-setting" data-option="showSELF" data-default="true" type="checkbox" id="show-self"><label for="show-self">Show SELF?</label></p>
+        <p><input class="toggle-setting" data-option="metricTime" data-default="false" type="checkbox" id="24-hour"><label for="24-hour">24-hour time?</label></p>
+        <p><input class="toggle-setting" data-option="natureBackground" data-default="false" type="checkbox" id="nature-back"><label for="nature-back">Use nature backgrounds?</label></p>
+        <p><button class="button ripples" id="next-back" disabled>next nature background</button></p>
+        <p><button class="button ripples" id="set-back">set background URL</button></p>
+        <p><button class="button ripples" id="reset-back" disabled>reset background</button></p>
+        <h2>About</h2>
+        <p>Ugwisha is a rewrite of <a href="https://orbiit.github.io/gunn-web-app/lite/">Ugwita</a>; it is open-sourced on <a href="https://github.com/Orbiit/ugwisha">Github</a>. You can send suggestions and bug reports as an issue on Github or by email to <a href="mailto:sy24484@pausd.us">sy24484@pausd.us</a>.</p>
+        <h2>Credits</h2>
+        <p>Font: <a href="https://fonts.google.com/specimen/Roboto+Condensed">Roboto Condensed</a></p>
+        <p>Icons: <a href="https://material.io/tools/icons/">material design</a></p>
+        <p>Assembled by <a href="https://sheeptester.github.io/">Sean</a></p>
+      </div>
     </div>
   </body>
 </html>

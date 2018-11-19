@@ -325,4 +325,12 @@ document.addEventListener('DOMContentLoaded', async e => {
     updateView();
   });
   updateStatus(true);
+  const settingsWrapper = document.getElementById('settings');
+  const toggleSettings = document.getElementById('toggle-settings');
+  const btnText = document.createTextNode('show settings');
+  toggleSettings.appendChild(btnText);
+  toggleSettings.addEventListener('click', e => {
+    settingsWrapper.classList.toggle('hidden');
+    btnText.nodeValue = settingsWrapper.classList.contains('hidden') ? 'show settings' : 'hide settings';
+  });
 }, {once: true});

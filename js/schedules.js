@@ -79,15 +79,15 @@ function identifyPeriod(name) {
   else return;
 }
 
-const firstDay = '2018-08-13T00:00:00.000-07:00';
-const lastDay = '2019-05-31T23:59:59.999-07:00';
+const firstDay = new Date(2018, 7, 13);
+const lastDay = new Date(2019, 4, 31, 23, 59, 59, 999);
 const keywords = ['self', 'schedule', 'extended', 'holiday', 'no students', 'break', 'development'];
 const calendarURL = 'https://www.googleapis.com/calendar/v3/calendars/'
   + encodeURIComponent('u5mgb2vlddfj70d7frf3r015h0@group.calendar.google.com')
   + '/events?singleEvents=true&fields='
   + encodeURIComponent('items(description,end(date,dateTime),start(date,dateTime),summary)')
   + '&key=AIzaSyDBYs4DdIaTjYx5WDz6nfdEAftXuctZV0o'
-  + `&timeMin=${encodeURIComponent(firstDay)}&timeMax=${encodeURIComponent(lastDay)}`;
+  + `&timeMin=${encodeURIComponent(firstDay.toISOString())}&timeMax=${encodeURIComponent(lastDay.toISOString())}`;
 
 function parseEvents(events) {
   const alts = events.map(({items}) => {
@@ -294,6 +294,55 @@ function updateView() {
   dayElem.innerHTML = days[viewingDate.getUTCDay()];
 }
 ready.push(async () => {
+  const dateSelector = document.getElementById('date-selector');
+  const monthSelect = document.getElementById('months');
+  const dateSelect = document.getElementById('date-input');
+  const actualDateSelect = document.getElementById('actually-select-date');
+  const error = document.getElementById('error');
+  const cancelBtn = document.getElementById('cancel-select-date');
+  const schoolMonths = [];
+  const firstYear = firstDay.getFullYear();
+  const firstMonth = firstDay.getMonth();
+  const tempDate = new Date(firstYear, firstMonth, 1);
+  for (const endTime = lastDay.getTime(); tempDate.getTime() < endTime; tempDate.setMonth(tempDate.getMonth() + 1)) {
+    schoolMonths.push(months[tempDate.getMonth()] + ' ' + tempDate.getFullYear());
+  }
+  monthSelect.appendChild(createFragment(schoolMonths.map((m, i) => createElement('option', { attributes: { value: i }, html: m }))));
+  document.getElementById('select-date').addEventListener('click', e => {
+    dateSelector.classList.remove('hidden');
+    monthSelect.value = 'CHOOSE';
+    monthSelect.disabled = false;
+    dateSelect.disabled = true;
+    actualDateSelect.disabled = true;
+    error.innerHTML = '';
+    dateSelect.value = '';
+  });
+  monthSelect.addEventListener('change', e => {
+    monthSelect.disabled = true;
+    dateSelect.disabled = false;
+    actualDateSelect.disabled = false;
+    dateSelect.focus();
+  });
+  cancelBtn.addEventListener('click', e => {
+    dateSelector.classList.add('hidden');
+    monthSelect.disabled = true;
+    dateSelect.disabled = true;
+    actualDateSelect.disabled = true;
+  });
+  actualDateSelect.addEventListener('click', e => {
+    const errors = [];
+    if (monthSelect.value === 'CHOOSE') errors.push('You did not choose a month.');
+    const date = +dateSelect.value;
+    if (isNaN(date)) errors.push('The date is not a number.');
+    else if (date % 1 !== 0) errors.push('The date is not an integer.');
+    if (errors.length) {
+      error.innerHTML = errors.join('<br>') + '<br>You have issues.';
+    } else {
+      viewingDate = new Date(Date.UTC(firstYear, firstMonth + +monthSelect.value, date));
+      updateView();
+      cancelBtn.click();
+    }
+  });
   dateElem = document.getElementById('date');
   dayElem = document.getElementById('weekday');
   altFetchBtn = document.getElementById('fetch-alts');
