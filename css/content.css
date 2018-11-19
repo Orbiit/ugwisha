@@ -105,7 +105,7 @@ textarea:focus {
   border-color: rgba(255, 255, 255, 0.3);
 }
 
-input:disabled {
+input:disabled, button:disabled {
   opacity: 0.5;
   cursor: default;
 }

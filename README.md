@@ -30,6 +30,7 @@ Perhaps Ugwisha may also support:
 - warning the user if it has been too long since they fetched the alternate schedules
 - keeping the user from viewing summer break/next year
 - weather
+- cache custom background
 
 Ugwisha will probably not have:
 - club and staff lists
