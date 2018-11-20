@@ -15,6 +15,7 @@ urlsToCache = [
   './images/material-keyboard_arrow_right.svg',
   './images/logo-192.png',
   './images/logo-512.png',
+  './images/logo-ios.png',
   './images/temp-sheep.png',
   'https://fonts.googleapis.com/css?family=Roboto+Condensed',
   'https://fonts.gstatic.com/s/robotocondensed/v16/ieVl2ZhZI2eCN5jzbjEETS9weq8-19K7DQ.woff2'
