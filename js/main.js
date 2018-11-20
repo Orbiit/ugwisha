@@ -118,10 +118,15 @@ function createFragment(elems) {
   return frag;
 }
 
-function formatTime(minutes) {
+function formatTime(minutes, noAMPM = false) {
   const hour = Math.floor(minutes / 60);
   const min = ('0' + minutes % 60).slice(-2);
-  return options.metricTime ? `${hour}:${min}` : `${(hour + 11) % 12 + 1}:${min} ${hour < 12 ? 'a' : 'p'}m`;
+  let time = options.metricTime ? `${hour}:${min}` : `${(hour + 11) % 12 + 1}:${min}`;
+  if (options.metricTime || noAMPM) {
+    return time;
+  } else {
+    return `${time} ${hour < 12 ? 'a' : 'p'}m`;
+  }
 }
 function formatDuration(minutes, short) {
   if (!short) return minutes + ' minute' + (minutes === 1 ? '' : 's');
@@ -295,11 +300,11 @@ document.addEventListener('DOMContentLoaded', async e => {
   document.addEventListener('wheel', e => {
     window.cancelAnimationFrame(smoothScrolling);
     smoothScrolling = false;
-  });
+  }, {passive: true});
   document.addEventListener('touchstart', e => {
     window.cancelAnimationFrame(smoothScrolling);
     smoothScrolling = false;
-  });
+  }, {passive: true});
   document.addEventListener('scroll', e => {
     if (window.scrollY > windowHeight / 3) jumpBtn.classList.add('up');
     else jumpBtn.classList.remove('up');
@@ -334,6 +339,7 @@ document.addEventListener('DOMContentLoaded', async e => {
     },
     metricTime() {
       updateView();
+      updateStatus();
     },
     natureBackground(yes) {
       if (options.backgroundURL) return;

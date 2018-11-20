@@ -2,6 +2,7 @@ const VERSION = 0;
 const CACHE_NAME = 'ugwisha-sw-v' + VERSION, // change cache name to force update
 urlsToCache = [
   './',
+  './manifest.json',
   './css/content.css',
   './css/main.css',
   './css/periods.css',
@@ -12,6 +13,8 @@ urlsToCache = [
   './images/material-check_box.svg',
   './images/material-keyboard_arrow_left.svg',
   './images/material-keyboard_arrow_right.svg',
+  './images/logo-192.png',
+  './images/logo-512.png',
   './images/temp-sheep.png',
   'https://fonts.googleapis.com/css?family=Roboto+Condensed',
   'https://fonts.gstatic.com/s/robotocondensed/v16/ieVl2ZhZI2eCN5jzbjEETS9weq8-19K7DQ.woff2'

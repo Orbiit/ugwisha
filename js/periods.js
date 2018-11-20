@@ -180,8 +180,11 @@ function setSchedule(schedule) {
 const timezone = new Date().getTimezoneOffset(); // could try to sync it to PT for everyone, but DST :(
 function timeLeft(schedule, offset = 0) {
   const now = Date.now() + offset;
-  const toNextMinute = 60000 - now % 60000;
   const minutes = Math.floor((now / 60000 - timezone) % 1440);
+  const toNextMinute = 60000 - now % 60000;
+  if (schedule.noSchool) {
+    return { type: 'time', value: minutes, nextMinute: toNextMinute };
+  }
   const period = schedule.find(pd => pd.end > minutes);
   const status = { secondCounter: null, nextMinute: toNextMinute };
   if (period) {
@@ -221,6 +224,7 @@ function getPeriodChipHTML(period) {
   str += `>${options['periodName_' + period]}</span>`;
   return str;
 }
+const defaultFaviconURL = './images/logo-192.png';
 function setFavicon(text) {
   fc.clearRect(0, 0, FAVICON_SIZE, FAVICON_SIZE);
   fc.font = `100px 'Roboto Condensed', sans-serif`;
@@ -237,35 +241,40 @@ function updateStatus(startInterval = false) {
   if (todayDate !== today) {
     todayDate = today;
     todaySchedule = getSchedule(getToday());
-  }
-  if (todaySchedule.noSchool) {
-    if (startInterval) setTimeout(() => updateStatus(true), 5000);
-    progressBar.style.opacity = 0;
-    return;
+    if (todaySchedule.noSchool) {
+      progressBar.style.opacity = 0;
+      favicon.setAttribute('href', defaultFaviconURL);
+      document.title = 'Ugwisha';
+    }
   }
   const status = timeLeft(todaySchedule);
-  if (status.type === 'left in') {
-    progressBar.style.opacity = 1;
-    progressBar.style.setProperty('--progress', status.progress * 100 + '%');
+  if (todaySchedule.noSchool) {
+    previewTime.textContent = formatTime(status.value, true);
+    return;
   } else {
-    progressBar.style.opacity = 0;
-  }
-  previewMsg.innerHTML = status.type + ' ' + getPeriodChipHTML(status.period);
-  setFavicon(formatDuration(status.value, true));
-  if (status.secondCounter) {
-    function seconds() {
-      const {secondsLeft, stop} = status.secondCounter();
-      if (!stop) {
-        const str = Math.round(secondsLeft * 10) / 10 + '';
-        document.title = (previewTime.textContent = str + (str.includes('.') ? '0'.repeat(2 - str.length + str.indexOf('.')) : '.0') + 's')
-          + ' ' + status.type + ' ' + options['periodName_' + status.period] + ' - Ugwisha';
-      }
-      window.requestAnimationFrame(startInterval && !stop ? seconds : updateStatus);
+    if (status.type === 'left in') {
+      progressBar.style.opacity = 1;
+      progressBar.style.setProperty('--progress', status.progress * 100 + '%');
+    } else {
+      progressBar.style.opacity = 0;
     }
-    seconds();
-  } else {
-    document.title = (previewTime.textContent = formatDuration(status.value, true))
-      + ' ' + status.type + ' ' + options['periodName_' + status.period] + ' - Ugwisha';
+    previewMsg.innerHTML = status.type + ' ' + getPeriodChipHTML(status.period);
+    setFavicon(formatDuration(status.value, true));
+    if (status.secondCounter) {
+      function seconds() {
+        const {secondsLeft, stop} = status.secondCounter();
+        if (!stop) {
+          const str = Math.round(secondsLeft * 10) / 10 + '';
+          document.title = (previewTime.textContent = str + (str.includes('.') ? '0'.repeat(2 - str.length + str.indexOf('.')) : '.0') + 's')
+            + ' ' + status.type + ' ' + options['periodName_' + status.period] + ' - Ugwisha';
+        }
+        window.requestAnimationFrame(startInterval && !stop ? seconds : updateStatus);
+      }
+      seconds();
+    } else {
+      document.title = (previewTime.textContent = formatDuration(status.value, true))
+        + ' ' + status.type + ' ' + options['periodName_' + status.period] + ' - Ugwisha';
+    }
   }
   if (startInterval) setTimeout(() => updateStatus(true), status.nextMinute);
 }
@@ -283,11 +292,7 @@ ready.push(() => {
   previewTime = document.getElementById('preview-time');
   previewMsg = document.getElementById('preview-msg');
   progressBar = document.getElementById('progress');
-  favicon = createElement('link', {
-    attributes: {
-      rel: 'icon'
-    }
-  });
+  favicon = document.getElementById('favicon');
   faviconCanvas = createElement('canvas', {
     attributes: {
       width: FAVICON_SIZE,
@@ -298,5 +303,4 @@ ready.push(() => {
   fc.textAlign = 'center';
   fc.textBaseline = 'middle';
   fc.fillStyle = '#ff5959';
-  document.head.appendChild(favicon);
 });

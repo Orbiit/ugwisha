@@ -10,7 +10,7 @@ document.addEventListener('touchend', e => {
   Array.from(e.changedTouches).forEach(touch => {
     ripples.filter(r => r.identifier === touch.identifier).forEach(r => r.dying = true);
   });
-});
+}, {passive: true});
 class Ripple {
 
   constructor(parent, x, y, identifier) {
@@ -53,7 +53,7 @@ function rippleify(elem) {
     Array.from(e.changedTouches).forEach(touch => {
       new Ripple(elem, touch.clientX, touch.clientY, touch.identifier);
     });
-  });
+  }, {passive: true});
   elem.addEventListener('mousedown', e => {
     if (tapped) tapped = false;
     else new Ripple(elem, e.clientX, e.clientY, 'mouse');
