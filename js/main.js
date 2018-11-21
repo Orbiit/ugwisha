@@ -67,6 +67,15 @@ if ("serviceWorker" in navigator) {
             setBackground(`url("${data.path}?n=${Date.now()}")`);
             if (data.path === 'happy') options.natureLoaded = true;
             break;
+          case 'error':
+            if (data.path === 'fluffy') {
+              alert(`The image couldn't be loaded. This might be because:
+- You are offline
+- The website hosting the image won't let Ugwisha load their images
+(sorry again for lack of proper UI)`);
+              resetBackground.click();
+            }
+            break;
           default:
             console.log(data);
         }
@@ -174,6 +183,7 @@ function getToday() {
 if (params.day) {
   viewingDate = new Date(params.day);
 }
+let resetBackground;
 document.addEventListener('DOMContentLoaded', async e => {
   // notes
   const notes = document.getElementById('notes');
@@ -195,7 +205,7 @@ document.addEventListener('DOMContentLoaded', async e => {
 
   // background
   const setBackgroundBtn = document.getElementById('set-back');
-  const resetBackground = document.getElementById('reset-back');
+  resetBackground = document.getElementById('reset-back');
   const nextBackground = document.getElementById('next-back');
   backgroundTransitioner = document.getElementById('transition-background');
   let randomGradientTimer = null;
@@ -207,7 +217,7 @@ document.addEventListener('DOMContentLoaded', async e => {
     setBackground(randomGradient());
   }
   if (options.backgroundURL) {
-    setBackground(`url(${options.backgroundURL})`);
+    setBackground(`url("fluffy?n=${Date.now()}")`);
     resetBackground.disabled = false;
   } else if (options.natureBackground) {
     setBackground(`url("happy?n=${Date.now()}")`);

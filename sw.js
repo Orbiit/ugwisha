@@ -31,6 +31,8 @@ function cacheImage(source, path) {
       // deletePromise.then(console.log);
       return deletePromise.then(() => cache.put(new Request(path), res));
     }).then(() => send({type: 'background-ok', path: path}));
+  }).catch(err => {
+    send({type: 'error', path: path});
   });
 }
 
@@ -43,7 +45,7 @@ self.addEventListener('fetch', e => {
   send({type: 'version', version: VERSION});
 });
 self.addEventListener('activate', e => {
-  e.waitUntil(caches.keys().then(names => Promise.all(names.map(cache => CACHE_NAME !== cache ? caches.delete(cache) : undefined))).then(() => self.clients.claim())); // BUG: nature image resets upon update
+  e.waitUntil(caches.keys().then(names => Promise.all(names.map(cache => CACHE_NAME !== cache ? caches.delete(cache) : undefined))).then(() => self.clients.claim())); // BUG: images reset upon update
 });
 self.addEventListener('message', ({data}) => {
   switch (data.type) {
