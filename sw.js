@@ -1,4 +1,4 @@
-const VERSION = 0;
+const VERSION = 1;
 const CACHE_NAME = 'ugwisha-sw-v' + VERSION, // change cache name to force update
 urlsToCache = [
   './',

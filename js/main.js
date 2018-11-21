@@ -175,9 +175,6 @@ if (params.day) {
   viewingDate = new Date(params.day);
 }
 document.addEventListener('DOMContentLoaded', async e => {
-  // thinner scrollbar for windows
-  if (navigator.platform.includes('Win')) document.body.classList.add('windows');
-
   // notes
   const notes = document.getElementById('notes');
   notes.value = storage.getItem('[ugwisha] notes');
