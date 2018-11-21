@@ -1,6 +1,8 @@
-const VERSION = 1;
-const CACHE_NAME = 'ugwisha-sw-v' + VERSION, // change cache name to force update
-urlsToCache = [
+const VERSION = 2; // change to force update
+
+const CACHE_NAME = 'ugwisha-sw-v' + VERSION;
+const BACKGROUND_CACHE_NAME = 'ugwisha-backgrounds'; // don't change this
+const urlsToCache = [
   './',
   './manifest.json',
   './css/content.css',
@@ -24,15 +26,6 @@ urlsToCache = [
 function send(data) {
   self.clients.matchAll().then(clients => clients.forEach(c => c.postMessage(data)));
 }
-function cacheImage(source, path) {
-  fetch(source).then(res => {
-    caches.open(CACHE_NAME).then(cache => {
-      const deletePromise = cache.delete(new Request(path));
-      // deletePromise.then(console.log);
-      return deletePromise.then(() => cache.put(new Request(path), res));
-    }).then(() => send({type: 'background-ok', path: path}));
-  });
-}
 
 self.addEventListener('install', e => {
   self.skipWaiting();
@@ -43,15 +36,5 @@ self.addEventListener('fetch', e => {
   send({type: 'version', version: VERSION});
 });
 self.addEventListener('activate', e => {
-  e.waitUntil(caches.keys().then(names => Promise.all(names.map(cache => CACHE_NAME !== cache ? caches.delete(cache) : undefined))).then(() => self.clients.claim())); // BUG: nature image resets upon update
-});
-self.addEventListener('message', ({data}) => {
-  switch (data.type) {
-    case 'nature-image':
-      cacheImage('https://source.unsplash.com/featured/1600x900/?nature', 'happy');
-      break;
-    case 'custom-image':
-      cacheImage(data.url, 'fluffy');
-      break;
-  }
+  e.waitUntil(caches.keys().then(names => Promise.all(names.map(cache => CACHE_NAME !== cache && BACKGROUND_CACHE_NAME !== cache ? caches.delete(cache) : undefined))).then(() => self.clients.claim()));
 });

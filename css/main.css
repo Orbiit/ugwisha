@@ -21,7 +21,7 @@ body {
   display: none;
 }
 .content {
-  background-color: rgba(0, 0, 0, 0.3);
+  background-color: rgba(0, 0, 0, 0.5);
   width: 250px;
   padding: 20px;
   margin-left: 100px;
@@ -193,6 +193,8 @@ body {
   border: 1px solid rgba(255, 255, 255, 0.2);
   border-radius: 20px;
   margin: 20px;
+  max-height: 80%;
+  overflow: auto;
 }
 #psa-wrapper > h2 {
   margin-top: 0;
@@ -202,5 +204,7 @@ body {
 }
 #psa-content {
   font-size: 16px;
+  color: rgba(255, 255, 255, 0.7);
+  line-height: 1.5;
 }
 #psa.hidden { display: none; }
