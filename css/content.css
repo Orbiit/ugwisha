@@ -61,6 +61,10 @@ hr {
   width: 50%;
   margin: 10px auto;
 }
+ul {
+  margin: 5px 0;
+  padding-left: 20px;
+}
 a {
   color: white;
 }

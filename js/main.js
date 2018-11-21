@@ -21,10 +21,11 @@ function save() {
 }
 
 // URL PARAMETERS
-// destroy-sw - destroys service workers
-// get-alts   - fetches alternate schedules
-// then       - URL to redirect to after fetching alternate schedules
-// day        - date to view (yyyy-mm-dd)
+// no-sw    - destroys service workers and keeps them destroyed
+// reset-sw - destroys service workers and redirects back
+// get-alts - fetches alternate schedules
+// then     - URL to redirect to after fetching alternate schedules
+// day      - date to view (yyyy-mm-dd)
 const params = {};
 if (window.location.search) {
   window.location.search.slice(1).split('&').forEach(entry => {
@@ -38,10 +39,12 @@ if (window.location.search) {
 }
 
 if ("serviceWorker" in navigator) {
-  if (params['destroy-sw']) {
-    navigator.serviceWorker.getRegistrations()
-      .then(regis => regis.map(regis => regis.unregister()))
-      .catch(err => console.log(err));
+  if (params['no-sw'] || params['reset-sw']) {
+    navigator.serviceWorker.getRegistrations().then(regis => {
+      regis.forEach(regis => regis.unregister());
+      if (params['reset-sw']) window.location = '/ugwisha-updater.html';
+      else if (regis.length) window.location.reload();
+    }).catch(err => console.log(err));
   } else {
     window.addEventListener("load", () => {
       navigator.serviceWorker.register('./sw.js').then(regis => {
@@ -62,19 +65,6 @@ if ("serviceWorker" in navigator) {
         switch (data.type) {
           case 'version':
             console.log('Service worker version ' + data.version);
-            break;
-          case 'background-ok':
-            setBackground(`url("${data.path}?n=${Date.now()}")`);
-            if (data.path === 'happy') options.natureLoaded = true;
-            break;
-          case 'error':
-            if (data.path === 'fluffy') {
-              alert(`The image couldn't be loaded. This might be because:
-- You are offline
-- The website hosting the image won't let Ugwisha load their images
-(sorry again for lack of proper UI)`);
-              resetBackground.click();
-            }
             break;
           default:
             console.log(data);
@@ -171,8 +161,12 @@ function setBackground(css) {
     transitioning = false;
   }, 500);
 }
-function newNatureBackground() {
-  navigator.serviceWorker.controller.postMessage({type: 'nature-image'});
+async function newBackground(url, id) {
+  const res = await fetch(url);
+  const cache = await caches.open(BACKGROUND_CACHE_NAME);
+  if (!res.ok) throw new Error('not ok');
+  await cache.delete(new Request(id));
+  await cache.put(new Request(id), res);
 }
 
 let viewingDate = getToday();
@@ -183,7 +177,7 @@ function getToday() {
 if (params.day) {
   viewingDate = new Date(params.day);
 }
-let resetBackground;
+const BACKGROUND_CACHE_NAME = 'ugwisha-backgrounds';
 document.addEventListener('DOMContentLoaded', async e => {
   // notes
   const notes = document.getElementById('notes');
@@ -205,7 +199,7 @@ document.addEventListener('DOMContentLoaded', async e => {
 
   // background
   const setBackgroundBtn = document.getElementById('set-back');
-  resetBackground = document.getElementById('reset-back');
+  const resetBackground = document.getElementById('reset-back');
   const nextBackground = document.getElementById('next-back');
   backgroundTransitioner = document.getElementById('transition-background');
   let randomGradientTimer = null;
@@ -216,11 +210,30 @@ document.addEventListener('DOMContentLoaded', async e => {
     }, 5000);
     setBackground(randomGradient());
   }
+  function newNatureBackground() {
+    nextBackground.disabled = true;
+    newBackground('https://source.unsplash.com/featured/1600x900/?nature', 'nature').then(() => {
+      setBackground(`url("nature?n=${Date.now()}")`);
+      options.natureLoaded = true;
+      save();
+      nextBackground.disabled = false;
+    }).catch(() => {
+      setBackground(`url("./images/temp-sheep.png")`); // too lazy to make an error image right now
+      nextBackground.disabled = false;
+    });
+  }
+  function activateNatureBackground() {
+    if (options.natureLoaded) {
+      setBackground(`url("nature?n=${Date.now()}")`);
+      nextBackground.disabled = false;
+    }
+    else newNatureBackground();
+  }
   if (options.backgroundURL) {
-    setBackground(`url("fluffy?n=${Date.now()}")`);
+    setBackground(`url("custom?n=${Date.now()}")`);
     resetBackground.disabled = false;
   } else if (options.natureBackground) {
-    setBackground(`url("happy?n=${Date.now()}")`);
+    setBackground(`url("nature?n=${Date.now()}")`);
     nextBackground.disabled = false;
   } else {
     startRandomGradients();
@@ -228,11 +241,24 @@ document.addEventListener('DOMContentLoaded', async e => {
   setBackgroundBtn.addEventListener('click', e => {
     const url = prompt('URL of image: (sorry for lack of proper UI)');
     if (url) {
-      navigator.serviceWorker.controller.postMessage({type: 'custom-image', url: options.backgroundURL = url});
-      save();
-      resetBackground.disabled = false;
+      setBackgroundBtn.disabled = true;
       nextBackground.disabled = true;
-      if (randomGradientTimer) clearInterval(randomGradientTimer);
+      newBackground(url, 'custom').then(() => {
+        setBackgroundBtn.disabled = false;
+        resetBackground.disabled = false;
+        setBackground(`url("custom?n=${Date.now()}")`);
+        options.backgroundURL = url;
+        save();
+        if (randomGradientTimer) clearInterval(randomGradientTimer);
+      }).catch(() => {
+        setBackgroundBtn.disabled = false;
+        if (!options.backgroundURL && options.natureBackground) nextBackground.disabled = false;
+        alert(`The image couldn't be loaded. This might be because:
+- You are offline
+- The website hosting the image won't let Ugwisha load their images
+- There's something wrong with the URL
+(sorry again for lack of proper UI)`);
+      });
     }
   });
   resetBackground.addEventListener('click', e => {
@@ -241,8 +267,7 @@ document.addEventListener('DOMContentLoaded', async e => {
     resetBackground.disabled = true;
     nextBackground.disabled = !options.natureBackground;
     if (options.natureBackground) {
-      if (options.natureLoaded) setBackground(`url("happy?n=${Date.now()}")`);
-      else newNatureBackground();
+      activateNatureBackground();
     }
     else startRandomGradients();
   });
@@ -350,13 +375,13 @@ document.addEventListener('DOMContentLoaded', async e => {
     },
     natureBackground(yes) {
       if (options.backgroundURL) return;
-      nextBackground.disabled = !yes;
       if (yes) {
         if (randomGradientTimer) clearInterval(randomGradientTimer);
-        if (options.natureLoaded) setBackground(`url("happy?n=${Date.now()}")`);
-        else newNatureBackground();
+        activateNatureBackground();
+      } else {
+        startRandomGradients();
+        nextBackground.disabled = true;
       }
-      else startRandomGradients();
     },
     showSELF() {
       updateView();
