@@ -15,6 +15,7 @@ const urlsToCache = [
   './images/material-check_box.svg',
   './images/material-keyboard_arrow_left.svg',
   './images/material-keyboard_arrow_right.svg',
+  './images/material-keyboard_arrow_up.svg',
   './images/logo-192.png',
   './images/logo-512.png',
   './images/logo-ios.png',
