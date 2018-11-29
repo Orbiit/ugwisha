@@ -303,4 +303,7 @@ ready.push(() => {
   fc.textAlign = 'center';
   fc.textBaseline = 'middle';
   fc.fillStyle = '#ff5959';
+  window.addEventListener('focus', e => {
+    updateView();
+  });
 });
