@@ -414,5 +414,5 @@ document.addEventListener('DOMContentLoaded', async e => {
     viewingDate = getToday();
     updateView();
   });
-  updateStatus(true);
+  updateStatus(true, 0);
 }, {once: true});

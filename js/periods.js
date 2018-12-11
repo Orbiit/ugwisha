@@ -181,7 +181,7 @@ const timezone = new Date().getTimezoneOffset(); // could try to sync it to PT f
 function timeLeft(schedule, offset = 0) {
   const now = Date.now() + offset;
   const minutes = Math.floor((now / 60000 - timezone) % 1440);
-  const toNextMinute = 60000 - now % 60000;
+  const toNextMinute = now + 60000 - now % 60000;
   if (schedule.noSchool) {
     return { type: 'time', value: minutes, nextMinute: toNextMinute };
   }
@@ -236,7 +236,11 @@ function setFavicon(text) {
 
 let previewTime, previewMsg, progressBar, favicon, faviconCanvas, fc;
 let todaySchedule, todayDate;
-function updateStatus(startInterval = false) {
+function updateStatus(startInterval = false, nextMinute = 0) {
+  const now = Date.now();
+  if (startInterval && now < nextMinute) {
+    return setTimeout(() => updateStatus(true, nextMinute), Math.min(nextMinute - now, 1000));
+  }
   const today = new Date().toISOString().slice(0, 10);
   if (todayDate !== today) {
     todayDate = today;
@@ -276,7 +280,7 @@ function updateStatus(startInterval = false) {
         + ' ' + status.type + ' ' + options['periodName_' + status.period] + ' - Ugwisha';
     }
   }
-  if (startInterval) setTimeout(() => updateStatus(true), status.nextMinute);
+  if (startInterval) setTimeout(() => updateStatus(true, status.nextMinute), Math.min(status.nextMinute - now, 1000));
 }
 
 ready.push(() => {
@@ -303,7 +307,4 @@ ready.push(() => {
   fc.textAlign = 'center';
   fc.textBaseline = 'middle';
   fc.fillStyle = '#ff5959';
-  window.addEventListener('focus', e => {
-    updateView();
-  });
 });
