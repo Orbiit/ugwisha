@@ -1,9 +1,10 @@
-const VERSION = 4; // change to force update
+const VERSION = 5; // change to force update
 
 const CACHE_NAME = 'ugwisha-sw-v' + VERSION;
 const BACKGROUND_CACHE_NAME = 'ugwisha-backgrounds'; // don't change this
 const urlsToCache = [
   './',
+  './paly',
   './manifest.json',
   './css/content.css',
   './css/main.css',
@@ -12,6 +13,8 @@ const urlsToCache = [
   './js/periods.js',
   './js/ripple.js',
   './js/schedules.js',
+  './js/gunn.js',
+  './js/paly.js',
   './images/material-check_box.svg',
   './images/material-keyboard_arrow_left.svg',
   './images/material-keyboard_arrow_right.svg',
@@ -19,6 +22,9 @@ const urlsToCache = [
   './images/logo-192.png',
   './images/logo-512.png',
   './images/logo-ios.png',
+  './images/logo-paly-192.png',
+  './images/logo-paly-512.png',
+  './images/logo-paly-ios.png',
   './images/temp-sheep.png',
   'https://fonts.googleapis.com/css?family=Roboto+Condensed',
   'https://fonts.gstatic.com/s/robotocondensed/v16/ieVl2ZhZI2eCN5jzbjEETS9weq8-19K7DQ.woff2'

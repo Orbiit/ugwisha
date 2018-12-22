@@ -1,17 +1,17 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
-    <title>Ugwisha</title>
+    <title>Upwisha</title>
     <meta charset="UTF-8">
-    <meta name="description" content="A simple-ish web app that shows the Gunn schedule, including alternate schedules."/>
+    <meta name="description" content="A simple-ish web app that shows the Paly schedule, including alternate schedules."/>
     <meta name="viewport" content="width=device-width, initial-scale=1"/>
-    <meta name="theme-color" content="#ff5959">
+    <meta name="theme-color" content="#2D5727">
     <meta name="apple-mobile-web-app-capable" content="yes"/>
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <meta name="apple-mobile-web-app-title" content="Ugwisha">
-    <link rel="apple-touch-icon" href="./images/logo-ios.png">
-    <link rel="icon" href="./images/logo-192.png" id="favicon">
-    <link rel="manifest" href="./manifest.json">
+    <meta name="apple-mobile-web-app-title" content="Upwisha">
+    <link rel="apple-touch-icon" href="./images/logo-paly-ios.png">
+    <link rel="icon" href="./images/logo-paly-192.png" id="favicon">
+    <link rel="manifest" href="./manifest-paly.json">
     <link href="https://fonts.googleapis.com/css?family=Roboto+Condensed" rel="stylesheet">
     <link rel="stylesheet" href="./css/main.css">
     <link rel="stylesheet" href="./css/content.css">
@@ -20,7 +20,7 @@
     <script src="./js/ripple.js" charset="utf-8"></script>
     <script src="./js/periods.js" charset="utf-8"></script>
     <script src="./js/schedules.js" charset="utf-8"></script>
-    <script src="./js/gunn.js" charset="utf-8"></script>
+    <script src="./js/paly.js" charset="utf-8"></script>
   </head>
   <body>
     <div id="transition-background"></div>
@@ -71,14 +71,14 @@
         <p><button class="button ripples" id="fetch-alts">get alternate schedules</button></p>
         <p><input class="toggle-setting" data-option="showTime" data-default="true" type="checkbox" id="show-time"><label for="show-time">Show period times?</label></p>
         <p><input class="toggle-setting" data-option="showDuration" data-default="false" type="checkbox" id="show-duration"><label for="show-duration">Show period length?</label></p>
-        <p><input class="toggle-setting" data-option="showSELF" data-default="true" type="checkbox" id="show-self"><label for="show-self">Show SELF?</label></p>
+        <p></p>
         <p><input class="toggle-setting" data-option="metricTime" data-default="false" type="checkbox" id="24-hour"><label for="24-hour">24-hour time?</label></p>
         <p><input class="toggle-setting" data-option="natureBackground" data-default="false" type="checkbox" id="nature-back"><label for="nature-back">Use nature backgrounds?</label></p>
         <p><button class="button ripples" id="next-back" disabled>next nature background</button></p>
         <p><button class="button ripples" id="set-back">set background URL</button></p>
         <p><button class="button ripples" id="reset-back" disabled>reset background</button></p>
         <h2>About</h2>
-        <p>Ugwisha is a rewrite of <a href="https://orbiit.github.io/gunn-web-app/lite/">Ugwita</a>; it is open-sourced on <a href="https://github.com/Orbiit/ugwisha">Github</a>. You can send suggestions and bug reports as an issue on Github or by email to <a href="mailto:sy24484@pausd.us">sy24484@pausd.us</a>.</p>
+        <p>Upwisha is a rewrite of <a href="https://orbiit.github.io/gunn-web-app/lite/">Ugwita</a>; it is open-sourced on <a href="https://github.com/Orbiit/ugwisha">Github</a>. You can send suggestions and bug reports as an issue on Github or by email to <a href="mailto:sy24484@pausd.us">sy24484@pausd.us</a>.</p>
         <p><button class="button ripples" id="last-psa">last announcement</button></p>
         <h2>Credits</h2>
         <p>Font: <a href="https://fonts.google.com/specimen/Roboto+Condensed">Roboto Condensed</a></p>

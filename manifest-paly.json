@@ -1,0 +1,21 @@
+{
+  "short_name": "Upwisha",
+  "name": "Upwisha",
+  "icons": [
+    {
+      "src": "./images/logo-paly-192.png",
+      "type": "image/png",
+      "sizes": "192x192"
+    },
+    {
+      "src": "./images/logo-paly-512.png",
+      "type": "image/png",
+      "sizes": "512x512"
+    }
+  ],
+  "start_url": "./paly",
+  "background_color": "#2D5727",
+  "display": "standalone",
+  "scope": "./",
+  "theme_color": "#2D5727"
+}

@@ -1,15 +1,24 @@
+/*
+ * GIVEN: defaultNames, defaultColours, getNote, THEME_COLOUR,
+ *   DEFAULT_FAVICON_URL, APP_NAME, PERIOD_OPTION_PREFIX
+ * GIVES: *nothing*
+ */
+
 const FAVICON_SIZE = 32;
 
-const defaultNames = {
-  A: 'Period A', B: 'Period B', C: 'Period C', D: 'Period D',
-  E: 'Period E', F: 'Period F', G: 'Period G',
-  b: 'Brunch', l: 'Lunch', f: 'Flex', s: 'SELF'
-};
-const defaultColours = {
-  A: 'f44336', B: '3F51B5', C: 'FFEB3B', D: '795548',
-  E: 'FF9800', F: '9C27B0', G: '4CAF50',
-  b: null, l: null, f: '607D8B', s: '9E9E9E'
-};
+function getPdName(pd) {
+  return options['periodName_' + PERIOD_OPTION_PREFIX + pd];
+}
+function setPdName(pd, newName) {
+  return options['periodName_' + PERIOD_OPTION_PREFIX + pd] = newName;
+}
+function getPdColour(pd) {
+  return options['periodColour_' + PERIOD_OPTION_PREFIX + pd];
+}
+function setPdColour(pd, newColour) {
+  return options['periodColour_' + PERIOD_OPTION_PREFIX + pd] = newColour;
+}
+
 let scheduleWrapper;
 let inputs, periodCards;
 const gradeName = ['freshmen', 'sophomores', 'juniors', 'seniors'];
@@ -49,12 +58,12 @@ const colourPicker = createElement('div', {
         change() {
           const colour = parseColour(colourPickerInput.value);
           if (colour) {
-            options['periodColour_' + periodBeingColoured] = colour;
+            setPdColour(periodBeingColoured, colour);
             periodCards[periodBeingColoured].forEach(p => p.style.setProperty('--colour', '#' + colour));
             save();
             updateStatus();
           } else {
-            colourPickerInput.value = '#' + options['periodColour_' + periodBeingColoured];
+            colourPickerInput.value = '#' + getPdColour(periodBeingColoured);
           }
         },
         blur: checkThenDestroy
@@ -69,16 +78,16 @@ const colourPicker = createElement('div', {
         change() {
           colourPickerInput.disabled = colourPickerCheckbox.checked;
           if (colourPickerCheckbox.checked) {
-            options['periodColour_' + periodBeingColoured] = null;
+            setPdColour(periodBeingColoured, null);
             periodCards[periodBeingColoured].forEach(p => {
               p.classList.add('transparent');
               p.style.setProperty('--colour', null);
             });
           } else {
-            options['periodColour_' + periodBeingColoured] = parseColour(colourPickerInput.value) || defaultColours[periodBeingColoured] || '000';
+            setPdColour(periodBeingColoured, parseColour(colourPickerInput.value) || defaultColours[periodBeingColoured] || '000');
             periodCards[periodBeingColoured].forEach(p => {
               p.classList.remove('transparent');
-              p.style.setProperty('--colour', '#' + options['periodColour_' + periodBeingColoured]);
+              p.style.setProperty('--colour', '#' + getPdColour(periodBeingColoured));
             });
           }
           save();
@@ -126,11 +135,11 @@ function setSchedule(schedule) {
       attributes: {
         type: 'text',
         placeholder: defaultNames[pd.period],
-        value: options['periodName_' + pd.period]
+        value: getPdName(pd.period)
       },
       listeners: {
         change() {
-          options['periodName_' + pd.period] = periodName.value;
+          setPdName(pd.period, periodName.value);
           save();
           updateStatus();
           inputs[pd.period].forEach(input => input !== periodName && (input.value = periodName.value));
@@ -138,8 +147,8 @@ function setSchedule(schedule) {
         focus() {
           if (colourPicker.parentNode) colourPicker.parentNode.removeChild(colourPicker);
           periodName.parentNode.insertBefore(colourPicker, periodName.nextElementSibling);
-          colourPickerInput.value = '#' + (options['periodColour_' + pd.period] || defaultColours[pd.period] || '000');
-          colourPickerInput.disabled = colourPickerCheckbox.checked = options['periodColour_' + pd.period] === null;
+          colourPickerInput.value = '#' + (getPdColour(pd.period) || defaultColours[pd.period] || '000');
+          colourPickerInput.disabled = colourPickerCheckbox.checked = getPdColour(pd.period) === null;
           periodBeingColoured = pd.period;
         },
         blur: checkThenDestroy
@@ -147,13 +156,14 @@ function setSchedule(schedule) {
     });
     if (!inputs[pd.period]) inputs[pd.period] = [];
     inputs[pd.period].push(periodName);
+    const note = getNote(pd);
     const wrapper = createElement('div', {
       classes: [
         'period',
-        options['periodColour_' + pd.period] === null ? 'transparent' : undefined
+        getPdColour(pd.period) === null ? 'transparent' : undefined
       ],
       styles: {
-        '--colour': options['periodColour_' + pd.period] === null ? undefined : '#' + options['periodColour_' + pd.period]
+        '--colour': getPdColour(pd.period) === null ? undefined : '#' + getPdColour(pd.period)
       },
       children: [
         periodName,
@@ -165,9 +175,9 @@ function setSchedule(schedule) {
           classes: 'duration',
           html: formatDuration(pd.end - pd.start, false) + ' long'
         }),
-        pd.period === 's' ? createElement('span', {
+        note ? createElement('span', {
           classes: 'note',
-          html: 'For ' + (pd.selfGrades || defaultSelf).toString(2).split('').reverse().map((n, i) => n === '1' ? gradeName[i] : '').filter(n => n).join(', ')
+          html: note
         }) : undefined
       ]
     });
@@ -216,15 +226,14 @@ function timeLeft(schedule, offset = 0) {
   return status;
 }
 function getPeriodChipHTML(period) {
-  const colour = options['periodColour_' + period];
+  const colour = getPdColour(period);
   let str = '<span class="period-chip';
   if (colour === null) str += ' transparent';
   str += '"';
   if (colour !== null) str += ` style="--colour: #${colour};"`;
-  str += `>${options['periodName_' + period]}</span>`;
+  str += `>${getPdName(period)}</span>`;
   return str;
 }
-const defaultFaviconURL = './images/logo-192.png';
 function setFavicon(text) {
   fc.clearRect(0, 0, FAVICON_SIZE, FAVICON_SIZE);
   fc.font = `100px 'Roboto Condensed', sans-serif`;
@@ -247,8 +256,8 @@ function updateStatus(startInterval = false, nextMinute = 0) {
     todaySchedule = getSchedule(getToday());
     if (todaySchedule.noSchool) {
       progressBar.style.opacity = 0;
-      favicon.setAttribute('href', defaultFaviconURL);
-      document.title = 'Ugwisha';
+      favicon.setAttribute('href', DEFAULT_FAVICON_URL);
+      document.title = APP_NAME;
     }
   }
   const status = timeLeft(todaySchedule);
@@ -263,21 +272,27 @@ function updateStatus(startInterval = false, nextMinute = 0) {
       progressBar.style.opacity = 0;
     }
     previewMsg.innerHTML = status.type + ' ' + getPeriodChipHTML(status.period);
-    setFavicon(formatDuration(status.value, true));
-    if (status.secondCounter) {
-      function seconds() {
-        const {secondsLeft, stop} = status.secondCounter();
-        if (!stop) {
-          const str = Math.round(secondsLeft * 10) / 10 + '';
-          document.title = (previewTime.textContent = str + (str.includes('.') ? '0'.repeat(2 - str.length + str.indexOf('.')) : '.0') + 's')
-            + ' ' + status.type + ' ' + options['periodName_' + status.period] + ' - Ugwisha';
-        }
-        window.requestAnimationFrame(startInterval && !stop ? seconds : updateStatus);
-      }
-      seconds();
+    if (status.type === 'since') {
+      previewTime.textContent = formatDuration(status.value, true);
+      favicon.setAttribute('href', DEFAULT_FAVICON_URL);
+      document.title = APP_NAME;
     } else {
-      document.title = (previewTime.textContent = formatDuration(status.value, true))
-        + ' ' + status.type + ' ' + options['periodName_' + status.period] + ' - Ugwisha';
+      setFavicon(formatDuration(status.value, true));
+      if (status.secondCounter) {
+        function seconds() {
+          const {secondsLeft, stop} = status.secondCounter();
+          if (!stop) {
+            const str = Math.round(secondsLeft * 10) / 10 + '';
+            document.title = (previewTime.textContent = str + (str.includes('.') ? '0'.repeat(2 - str.length + str.indexOf('.')) : '.0') + 's')
+              + ' ' + status.type + ' ' + getPdName(status.period) + ' - ' + APP_NAME;
+          }
+          window.requestAnimationFrame(startInterval && !stop ? seconds : updateStatus);
+        }
+        seconds();
+      } else {
+        document.title = (previewTime.textContent = formatDuration(status.value, true))
+          + ' ' + status.type + ' ' + getPdName(status.period) + ' - ' + APP_NAME;
+      }
     }
   }
   if (startInterval) setTimeout(() => updateStatus(true, status.nextMinute), Math.min(status.nextMinute - now, 1000));
@@ -286,12 +301,12 @@ function updateStatus(startInterval = false, nextMinute = 0) {
 ready.push(() => {
   scheduleWrapper = document.getElementById('periods');
   Object.keys(defaultNames).forEach(pd => {
-    if (options['periodName_' + pd] === undefined)
-      options['periodName_' + pd] = defaultNames[pd];
+    if (getPdName(pd) === undefined)
+      setPdName(pd, defaultNames[pd]);
   });
   Object.keys(defaultColours).forEach(pd => {
-    if (options['periodColour_' + pd] === undefined)
-      options['periodColour_' + pd] = defaultColours[pd];
+    if (getPdColour(pd) === undefined)
+      setPdColour(pd, defaultColours[pd]);
   });
   previewTime = document.getElementById('preview-time');
   previewMsg = document.getElementById('preview-msg');
@@ -306,5 +321,5 @@ ready.push(() => {
   fc = faviconCanvas.getContext('2d');
   fc.textAlign = 'center';
   fc.textBaseline = 'middle';
-  fc.fillStyle = '#ff5959';
+  fc.fillStyle = THEME_COLOUR;
 });

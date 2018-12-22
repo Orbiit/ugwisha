@@ -1,3 +1,8 @@
+/*
+ * GIVEN: *nothing*
+ * GIVES: loadSW
+ */
+
 window.ready = [];
 
 try {
@@ -36,42 +41,6 @@ if (window.location.search) {
       params[entry] = true;
     }
   });
-}
-
-if ("serviceWorker" in navigator) {
-  if (params['no-sw'] || params['reset-sw']) {
-    navigator.serviceWorker.getRegistrations().then(regis => {
-      regis.forEach(regis => regis.unregister());
-      if (params['reset-sw']) window.location = '/ugwisha-updater.html';
-      else if (regis.length) window.location.reload();
-    }).catch(err => console.log(err));
-  } else {
-    window.addEventListener("load", () => {
-      navigator.serviceWorker.register('./sw.js').then(regis => {
-        regis.onupdatefound = () => {
-          const installingWorker = regis.installing;
-          installingWorker.onstatechange = () => {
-            if (installingWorker.state === 'installed' && navigator.serviceWorker.controller) {
-              console.log('New update! Redirecting you away and back');
-              options.natureLoaded = false;
-              window.location.replace('/ugwisha-updater.html');
-            }
-          };
-        };
-      }, err => {
-        console.log(':( Couldn\'t register service worker', err);
-      });
-      navigator.serviceWorker.addEventListener('message', ({data}) => {
-        switch (data.type) {
-          case 'version':
-            console.log('Service worker version ' + data.version);
-            break;
-          default:
-            console.log(data);
-        }
-      });
-    }, {once: true});
-  }
 }
 
 function deundefine(obj) {
@@ -416,3 +385,41 @@ document.addEventListener('DOMContentLoaded', async e => {
   });
   updateStatus(true, 0);
 }, {once: true});
+
+function loadSW(updateURL = '/ugwisha-updater.html') {
+  if ('serviceWorker' in navigator) {
+    if (params['no-sw'] || params['reset-sw']) {
+      navigator.serviceWorker.getRegistrations().then(regis => {
+        regis.forEach(regis => regis.unregister());
+        if (params['reset-sw']) window.location = updateURL;
+        else if (regis.length) window.location.reload();
+      }).catch(err => console.log(err));
+    } else {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('./sw.js').then(regis => {
+          regis.onupdatefound = () => {
+            const installingWorker = regis.installing;
+            installingWorker.onstatechange = () => {
+              if (installingWorker.state === 'installed' && navigator.serviceWorker.controller) {
+                console.log('New update! Redirecting you away and back');
+                options.natureLoaded = false;
+                window.location.replace(updateURL);
+              }
+            };
+          };
+        }, err => {
+          console.log(':( Couldn\'t register service worker', err);
+        });
+        navigator.serviceWorker.addEventListener('message', ({data}) => {
+          switch (data.type) {
+            case 'version':
+              console.log('Service worker version ' + data.version);
+              break;
+            default:
+              console.log(data);
+          }
+        });
+      }, {once: true});
+    }
+  }
+}
