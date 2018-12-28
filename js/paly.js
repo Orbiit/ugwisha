@@ -71,29 +71,7 @@ const calendarURL = 'https://www.googleapis.com/calendar/v3/calendars/'
   + `&timeMin=${encodeURIComponent(firstDay.toISOString())}&timeMax=${encodeURIComponent(lastDay.toISOString())}`;
 
 function parseEvents(events) {
-  const alts = events.map(({items}) => {
-    const events = [];
-    items.forEach(ev => {
-      if (ev.start.dateTime) events.push({
-        summary: ev.summary,
-        description: ev.description,
-        date: ev.start.dateTime.slice(5, 10)
-      });
-      else {
-        const dateObj = new Date(ev.start.date);
-        const endDate = new Date(ev.end.date).getTime();
-        while (dateObj.getTime() < endDate) {
-          events.push({
-            summary: ev.summary,
-            description: ev.description,
-            date: dateObj.toISOString().slice(5, 10)
-          });
-          dateObj.setUTCDate(dateObj.getUTCDate() + 1);
-        }
-      }
-    });
-    return events;
-  });
+  const alts = events.map(splitEvents);
   const schedules = {};
   alts.forEach(moreAlts => moreAlts.forEach(alt => {
     const schedule = parseAlternate(alt.summary, alt.description);

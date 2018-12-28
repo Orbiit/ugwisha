@@ -369,19 +369,27 @@ document.addEventListener('DOMContentLoaded', async e => {
   });
 
   // simple date navegation buttons
+  const dateWrapper = document.getElementById('date-wrapper');
   const backDay = document.getElementById('back-day');
   const forthDay = document.getElementById('forth-day');
+  function updateDateWrapperLink() {
+    dateWrapper.href = (params['no-sw'] ? '?no-sw&' : '?') + 'day=' + viewingDate.toISOString().slice(0, 10);
+  }
+  updateDateWrapperLink();
   backDay.addEventListener('click', e => {
     viewingDate.setUTCDate(viewingDate.getUTCDate() - 1);
     updateView();
+    updateDateWrapperLink();
   });
   forthDay.addEventListener('click', e => {
     viewingDate.setUTCDate(viewingDate.getUTCDate() + 1);
     updateView();
+    updateDateWrapperLink();
   });
   document.getElementById('today').addEventListener('click', e => {
     viewingDate = getToday();
     updateView();
+    updateDateWrapperLink();
   });
   updateStatus(true, 0);
 }, {once: true});

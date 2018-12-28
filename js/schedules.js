@@ -1,6 +1,6 @@
 /*
  * GIVEN: getSchedule, prepareScheduleData
- * GIVES: *nothing*
+ * GIVES: splitEvents
  *
  * Schedule data should be an array of {period, start, end} where
  * `period` is the period ID used by periods.js for colours and names
@@ -12,6 +12,30 @@
 
 const firstDay = new Date(2018, 7, 13);
 const lastDay = new Date(2019, 4, 31, 23, 59, 59, 999);
+
+function splitEvents({items}) {
+  const events = [];
+  items.forEach(ev => {
+    if (ev.start.dateTime) events.push({
+      summary: ev.summary,
+      description: ev.description,
+      date: ev.start.dateTime.slice(5, 10)
+    });
+    else {
+      const dateObj = new Date(ev.start.date);
+      const endDate = new Date(ev.end.date).getTime();
+      while (dateObj.getTime() < endDate) {
+        events.push({
+          summary: ev.summary,
+          description: ev.description,
+          date: dateObj.toISOString().slice(5, 10)
+        });
+        dateObj.setUTCDate(dateObj.getUTCDate() + 1);
+      }
+    }
+  });
+  return events;
+}
 
 const months = 'jan. feb. mar. apr. may jun. jul. aug. sept. oct. nov. dec.'.split(' ');
 const days = ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'];

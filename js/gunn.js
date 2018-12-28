@@ -89,30 +89,10 @@ const calendarURL = 'https://www.googleapis.com/calendar/v3/calendars/'
   + '&key=AIzaSyDBYs4DdIaTjYx5WDz6nfdEAftXuctZV0o'
   + `&timeMin=${encodeURIComponent(firstDay.toISOString())}&timeMax=${encodeURIComponent(lastDay.toISOString())}`;
 
+const PASSING_PERIOD_LENGTH = 10;
+const DOUBLE_FLEX_THRESHOLD = 80;
 function parseEvents(events) {
-  const alts = events.map(({items}) => {
-    const events = [];
-    items.forEach(ev => {
-      if (ev.start.dateTime) events.push({
-        summary: ev.summary,
-        description: ev.description,
-        date: ev.start.dateTime.slice(5, 10)
-      });
-      else {
-        const dateObj = new Date(ev.start.date);
-        const endDate = new Date(ev.end.date).getTime();
-        while (dateObj.getTime() < endDate) {
-          events.push({
-            summary: ev.summary,
-            description: ev.description,
-            date: dateObj.toISOString().slice(5, 10)
-          });
-          dateObj.setUTCDate(dateObj.getUTCDate() + 1);
-        }
-      }
-    });
-    return events;
-  });
+  const alts = events.map(splitEvents);
   const selfDays = {};
   alts[0].forEach(ev => {
     if (ev.summary.includes('SELF')) {
@@ -126,7 +106,26 @@ function parseEvents(events) {
     const schedule = parseAlternate(alt.summary, alt.description);
     if (schedule !== undefined) {
       alternates[alt.date] = schedule;
-      if (schedule && schedule.selfInSchedule) delete selfDays[alt.date];
+      if (schedule) {
+        if (schedule.selfInSchedule) delete selfDays[alt.date];
+        for (let i = 0; i < schedule.length; i++) {
+          if (schedule[i].period === 'b' || schedule[i].period === 'l') {
+            if (i === 0) schedule.splice(i--, 1);
+            else if (i === schedule.length - 1) schedule.splice(i--, 1);
+            else {
+              schedule[i].end = schedule[i + 1].start - PASSING_PERIOD_LENGTH;
+            }
+          } else if (schedule[i].period === 'f') {
+            const length = schedule[i].end - schedule[i].start;
+            if (length >= DOUBLE_FLEX_THRESHOLD) {
+              const flexLength = (length - PASSING_PERIOD_LENGTH) / 2;
+              schedule.splice(i + 1, 0, {period: 'f', start: schedule[i].end - flexLength, end: schedule[i].end});
+              schedule[i].end = schedule[i].start + flexLength;
+              i++;
+            }
+          }
+        }
+      }
     }
   }));
   return {

@@ -22,6 +22,8 @@ Ugwisha currently supports:
   - better design than Ugwita
   - nature, custom, or gradient backgrounds that work offline
   - time until next period in favicon (so Ugwisha can be pinned)
+  - split double flex
+  - remove passing periods from brunch/lunch
 
 Perhaps Ugwisha may also support:
 
@@ -30,8 +32,6 @@ Perhaps Ugwisha may also support:
 - zero, H, and staff periods support
 - show week previews (like UGWA)
 - better date selector
-- split double flex
-- remove passing periods from brunch/lunch
 - show events
 - randomly selected sheep doodles
 - warning the user if it has been too long since they fetched the alternate schedules
@@ -40,6 +40,7 @@ Perhaps Ugwisha may also support:
 - barcode generator
 
 Ugwisha will probably not have:
+
 - club and staff lists
 - campus map
 
