@@ -68,7 +68,7 @@ const calendarURL = 'https://www.googleapis.com/calendar/v3/calendars/'
   + '/events?singleEvents=true&fields='
   + encodeURIComponent('items(description,end(date,dateTime),start(date,dateTime),summary)')
   + '&key=AIzaSyDBYs4DdIaTjYx5WDz6nfdEAftXuctZV0o'
-  + `&timeMin=${encodeURIComponent(firstDay.toISOString())}&timeMax=${encodeURIComponent(lastDay.toISOString())}`;
+  + `&timeMin=${encodeURIComponent(eventsMinDate.toISOString())}&timeMax=${encodeURIComponent(eventsMaxDate.toISOString())}`;
 
 function parseEvents(events) {
   const alts = events.map(splitEvents);

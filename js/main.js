@@ -401,6 +401,9 @@ document.addEventListener('DOMContentLoaded', async e => {
     e.preventDefault();
   });
   function updateDateWrapperLink() {
+    const viewingTime = viewingDate.getTime();
+    backDay.disabled = viewingTime <= firstDay.getTime();
+    forthDay.disabled = viewingTime >= lastDay.getTime();
     dateWrapper.href = (params['no-sw'] ? '?no-sw&' : '?') + 'day=' + viewingDate.toISOString().slice(0, 10);
   }
   updateDateWrapperLink();

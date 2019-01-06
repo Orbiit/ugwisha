@@ -87,7 +87,7 @@ const calendarURL = 'https://www.googleapis.com/calendar/v3/calendars/'
   + '/events?singleEvents=true&fields='
   + encodeURIComponent('items(description,end(date,dateTime),start(date,dateTime),summary)')
   + '&key=AIzaSyDBYs4DdIaTjYx5WDz6nfdEAftXuctZV0o'
-  + `&timeMin=${encodeURIComponent(firstDay.toISOString())}&timeMax=${encodeURIComponent(lastDay.toISOString())}`;
+  + `&timeMin=${encodeURIComponent(eventsMinDate.toISOString())}&timeMax=${encodeURIComponent(eventsMaxDate.toISOString())}`;
 
 const PASSING_PERIOD_LENGTH = 10;
 const DOUBLE_FLEX_THRESHOLD = 80;
