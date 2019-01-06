@@ -250,7 +250,7 @@ const gunnApp = new Ugwisha({
     }
     if (schedule.length === 0) {
       schedule.noSchool = true;
-    } else if (!options._showSELF) {
+    } else if (!options.showSELF) {
       schedule.forEach(pd => {
         if (pd.period === 's') pd.period = 'f';
       });
@@ -267,6 +267,8 @@ const gunnApp = new Ugwisha({
     return periodData.period === 's' ? 'For ' + (periodData.selfGrades || defaultSelf).toString(2).split('').reverse().map((n, i) => n === '1' ? gradeName[i] : '').filter(n => n).join(', ') : undefined;
   }
 });
+
+gunnApp.start();
 
 document.addEventListener('DOMContentLoaded', e => {
   document.body.appendChild(gunnApp.render());

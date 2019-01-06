@@ -99,7 +99,7 @@
   font-size: 24px;
   color: rgba(255, 255, 255, 0.8);
 }
-.colour-picker, #date-selector {
+.colour-picker, .date-selector {
   position: absolute;
   background-color: rgba(0, 0, 0, 0.7);
   padding: 5px;
@@ -108,7 +108,7 @@
 .colour-picker:focus {
   outline: none;
 }
-.colour-input, #date-input, #months {
+.colour-input, .date-input, .months {
   border: none;
   background: none;
   background-color: rgba(255, 255, 255, 0.1);
@@ -122,10 +122,10 @@
   height: 1em;
   box-sizing: content-box;
 }
-.colour-input:not(:disabled):hover, #date-input:not(:disabled):hover, #months:not(:disabled):hover {
+.colour-input:not(:disabled):hover, .date-input:not(:disabled):hover, .months:not(:disabled):hover {
   background-color: rgba(255, 255, 255, 0.2);
 }
-.colour-input:focus, #date-input:focus, #months:focus {
+.colour-input:focus, .date-input:focus, .months:focus {
   outline: none;
   cursor: auto;
   background-color: rgba(255, 255, 255, 0.3);
@@ -135,22 +135,22 @@
   margin-right: 5px;
   margin-left: 15px;
 }
-#date-selector {
+.date-selector {
   padding: 10px;
   transform: translateY(-10px);
   z-index: 2;
 }
-#months, #cancel-select-date {
+.months, .cancel-select-date {
   margin-right: 10px;
 }
-#months {
+.months {
   margin-bottom: 10px;
   width: auto;
 }
-#date-input {
+.date-input {
   width: 2.5ch;
   text-align: right;
 }
-#months, #date-input {
+.months, .date-input {
   vertical-align: top;
 }

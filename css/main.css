@@ -37,17 +37,17 @@ body {
   text-align: right;
   margin: 50px;
 }
-#preview-time {
+.preview-time {
   display: block;
   color: white;
   font-size: 120px;
 }
-#preview-msg {
+.preview-msg {
   display: block;
   color: rgba(255, 255, 255, 0.7);
   font-size: 36px;
 }
-#progress {
+.progress {
   position: absolute;
   right: 0;
   top: 100%;
@@ -57,7 +57,7 @@ body {
   margin-top: 20px;
   border-radius: 3px;
 }
-#progress::before {
+.progress::before {
   content: '';
   display: block;
   background-color: rgba(255, 255, 255, 0.8);
@@ -65,10 +65,10 @@ body {
   height: 100%;
   border-radius: 3px;
 }
-#jump-btn-wrapper {
+.jump-btn-wrapper {
   position: relative;
 }
-#jump {
+.jump {
   display: none;
   position: absolute;
   background-image: url("../images/material-keyboard_arrow_up.svg");
@@ -76,7 +76,7 @@ body {
   transform: translateX(-50%);
   transition: bottom .2s;
 }
-#jump.up {
+.jump.up {
   background-image: url("../images/material-keyboard_arrow_down.svg");
   bottom: 15px;
 }
@@ -104,7 +104,7 @@ body {
     bottom: auto;
   }
 
-  #progress {
+  .progress {
     left: 0;
     margin-left: auto;
     margin-right: auto;
@@ -114,7 +114,7 @@ body {
     display: inline;
   }
 
-  #jump {
+  .jump {
     display: inline-block;
   }
 
@@ -129,33 +129,33 @@ body {
   transform-origin: center;
   background-color: rgba(255, 255, 255, 0.2);
 }
-#date-wrapper {
+.date-wrapper {
   color: inherit;
   text-decoration: none;
   display: block;
 }
-#date {
+.date {
   font-size: 24px;
   color: rgba(255, 255, 255, 0.5);
 }
-#weekday {
+.weekday {
   font-size: 24px;
   color: rgba(255, 255, 255, 0.8);
   float: right;
 }
-#date-nav-button-wrapper {
+.date-nav-button-wrapper {
   margin-bottom: 10px;
 }
-#back-day {
+.back-day {
   background-image: url("../images/material-keyboard_arrow_left.svg");
 }
-#forth-day {
+.forth-day {
   background-image: url("../images/material-keyboard_arrow_right.svg");
 }
-#select-date {
+.select-date {
   margin: 0 5px;
 }
-#transition-background {
+.transition-background {
   position: fixed;
   top: 0;
   left: 0;
@@ -169,7 +169,7 @@ body {
   display: none;
   background-color: #212121;
 }
-#transition-background.animating {
+.transition-background.animating {
   display: block;
   animation: fade-out .5s forwards;
 }
@@ -177,10 +177,10 @@ body {
   from { opacity: 1; }
   to { opacity: 0; }
 }
-#settings {
+.settings {
   margin-top: -15px;
 }
-#psa {
+.psa {
   display: flex;
   position: fixed;
   top: 0;
@@ -191,7 +191,7 @@ body {
   align-items: center;
   justify-content: center;
 }
-#psa-wrapper {
+.psa-wrapper {
   width: 100%;
   max-width: 500px;
   padding: 20px;
@@ -201,15 +201,15 @@ body {
   max-height: 80%;
   overflow: auto;
 }
-#psa-wrapper > h2 {
+.psa-wrapper > h2 {
   margin-top: 0;
 }
-#psa-wrapper > p {
+.psa-wrapper > p {
   text-align: right;
 }
-#psa-content {
+.psa-content {
   font-size: 16px;
   color: rgba(255, 255, 255, 0.7);
   line-height: 1.5;
 }
-#psa.hidden { display: none; }
+.psa.hidden { display: none; }
