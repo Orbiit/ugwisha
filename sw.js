@@ -12,7 +12,6 @@ const urlsToCache = [
   './js/main.js',
   './js/periods.js',
   './js/ripple.js',
-  './js/schedules.js',
   './js/gunn.js',
   './js/paly.js',
   './images/material-check_box.svg',

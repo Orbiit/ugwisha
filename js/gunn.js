@@ -271,7 +271,7 @@ const defaultColours = {
 
 /* GET SCHEDULE */
 const SCHEDULE_DATA_KEY = '[ugwisha] alternates';
-let scheduleData;
+let scheduleData = {};
 function getSchedule(dateObj) {
   const string = dateObj.toISOString().slice(5, 10);
   let schedule;

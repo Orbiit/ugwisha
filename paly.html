@@ -19,7 +19,6 @@
     <script src="./js/main.js" charset="utf-8"></script>
     <script src="./js/ripple.js" charset="utf-8"></script>
     <script src="./js/periods.js" charset="utf-8"></script>
-    <script src="./js/schedules.js" charset="utf-8"></script>
     <script src="./js/paly.js" charset="utf-8"></script>
   </head>
   <body>
@@ -40,24 +39,24 @@
         <div>
           <button class="icon-btn ripples" id="back-day" aria-label="view previous day"></button>
           <button class="button ripples" id="select-date">select date</button>
+          <div id="date-selector" class="hidden">
+            <select id="months" disabled>
+              <option value="CHOOSE">Choose</option>
+            </select>
+            <input type="text" id="date-input" placeholder="dd" disabled>
+            <p id="error"></p>
+            <div>
+              <button class="button ripples" id="cancel-select-date">Cancel</button>
+              <button class="button ripples" id="actually-select-date" disabled>Select</button>
+            </div>
+          </div>
           <button class="icon-btn ripples" id="forth-day" aria-label="view next day"></button>
         </div>
       </div>
-      <div id="date-selector" class="hidden">
-        <select id="months" disabled>
-          <option value="CHOOSE">Choose</option>
-        </select>
-        <input type="text" id="date-input" placeholder="dd" disabled>
-        <p id="error"></p>
-        <div>
-          <button class="button ripples" id="cancel-select-date">Cancel</button>
-          <button class="button ripples" id="actually-select-date" disabled>Select</button>
-        </div>
-      </div>
-      <div id="date-wrapper">
+      <a id="date-wrapper">
         <span id="date">november 5</span>
         <span id="weekday">monday</span>
-      </div>
+      </a>
       <div id="periods"></div>
       <h2>Notes</h2>
       <textarea id="notes" aria-label="notes"></textarea>
