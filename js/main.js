@@ -1,6 +1,9 @@
 /*
  * GIVEN: *nothing*
  * GIVES: loadSW
+ *
+ * MAIN.js
+ * defines helper functions, service workers, backgrounds, and other small things
  */
 
 window.ready = [];
@@ -148,6 +151,25 @@ if (params.day) {
 }
 const BACKGROUND_CACHE_NAME = 'ugwisha-backgrounds';
 document.addEventListener('DOMContentLoaded', async e => {
+  // tab focus
+  let tabFocus = false;
+  document.addEventListener('keydown', e => {
+  	if (e.keyCode === 9 || e.keyCode === 13) {
+    	document.body.classList.add('tab-focus');
+      tabFocus = true;
+    }
+  });
+  document.addEventListener('keyup', e => {
+  	if (e.keyCode === 9 || e.keyCode === 13) {
+      tabFocus = false;
+    }
+  });
+  document.addEventListener('focusin', e => {
+  	if (!tabFocus) {
+      document.body.classList.remove('tab-focus');
+    }
+  });
+
   // notes
   const notes = document.getElementById('notes');
   notes.value = storage.getItem('[ugwisha] notes');
@@ -263,9 +285,11 @@ document.addEventListener('DOMContentLoaded', async e => {
         options.lastPSA = version;
         save();
       }
+      psaOpen.focus();
     });
     psaOpen.addEventListener('click', e => {
       psaDialog.classList.remove('hidden');
+      psaClose.focus();
     });
   }).catch(() => {
     document.getElementById('offline-msg').classList.remove('hidden');
@@ -368,10 +392,14 @@ document.addEventListener('DOMContentLoaded', async e => {
     });
   });
 
-  // simple date navegation buttons
+  // simple date navigation buttons
   const dateWrapper = document.getElementById('date-wrapper');
   const backDay = document.getElementById('back-day');
   const forthDay = document.getElementById('forth-day');
+  dateWrapper.addEventListener('click', e => {
+    window.history.pushState({}, '', dateWrapper.href);
+    e.preventDefault();
+  });
   function updateDateWrapperLink() {
     dateWrapper.href = (params['no-sw'] ? '?no-sw&' : '?') + 'day=' + viewingDate.toISOString().slice(0, 10);
   }

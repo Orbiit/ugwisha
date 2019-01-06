@@ -2,6 +2,9 @@
  * GIVEN: defaultNames, defaultColours, getNote, THEME_COLOUR,
  *   DEFAULT_FAVICON_URL, APP_NAME, PERIOD_OPTION_PREFIX
  * GIVES: *nothing*
+ *
+ * PERIODS.js
+ * displays schedules and calculates time left
  */
 
 const FAVICON_SIZE = 32;
@@ -44,9 +47,6 @@ function parseColour(val) {
 }
 const colourPicker = createElement('div', {
   classes: 'colour-picker',
-  attributes: {
-    tabindex: 0
-  },
   children: [
     colourPickerInput = createElement('input', {
       classes: 'colour-input',
@@ -102,10 +102,7 @@ const colourPicker = createElement('div', {
       },
       html: 'Transparent?'
     })
-  ],
-  listeners: {
-    blur: checkThenDestroy
-  }
+  ]
 });
 let periodBeingColoured = null;
 function setSchedule(schedule) {
@@ -238,7 +235,11 @@ function setFavicon(text) {
   fc.clearRect(0, 0, FAVICON_SIZE, FAVICON_SIZE);
   fc.font = `100px 'Roboto Condensed', sans-serif`;
   const {width} = fc.measureText(text);
-  fc.font = `${FAVICON_SIZE / (width / 100)}px 'Roboto Condensed', sans-serif`;
+  const fontSize = FAVICON_SIZE / (width / 100);
+  fc.fillStyle = FAVICON_BACK_COLOUR;
+  fc.fillRect(0, (FAVICON_SIZE - fontSize) / 2 - 1, FAVICON_SIZE, fontSize + 2);
+  fc.font = `${fontSize}px 'Roboto Condensed', sans-serif`;
+  fc.fillStyle = THEME_COLOUR;
   fc.fillText(text, FAVICON_SIZE / 2, FAVICON_SIZE / 2);
   favicon.setAttribute('href', faviconCanvas.toDataURL());
 }
@@ -321,5 +322,4 @@ ready.push(() => {
   fc = faviconCanvas.getContext('2d');
   fc.textAlign = 'center';
   fc.textBaseline = 'middle';
-  fc.fillStyle = THEME_COLOUR;
 });

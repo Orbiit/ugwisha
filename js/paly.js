@@ -213,6 +213,7 @@ function getNote(periodData) {
 
 /* THEME */
 const THEME_COLOUR = '#2D5727';
+const FAVICON_BACK_COLOUR = '#ffffff';
 const DEFAULT_FAVICON_URL = './images/logo-paly-192.png';
 const APP_NAME = 'Upwisha';
 const PERIOD_OPTION_PREFIX = 'paly_';

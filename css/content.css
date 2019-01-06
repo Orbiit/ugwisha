@@ -21,6 +21,9 @@
 .button:active {
   box-shadow: 0 1px 5px rgba(0, 0, 0, 0.5);
 }
+.tab-focus .button:focus, .tab-focus .icon-btn:focus {
+  box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.2);
+}
 
 .icon-btn {
   vertical-align: middle;
@@ -67,6 +70,11 @@ ul {
 }
 a {
   color: white;
+  text-decoration: none;
+}
+a:hover, .tab-focus a:focus {
+  text-decoration: underline;
+  outline: none;
 }
 input[type=checkbox] {
   -webkit-appearance: none;
@@ -85,9 +93,9 @@ input[type=checkbox] {
 input[type=checkbox]:checked {
   background-image: url('../images/material-check_box.svg');
 }
-input[type=checkbox]:focus {
+.tab-focus input[type=checkbox]:focus {
   outline: none;
-  box-shadow: 0 0 0 0.1em rgba(255, 255, 255, 0.3);
+  box-shadow: 0 0 0 0.2em rgba(255, 255, 255, 0.3);
 }
 textarea {
   width: 100%;

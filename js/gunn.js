@@ -311,6 +311,7 @@ function getNote(periodData) {
 
 /* THEME */
 const THEME_COLOUR = '#ff5959';
+const FAVICON_BACK_COLOUR = '#000000';
 const DEFAULT_FAVICON_URL = './images/logo-192.png';
 const APP_NAME = 'Ugwisha';
 const PERIOD_OPTION_PREFIX = '';

@@ -2,6 +2,9 @@
  * GIVEN: getSchedule, prepareScheduleData
  * GIVES: splitEvents
  *
+ * SCHEDULES.js
+ * used to generate schedules
+ *
  * Schedule data should be an array of {period, start, end} where
  * `period` is the period ID used by periods.js for colours and names
  * and `start` and `end` are integers representing the number of minutes
