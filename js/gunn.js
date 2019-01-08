@@ -17,7 +17,7 @@ function parseAlternate(summary, description) {
     if (!description) return;
     description = '\n' + description.replace(HTMLnewlineRegex, '\n').replace(noHTMLRegex, '').replace(noNbspRegex, ' ');
     let periods = [];
-    description.split(newLineRegex).map(str => {
+    description.split(newLineRegex).forEach(str => {
       let times;
       const name = str.replace(timeGetterRegex, (...matches) => {
         times = matches;
@@ -35,27 +35,32 @@ function parseAlternate(summary, description) {
       endTime = eH * 60 + eM;
 
       const duplicatePeriod = periods.findIndex(p => p.start === startTime);
-      if (!~duplicatePeriod) {
-        const period = identifyPeriod(name);
-        const periodData = {
-          period: period,
-          start: startTime,
-          end: endTime
-        };
-        if (period === 's') {
-          periods.selfInSchedule = true;
-          periodSelfGradeRegex.lastIndex = 0;
-          const selfSlice = periodSelfGradeRegex.exec(name);
-          if (selfSlice) {
-            let grades = 0;
-            selfSlice[1].replace(selfGradeRegex, (_, grade) => grades += gradeToInt[grade]);
-            periodData.selfGrades = grades || defaultSelf;
-          } else {
-            periodData.selfGrades = defaultSelf;
-          }
+      if (~duplicatePeriod) {
+        // keep longer duplicate period (see 2019-01-07 schedule)
+        if (periods[duplicatePeriod].end - periods[duplicatePeriod].start > endTime - startTime) return;
+        else {
+          periods.splice(duplicatePeriod, 1);
         }
-        if (period) periods.push(periodData);
       }
+      const period = identifyPeriod(name);
+      const periodData = {
+        period: period,
+        start: startTime,
+        end: endTime
+      };
+      if (period === 's') {
+        periods.selfInSchedule = true;
+        periodSelfGradeRegex.lastIndex = 0;
+        const selfSlice = periodSelfGradeRegex.exec(name);
+        if (selfSlice) {
+          let grades = 0;
+          selfSlice[1].replace(selfGradeRegex, (_, grade) => grades += gradeToInt[grade]);
+          periodData.selfGrades = grades || defaultSelf;
+        } else {
+          periodData.selfGrades = defaultSelf;
+        }
+      }
+      if (period) periods.push(periodData);
     });
     return periods;
   } else if (/holiday|no\sstudents|break|development/i.test(summary)) {

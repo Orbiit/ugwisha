@@ -134,6 +134,13 @@ body {
   text-decoration: none;
   display: block;
 }
+#date-wrapper:focus {
+  outline: none;
+}
+.tab-focus #date-wrapper:focus {
+  box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.2);
+  border-radius: 5px;
+}
 #date {
   font-size: 24px;
   color: rgba(255, 255, 255, 0.5);

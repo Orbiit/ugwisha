@@ -183,8 +183,14 @@ const days = ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 
 let dateElem, dayElem, altFetchBtn;
 function updateView() {
   setSchedule(getSchedule(viewingDate));
+  const day = viewingDate.getUTCDay();
+  const weekSchedules = [];
+  for (let i = 0; i < 7; i++) {
+    weekSchedules.push(getSchedule(new Date(viewingDate.getTime() - (day - i) * 86400000)));
+  }
+  showWeekPreview(weekSchedules, day);
   dateElem.innerHTML = months[viewingDate.getUTCMonth()] + ' ' + viewingDate.getUTCDate();
-  dayElem.innerHTML = days[viewingDate.getUTCDay()];
+  dayElem.innerHTML = days[day];
 }
 
 let viewingDate = getToday();

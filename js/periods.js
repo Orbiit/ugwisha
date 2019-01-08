@@ -22,7 +22,7 @@ function setPdColour(pd, newColour) {
   return options['periodColour_' + PERIOD_OPTION_PREFIX + pd] = newColour;
 }
 
-let scheduleWrapper;
+let scheduleWrapper, weekPreviewWrapper;
 let inputs, periodCards;
 const gradeName = ['freshmen', 'sophomores', 'juniors', 'seniors'];
 const hexColourRegex = /([0-9a-f]{6})|([0-9a-f])([0-9a-f])([0-9a-f])/;
@@ -183,6 +183,45 @@ function setSchedule(schedule) {
     return wrapper;
   })));
 }
+const dayInitials = ['S', 'M', 'T', 'W', '&Theta;', 'F', 'S'];
+function showWeekPreview(schedules, selectedDay) {
+  weekPreviewWrapper.innerHTML = '';
+  weekPreviewWrapper.appendChild(createFragment(schedules.map((schedule, i) => createElement('div', {
+    classes: ['week-preview-col', selectedDay === i ? 'week-preview-today' : undefined],
+    children: [
+      createElement('span', {
+        classes: 'week-preview-cell week-preview-day-heading',
+        html: dayInitials[i],
+        attributes: {
+          title: days[i],
+          'aria-label': days[i]
+        }
+      }),
+      ...(schedule.noSchool ? [] : schedule.map((pd, i) => createElement('span', {
+        classes: [
+          'week-preview-cell',
+          'week-preview-period',
+          getPdColour(pd.period) === null ? 'week-preview-transparent' : undefined
+        ],
+        styles: {
+          backgroundColor: getPdColour(pd.period) === null ? undefined : '#' + getPdColour(pd.period)
+        },
+        attributes: {
+          title: getPdName(pd.period),
+          'aria-label': getPdName(pd.period)
+        }
+      }))),
+      schedule.alternate ? createElement('span', {
+        classes: 'week-preview-cell week-preview-alternate',
+        html: '*',
+        attributes: {
+          title: 'Alternate schedule',
+          'aria-label': 'This is an alternate schedule'
+        }
+      }) : undefined
+    ]
+  }))));
+}
 
 const timezone = new Date().getTimezoneOffset(); // could try to sync it to PT for everyone, but DST :(
 function timeLeft(schedule, offset = 0) {
@@ -322,4 +361,5 @@ ready.push(() => {
   fc = faviconCanvas.getContext('2d');
   fc.textAlign = 'center';
   fc.textBaseline = 'middle';
+  weekPreviewWrapper = document.getElementById('week-preview')
 });
