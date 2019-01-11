@@ -36,10 +36,15 @@ function parseAlternate(summary, description) {
 
       const duplicatePeriod = periods.findIndex(p => p.start === startTime);
       if (~duplicatePeriod) {
-        // keep longer duplicate period (see 2019-01-07 schedule)
-        if (periods[duplicatePeriod].end - periods[duplicatePeriod].start > endTime - startTime) return;
-        else {
+        const duplicate = periods[duplicatePeriod];
+        // keep longer duplicate period (see 2019-01-11 schedule)
+        if (duplicate.end - duplicate.start < endTime - startTime) {
+          if (duplicate.period === 's') {
+            periods.selfInSchedule--;
+          }
           periods.splice(duplicatePeriod, 1);
+        } else {
+          return;
         }
       }
       const period = identifyPeriod(name);
@@ -49,7 +54,7 @@ function parseAlternate(summary, description) {
         end: endTime
       };
       if (period === 's') {
-        periods.selfInSchedule = true;
+        periods.selfInSchedule = (periods.selfInSchedule || 0) + 1;
         periodSelfGradeRegex.lastIndex = 0;
         const selfSlice = periodSelfGradeRegex.exec(name);
         if (selfSlice) {
@@ -114,18 +119,19 @@ function parseEvents(events) {
       if (schedule) {
         if (schedule.selfInSchedule) delete selfDays[alt.date];
         for (let i = 0; i < schedule.length; i++) {
-          if (schedule[i].period === 'b' || schedule[i].period === 'l') {
+          const pd = schedule[i];
+          if (pd.period === 'b' || pd.period === 'l') {
             if (i === 0) schedule.splice(i--, 1);
             else if (i === schedule.length - 1) schedule.splice(i--, 1);
             else {
-              schedule[i].end = schedule[i + 1].start - PASSING_PERIOD_LENGTH;
+              pd.end = schedule[i + 1].start - PASSING_PERIOD_LENGTH;
             }
-          } else if (schedule[i].period === 'f') {
-            const length = schedule[i].end - schedule[i].start;
+          } else if (pd.period === 'f' || pd.period === 's') {
+            const length = pd.end - pd.start;
             if (length >= DOUBLE_FLEX_THRESHOLD) {
               const flexLength = (length - PASSING_PERIOD_LENGTH) / 2;
-              schedule.splice(i + 1, 0, {period: 'f', start: schedule[i].end - flexLength, end: schedule[i].end});
-              schedule[i].end = schedule[i].start + flexLength;
+              schedule.splice(i + 1, 0, {period: pd.period, start: pd.end - flexLength, end: pd.end});
+              pd.end = pd.start + flexLength;
               i++;
             }
           }

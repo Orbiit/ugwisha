@@ -326,6 +326,7 @@ document.addEventListener('DOMContentLoaded', async e => {
     const version = html.slice(6, 9);
     if (options.lastPSA && options.lastPSA !== version) {
       psaDialog.classList.remove('hidden');
+      psaClose.focus();
     }
     if (!options.lastPSA) {
       options.lastPSA = version;
@@ -336,6 +337,11 @@ document.addEventListener('DOMContentLoaded', async e => {
       if (options.lastPSA !== version) {
         options.lastPSA = version;
         save();
+        if (!fetched && html.includes('[REFETCH]')) {
+          const refetch = /\[REFETCH\]/.exec(html);
+          fetched = true;
+          fetchAlternates().then(updateView);
+        }
       }
       psaOpen.focus();
     });
@@ -408,15 +414,17 @@ document.addEventListener('DOMContentLoaded', async e => {
   dateElem = document.getElementById('date');
   dayElem = document.getElementById('weekday');
   altFetchBtn = document.getElementById('fetch-alts');
+  let fetched = false;
   if (params['get-alts'] || !localStorage.getItem(SCHEDULE_DATA_KEY)) {
+    fetched = true;
     await fetchAlternates();
     if (params.then) window.location.replace(params.then);
   }
   prepareScheduleData(localStorage.getItem(SCHEDULE_DATA_KEY));
   updateView();
   altFetchBtn.addEventListener('click', async e => {
-    await fetchAlternates();
-    updateView();
+    fetched = true;
+    fetchAlternates().then(updateView);
   });
 
   // checkboxes
