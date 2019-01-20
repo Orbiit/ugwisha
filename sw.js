@@ -1,4 +1,4 @@
-const VERSION = 9; // change to force update
+const VERSION = 10; // change to force update
 
 const CACHE_NAME = 'ugwisha-sw-v' + VERSION;
 const BACKGROUND_CACHE_NAME = 'ugwisha-backgrounds'; // don't change this
@@ -34,8 +34,7 @@ function send(data) {
 }
 
 self.addEventListener('install', e => {
-  self.skipWaiting();
-  e.waitUntil(caches.open(CACHE_NAME).then(cache => cache.addAll(urlsToCache)));
+  e.waitUntil(caches.open(CACHE_NAME).then(cache => cache.addAll(urlsToCache)).then(() => self.skipWaiting()));
 });
 self.addEventListener('fetch', e => {
   e.respondWith(caches.match(e.request, {ignoreSearch: true}).then(response => response || fetch(e.request)));

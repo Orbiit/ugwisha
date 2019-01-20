@@ -294,6 +294,11 @@ document.addEventListener('DOMContentLoaded', async e => {
   } else if (options.natureBackground) {
     setBackground(`url("nature?n=${Date.now()}")`);
     nextBackground.disabled = false;
+    caches.open(BACKGROUND_CACHE_NAME).then(cache => cache.match('nature')).then(r => {
+      if (!r) {
+        newNatureBackground();
+      }
+    });
   } else {
     startRandomGradients();
   }
@@ -575,9 +580,13 @@ function loadSW(updateURL = '/ugwisha-updater.html') {
   if ('serviceWorker' in navigator) {
     if (params['no-sw'] || params['reset-sw']) {
       navigator.serviceWorker.getRegistrations().then(regis => {
-        regis.forEach(regis => regis.unregister());
-        if (params['reset-sw']) window.location = updateURL;
-        else if (regis.length) window.location.reload();
+        Promise.all(regis.map(regis => {
+          // regis.active.postMessage({type: 'disable'});
+          return regis.unregister();
+        })).then(() => {
+          if (params['reset-sw']) window.location = updateURL;
+          else if (regis.length) window.location.reload();
+        });
       }).catch(err => console.log(err));
     } else {
       window.addEventListener('load', () => {
