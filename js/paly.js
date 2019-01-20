@@ -197,9 +197,11 @@ function getSchedule(dateObj) {
   const string = dateObj.toISOString().slice(5, 10);
   const schedule = scheduleData.schedules[string];
   if (schedule !== undefined && schedule !== null) {
-    return JSON.parse(JSON.stringify(schedule));
+    const clone = JSON.parse(JSON.stringify(schedule));
+    clone.date = dateObj;
+    return clone;
   } else {
-    return { noSchool: true };
+    return { noSchool: true, date: dateObj };
   }
 }
 function prepareScheduleData(storedSchedules) {

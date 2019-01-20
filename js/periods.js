@@ -188,6 +188,9 @@ function showWeekPreview(schedules, selectedDay) {
   weekPreviewWrapper.innerHTML = '';
   weekPreviewWrapper.appendChild(createFragment(schedules.map((schedule, i) => createElement('div', {
     classes: ['week-preview-col', selectedDay === i ? 'week-preview-today' : undefined],
+    attributes: {
+      tabindex: 0
+    },
     children: [
       createElement('span', {
         classes: 'week-preview-cell week-preview-day-heading',
@@ -219,7 +222,19 @@ function showWeekPreview(schedules, selectedDay) {
           'aria-label': 'This is an alternate schedule'
         }
       }) : undefined
-    ]
+    ],
+    listeners: {
+      click: e => {
+        // BUG: current allows user to click outside of school year, oh well
+        viewingDate = schedule.date;
+        updateView();
+        updateDateWrapperLink();
+      },
+      keydown(e) {
+        // BUG: focus is lost
+        if (e.keyCode === 13) this.click();
+      }
+    }
   }))));
 }
 

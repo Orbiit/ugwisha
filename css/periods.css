@@ -160,9 +160,16 @@
 .week-preview-col {
   flex: 1 0 0;
   padding: 0 2px;
+  cursor: pointer;
+  border-radius: 5px;
+}
+.week-preview-col:focus {
+  outline: none;
+}
+.tab-focus .week-preview-col:focus {
+  box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.2);
 }
 .week-preview-today {
-  border-radius: 5px;
   background-color: rgba(255, 255, 255, 0.1);
 }
 .week-preview-day-heading, .week-preview-alternate {

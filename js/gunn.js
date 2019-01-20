@@ -309,6 +309,7 @@ function getSchedule(dateObj) {
   if (scheduleData.schedules[string] !== undefined) {
     schedule.alternate = true;
   }
+  schedule.date = dateObj;
   return schedule;
 }
 function prepareScheduleData(storedSchedules) {

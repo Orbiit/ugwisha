@@ -171,9 +171,11 @@ function setBackground(css) {
   }, 500);
 }
 async function newBackground(url, id) {
-  const res = await fetch(url);
+  const headers = new Headers();
+  headers.append('pragma', 'no-cache');
+  headers.append('Cache-Control', 'no-cache');
+  const res = await fetch(url, {mode: 'no-cors', headers: headers, cache: 'no-cache'});
   const cache = await caches.open(BACKGROUND_CACHE_NAME);
-  if (!res.ok) throw new Error('not ok');
   await cache.delete(new Request(id));
   await cache.put(new Request(id), res);
 }
@@ -253,14 +255,28 @@ document.addEventListener('DOMContentLoaded', async e => {
     }, 5000);
     setBackground(randomGradient());
   }
+  const queries = [];
+  const terms = ['nature', 'water', 'wallpaper'];
+  terms.forEach((term, i) => {
+    const otherTerms = [...terms.slice(0, i), ...terms.slice(i + 1)];
+    queries.push(term);
+    queries.push(term + ',' + otherTerms[0]);
+    queries.push(term + ',' + otherTerms[0] + ',' + otherTerms[1]);
+    queries.push(term + ',' + otherTerms[1]);
+    queries.push(term + ',' + otherTerms[1] + ',' + otherTerms[0]);
+  });
+  queries.push(...queries.map(q => q + ',' + Date.now()));
+  let index = -1;
   function newNatureBackground() {
     nextBackground.disabled = true;
-    newBackground('https://source.unsplash.com/featured/1600x900/?nature', 'nature').then(() => {
+    index = (index + 1) % queries.length;
+    newBackground('https://source.unsplash.com/random/1600x900/?' + queries[index], 'nature').then(() => {
       setBackground(`url("nature?n=${Date.now()}")`);
       options.natureLoaded = true;
       save();
       nextBackground.disabled = false;
-    }).catch(() => {
+    }).catch(err => {
+      console.dir(err);
       setBackground(`url("./images/temp-sheep.png")`); // too lazy to make an error image right now
       nextBackground.disabled = false;
     });
@@ -475,12 +491,12 @@ document.addEventListener('DOMContentLoaded', async e => {
     window.history.pushState({}, '', dateWrapper.href);
     e.preventDefault();
   });
-  function updateDateWrapperLink() {
+  window.updateDateWrapperLink = () => {
     const viewingTime = viewingDate.getTime();
     backDay.disabled = viewingTime <= firstDay.getTime();
     forthDay.disabled = viewingTime >= lastDay.getTime();
     dateWrapper.href = (params['no-sw'] ? '?no-sw&' : '?') + 'day=' + viewingDate.toISOString().slice(0, 10);
-  }
+  };
   updateDateWrapperLink();
   backDay.addEventListener('click', e => {
     viewingDate.setUTCDate(viewingDate.getUTCDate() - 1);
