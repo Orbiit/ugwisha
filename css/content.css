@@ -118,6 +118,10 @@ textarea:focus {
   cursor: auto;
   border-color: rgba(255, 255, 255, 0.3);
 }
+h3, h4, h5, h6 {
+  font-weight: normal;
+  margin-bottom: 0;
+}
 
 option {
   background-color: black;

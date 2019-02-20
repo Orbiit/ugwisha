@@ -168,7 +168,7 @@ function setBackground(css) {
   setTimeout(() => {
     backgroundTransitioner.classList.remove('animating');
     transitioning = false;
-  }, 500);
+  }, options.quickTransitions ? 500 : 5000);
 }
 async function newBackground(url, id) {
   const headers = new Headers();
@@ -250,9 +250,11 @@ document.addEventListener('DOMContentLoaded', async e => {
   let randomGradientTimer = null;
   function startRandomGradients() {
     if (randomGradientTimer) clearInterval(randomGradientTimer);
-    randomGradientTimer = setInterval(() => {
-      setBackground(randomGradient());
-    }, 5000);
+    if (options.randomGradients) {
+      randomGradientTimer = setTimeout(startRandomGradients, options.quickTransitions ? 5000 : 10000);
+    } else {
+      randomGradientTimer = null;
+    }
     setBackground(randomGradient());
   }
   const queries = [];
@@ -474,6 +476,16 @@ document.addEventListener('DOMContentLoaded', async e => {
     },
     showSELF() {
       updateView();
+    },
+    quickTransitions(yes) {
+      if (yes) document.body.classList.add('quick-transitions');
+      else document.body.classList.remove('quick-transitions');
+    },
+    randomGradients(yes) {
+      if (yes) {
+        if (!options.natureBackground && !options.backgroundURL) startRandomGradients();
+      }
+      else if (randomGradientTimer) clearInterval(randomGradientTimer);
     }
   };
   Array.from(document.getElementsByClassName('toggle-setting')).forEach(toggle => {

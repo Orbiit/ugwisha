@@ -178,7 +178,10 @@ body {
 }
 #transition-background.animating {
   display: block;
-  animation: fade-out .5s forwards;
+  animation: fade-out 5s forwards;
+}
+.quick-transitions #transition-background.animating {
+  animation-duration: .5s;
 }
 @keyframes fade-out {
   from { opacity: 1; }
