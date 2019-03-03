@@ -72,7 +72,7 @@ function createElement(tag, data = {}) {
     if (typeof data.classes === 'string') elem.className = data.classes;
     else deundefine(data.classes).forEach(c => elem.classList.add(c));
   }
-  if (data.children) deundefine(data.children).forEach(c => elem.appendChild(c));
+  if (data.children) deundefine(data.children).forEach(c => elem.appendChild(typeof c === 'string' ? document.createTextNode(c) : c));
   if (data.attributes) {
     Object.keys(deundefine(data.attributes)).forEach(attr => {
       if (elem[attr] !== undefined) elem[attr] = data.attributes[attr];
@@ -147,7 +147,7 @@ function splitEvents({items}) {
 }
 function fetchEvents() {
   const gCalURL = 'https://www.googleapis.com/calendar/v3/calendars/'
-    + encodeURIComponent(CALENDAR_ID)
+    + encodeURIComponent(SCHEDULES_CALENDAR_ID)
     + '/events?singleEvents=true&fields='
     + encodeURIComponent('items(description,end(date,dateTime),start(date,dateTime),summary)')
     + '&key=' + GOOGLE_API_KEY
@@ -478,6 +478,70 @@ document.addEventListener('DOMContentLoaded', async e => {
     fetchEvents().then(updateView);
   });
 
+  // events
+  const eventsWrapper = document.getElementById('events-wrapper');
+  const eventsList = document.getElementById('events');
+  const events = {};
+  const gCalURL = 'https://www.googleapis.com/calendar/v3/calendars/'
+    + encodeURIComponent(EVENTS_CALENDAR_ID)
+    + '/events?singleEvents=true&fields='
+    + encodeURIComponent('items(description,end(date,dateTime),start(date,dateTime),summary)')
+    + '&key=' + GOOGLE_API_KEY;
+  function dateObjToMinutes(dateObj) {
+    // local time
+    return dateObj.getHours() * 60 + dateObj.getMinutes();
+  }
+  function toLocalTime(dateObj, offset = 0) {
+    return new Date(dateObj.getUTCFullYear(), dateObj.getUTCMonth(), dateObj.getUTCDate() + offset);
+  }
+  function removeDumbHTML(html) {
+    return html.replace(/(<.*?) style=(?:"[^"]*"|\S*)(.*?>)/g, '$1$2');
+  }
+  async function renderEvents() {
+    if (options.showEvents) {
+      const dateName = viewingDate.toISOString().slice(0, 10);
+      eventsList.innerHTML = `<span class="events-message">Loading...</span>`;
+      if (!events[dateName]) {
+        const {items} = await fetch(`${gCalURL}&timeMin=${encodeURIComponent(toLocalTime(viewingDate).toISOString())}&timeMax=${encodeURIComponent(toLocalTime(viewingDate, 1).toISOString())}`).then(r => r.json());
+        events[dateName] = items;
+        if (parseEvents(splitEvents({items}), viewingDate)) {
+          saveScheduleData();
+          updateView();
+        }
+      }
+      eventsList.innerHTML = '';
+      eventsList.appendChild(events[dateName].length ? createFragment(events[dateName].map(event => createElement('div', {
+        classes: 'event',
+        children: [
+          createElement('span', {
+            classes: 'event-name',
+            children: [event.summary]
+          }),
+          createElement('span', {
+            classes: 'event-info',
+            children: [
+              event.start && event.start.dateTime ? createElement('span', {
+                classes: 'event-time',
+                html: formatTime(dateObjToMinutes(new Date(event.start.dateTime))) + ' &ndash; ' + formatTime(dateObjToMinutes(new Date(event.end.dateTime)))
+              }) : undefined,
+              event.location ? createElement('span', {
+                classes: 'event-location',
+                children: [event.location]
+              }) : undefined
+            ]
+          }),
+          event.description ? createElement('span', {
+            classes: 'event-description',
+            html: removeDumbHTML(event.description)
+          }) : undefined
+        ]
+      }))) : createElement('span', {
+        classes: 'events-message',
+        html: 'Nothing happening today'
+      }));
+    }
+  }
+
   // checkboxes
   const optionChange = {
     showDuration(yes) {
@@ -514,6 +578,10 @@ document.addEventListener('DOMContentLoaded', async e => {
         if (!options.natureBackground && !options.backgroundURL) startRandomGradients();
       }
       else if (randomGradientTimer) clearInterval(randomGradientTimer);
+    },
+    showEvents(yes) {
+      if (yes && eventsWrapper.style.display) renderEvents();
+      eventsWrapper.style.display = yes ? null : 'none';
     }
   };
   Array.from(document.getElementsByClassName('toggle-setting')).forEach(toggle => {
@@ -541,6 +609,7 @@ document.addEventListener('DOMContentLoaded', async e => {
     backDay.disabled = viewingTime <= firstDay.getTime();
     forthDay.disabled = viewingTime >= lastDay.getTime();
     dateWrapper.href = (params['no-sw'] ? '?no-sw&' : '?') + 'day=' + viewingDate.toISOString().slice(0, 10);
+    renderEvents();
   };
   updateDateWrapperLink();
   backDay.addEventListener('click', e => {

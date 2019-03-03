@@ -15,6 +15,8 @@ Ugwisha currently supports:
   - custom period names and colours
   - PSA system
   - optional SELF
+  - show week previews (like UGWA)
+  - show events
 - Ugwita features
   - automatically change date when there's a new day
   - linking to dates by URL: `?day=yyyy-mm-dd`
@@ -30,12 +32,8 @@ Perhaps Ugwisha may also support:
 - a better colour picker
 - period descriptions
 - zero, H, and staff periods support
-- show week previews (like UGWA)
 - better date selector
-- show events
 - randomly selected sheep doodles
-- warning the user if it has been too long since they fetched the alternate schedules
-- keeping the user from viewing summer break/next year
 - weather
 - barcode generator
 

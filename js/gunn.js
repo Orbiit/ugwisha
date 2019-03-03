@@ -93,7 +93,8 @@ function identifyPeriod(name) {
 }
 
 /* FETCHING */
-const CALENDAR_ID = 'u5mgb2vlddfj70d7frf3r015h0@group.calendar.google.com';
+const SCHEDULES_CALENDAR_ID = 'u5mgb2vlddfj70d7frf3r015h0@group.calendar.google.com';
+const EVENTS_CALENDAR_ID = 'u5mgb2vlddfj70d7frf3r015h0@group.calendar.google.com';
 const CALENDAR_KEYWORDS = ['self', 'schedule', 'extended', 'holiday', 'no students', 'break', 'development'];
 
 // please set this to your own if you fork Ugwisha, thanks
@@ -104,6 +105,7 @@ const DOUBLE_FLEX_LENGTH = 80; // longer flex might not be double - see 2018-10-
 function parseEvents(events, dateObj) {
   const dateName = dateObj.toISOString().slice(5, 10);
   const weekDay = dateObj.getUTCDay();
+  const oldEntry = scheduleData[dateName];
   let self, alternate, overrideSELF = false;
   events.forEach(({summary, description}) => {
     if (summary.includes('SELF') && summary.includes('graders')) {
@@ -147,6 +149,7 @@ function parseEvents(events, dateObj) {
       });
     }
     scheduleData[dateName] = alternate;
+    return JSON.stringify(oldEntry) === JSON.stringify(alternate);
   } else {
     // this is hardcoded, so if say SELF gets moved to Wednesday, this will need changing
     if (weekDay === 4 && self !== defaultSelf) {
@@ -158,14 +161,17 @@ function parseEvents(events, dateObj) {
         clone[2].period = 'f';
       }
       scheduleData[dateName] = clone;
+      return !oldEntry;
     } else if (weekDay === 2 && self) {
       // when there's SELF on Tuesday
       const clone = JSON.parse(JSON.stringify(normalSchedules[weekDay]));
       clone[2].period = 's'; // hardcoded
       clone[2].selfGrades = self;
       scheduleData[dateName] = clone;
+      return !oldEntry;
     } else {
       scheduleData[dateName] = null;
+      return oldEntry;
     }
   }
 }
