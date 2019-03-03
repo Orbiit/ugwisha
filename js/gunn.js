@@ -99,9 +99,14 @@ const calendarURL = 'https://www.googleapis.com/calendar/v3/calendars/'
   + '&key=AIzaSyDBYs4DdIaTjYx5WDz6nfdEAftXuctZV0o'
   + `&timeMin=${encodeURIComponent(eventsMinDate.toISOString())}&timeMax=${encodeURIComponent(eventsMaxDate.toISOString())}`;
 
+const CALENDAR_ID = 'u5mgb2vlddfj70d7frf3r015h0@group.calendar.google.com';
+const CALENDAR_KEYWORDS = ['schedule']; // TEMP
+const GOOGLE_API_KEY = 'AIzaSyDBYs4DdIaTjYx5WDz6nfdEAftXuctZV0o';
+
 const PASSING_PERIOD_LENGTH = 10;
 const DOUBLE_FLEX_THRESHOLD = 80;
 function parseEvents(events) {
+  return console.log(events);
   const alts = events.map(splitEvents);
   const selfDays = {};
   alts[0].forEach(ev => {

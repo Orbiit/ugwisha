@@ -128,7 +128,7 @@ function splitEvents({items}) {
     if (ev.start.dateTime) events.push({
       summary: ev.summary,
       description: ev.description,
-      date: ev.start.dateTime.slice(5, 10)
+      date: ev.start.dateTime.slice(0, 10)
     });
     else {
       const dateObj = new Date(ev.start.date);
@@ -137,13 +137,42 @@ function splitEvents({items}) {
         events.push({
           summary: ev.summary,
           description: ev.description,
-          date: dateObj.toISOString().slice(5, 10)
+          date: dateObj.toISOString().slice(0, 10)
         });
         dateObj.setUTCDate(dateObj.getUTCDate() + 1);
       }
     }
   });
   return events;
+}
+function fetchEvents() {
+  const gCalURL = 'https://www.googleapis.com/calendar/v3/calendars/'
+    + encodeURIComponent(CALENDAR_ID)
+    + '/events?singleEvents=true&fields='
+    + encodeURIComponent('items(description,end(date,dateTime),start(date,dateTime),summary)')
+    + '&key=' + GOOGLE_API_KEY
+    + `&timeMin=${encodeURIComponent(eventsMinDate.toISOString())}&timeMax=${encodeURIComponent(eventsMaxDate.toISOString())}`;
+  altFetchBtn.disabled = true;
+  return Promise.all(CALENDAR_KEYWORDS.map(k => fetch(gCalURL + '&q=' + k).then(r => r.json()))).then(eventData => {
+    // assign each event to its day
+    const events = {};
+    eventData.map(splitEvents).forEach(data => data.forEach(event => {
+      if (!events[event.date]) events[event.date] = [];
+      events[event.date].push(event);
+    }));
+
+    // parse events per day
+    const dateObj = new Date(firstDay.getTime());
+    const endDate = lastDay.getTime();
+    while (dateObj.getTime() <= endDate) {
+      parseEvents(events[dateObj.toISOString().slice(0, 10)] || [], dateObj);
+      dateObj.setUTCDate(dateObj.getUTCDate() + 1);
+    }
+
+    // TEMP: (uncomment later)
+    // storage.setItem(SCHEDULE_DATA_KEY, encodeStoredAlternates(scheduleData)); // generalize encoding?
+    altFetchBtn.disabled = false;
+  });
 }
 
 function randomInt(int) {
@@ -363,7 +392,7 @@ document.addEventListener('DOMContentLoaded', async e => {
         if (!fetched && html.includes('[REFETCH]')) {
           const refetch = /\[REFETCH\]/.exec(html);
           fetched = true;
-          fetchAlternates().then(updateView);
+          fetchEvents().then(updateView);
         }
       }
       psaOpen.focus();
@@ -440,14 +469,14 @@ document.addEventListener('DOMContentLoaded', async e => {
   let fetched = false;
   if (params['get-alts'] || !localStorage.getItem(SCHEDULE_DATA_KEY)) {
     fetched = true;
-    await fetchAlternates();
+    await fetchEvents();
     if (params.then) window.location.replace(params.then);
   }
   prepareScheduleData(localStorage.getItem(SCHEDULE_DATA_KEY));
   updateView();
   altFetchBtn.addEventListener('click', async e => {
     fetched = true;
-    fetchAlternates().then(updateView);
+    fetchEvents().then(updateView);
   });
 
   // checkboxes
