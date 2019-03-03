@@ -94,8 +94,9 @@ function identifyPeriod(name) {
 
 /* FETCHING */
 const CALENDAR_ID = 'u5mgb2vlddfj70d7frf3r015h0@group.calendar.google.com';
-// ['self', 'schedule', 'extended', 'holiday', 'no students', 'break', 'development']
-const CALENDAR_KEYWORDS = ['self', 'schedule', 'extended', 'holiday', 'no students', 'break', 'development']; // TEMP
+const CALENDAR_KEYWORDS = ['self', 'schedule', 'extended', 'holiday', 'no students', 'break', 'development'];
+
+// please set this to your own if you fork Ugwisha, thanks
 const GOOGLE_API_KEY = 'AIzaSyDBYs4DdIaTjYx5WDz6nfdEAftXuctZV0o';
 
 const PASSING_PERIOD_LENGTH = 10;
