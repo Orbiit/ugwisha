@@ -83,81 +83,90 @@ function identifyPeriod(name) {
   if (~name.indexOf('SELF')) return 's';
   else if (~name.indexOf('FLEX')
       || ~name.indexOf('ASSEMBL') // assembly, assemblies
+      || ~name.indexOf('ATTEND') // HACK to detect PSAT day (2018-10-10)
       || ~name.indexOf('TUTORIAL'))
     return 'f';
   else if (~name.indexOf('BRUNCH') || ~name.indexOf('BREAK')) return 'b';
-  else if (~name.indexOf('LUNCH') || ~name.indexOf('TURKEY')) return 'l';
+  // 'UNCH' intentional - misspelling on 2019-03-26
+  else if (~name.indexOf('UNCH') || ~name.indexOf('TURKEY')) return 'l';
   else return;
 }
 
 /* FETCHING */
-const keywords = ['self', 'schedule', 'extended', 'holiday', 'no students', 'break', 'development'];
-const calendarURL = 'https://www.googleapis.com/calendar/v3/calendars/'
-  + encodeURIComponent('u5mgb2vlddfj70d7frf3r015h0@group.calendar.google.com')
-  + '/events?singleEvents=true&fields='
-  + encodeURIComponent('items(description,end(date,dateTime),start(date,dateTime),summary)')
-  + '&key=AIzaSyDBYs4DdIaTjYx5WDz6nfdEAftXuctZV0o'
-  + `&timeMin=${encodeURIComponent(eventsMinDate.toISOString())}&timeMax=${encodeURIComponent(eventsMaxDate.toISOString())}`;
-
 const CALENDAR_ID = 'u5mgb2vlddfj70d7frf3r015h0@group.calendar.google.com';
-const CALENDAR_KEYWORDS = ['schedule']; // TEMP
+// ['self', 'schedule', 'extended', 'holiday', 'no students', 'break', 'development']
+const CALENDAR_KEYWORDS = ['self', 'schedule', 'extended', 'holiday', 'no students', 'break', 'development']; // TEMP
 const GOOGLE_API_KEY = 'AIzaSyDBYs4DdIaTjYx5WDz6nfdEAftXuctZV0o';
 
 const PASSING_PERIOD_LENGTH = 10;
-const DOUBLE_FLEX_THRESHOLD = 80;
-function parseEvents(events) {
-  return console.log(events);
-  const alts = events.map(splitEvents);
-  const selfDays = {};
-  alts[0].forEach(ev => {
-    if (ev.summary.includes('SELF')) {
+const DOUBLE_FLEX_LENGTH = 80; // longer flex might not be double - see 2018-10-10
+function parseEvents(events, dateObj) {
+  const dateName = dateObj.toISOString().slice(5, 10);
+  const weekDay = dateObj.getUTCDay();
+  let self, alternate, overrideSELF = false;
+  events.forEach(({summary, description}) => {
+    if (summary.includes('SELF') && summary.includes('graders')) {
       let grades = 0;
-      ev.summary.replace(selfGradeRegex, (_, grade) => grades += gradeToInt[grade]);
-      if (grades > 0) selfDays[ev.date] = grades || defaultSelf;
+      summary.replace(selfGradeRegex, (_, grade) => grades += gradeToInt[grade]);
+      if (grades > 0) {
+        self = grades || defaultSelf;
+        return;
+      }
     }
-  });
-  const alternates = {};
-  alts.slice(1).forEach(moreAlts => moreAlts.forEach(alt => {
-    const schedule = parseAlternate(alt.summary, alt.description);
+    // HACK to prevent back-to-school schedule from overriding alternate schedule (2018-08-30)
+    if (summary.includes('Back-to-School')) return;
+    const schedule = parseAlternate(summary, description);
     if (schedule !== undefined) {
-      alternates[alt.date] = schedule;
       if (schedule) {
-        if (schedule.selfInSchedule) delete selfDays[alt.date];
+        if (schedule.selfInSchedule) overrideSELF = true;
         for (let i = 0; i < schedule.length; i++) {
           const pd = schedule[i];
           if (pd.period === 'b' || pd.period === 'l') {
+            // remove passing periods from breaks
             if (i === 0) schedule.splice(i--, 1);
             else if (i === schedule.length - 1) schedule.splice(i--, 1);
             else {
               pd.end = schedule[i + 1].start - PASSING_PERIOD_LENGTH;
             }
-          } else if (pd.period === 'f' || pd.period === 's') {
-            const length = pd.end - pd.start;
-            if (length >= DOUBLE_FLEX_THRESHOLD) {
-              const flexLength = (length - PASSING_PERIOD_LENGTH) / 2;
-              schedule.splice(i + 1, 0, {period: pd.period, start: pd.end - flexLength, end: pd.end});
-              pd.end = pd.start + flexLength;
-              i++;
-            }
           }
         }
       }
+      // latter part is so no school days on a weekend isn't considered alternate
+      if (schedule || normalSchedules[weekDay].length)
+        alternate = schedule || [];
     }
-  }));
-  return {
-    lastGenerated: new Date(),
-    selfDays: selfDays,
-    schedules: alternates
-  };
-}
-function fetchAlternates() {
-  altFetchBtn.disabled = true;
-  return Promise.all(keywords.map(k => fetch(calendarURL + '&q=' + k).then(r => r.json()))).then(alts => {
-    // localStorage.setItem('[ugwisha] test.rawAlts', JSON.stringify(alts));
-    scheduleData = parseEvents(alts);
-    storage.setItem(SCHEDULE_DATA_KEY, encodeStoredAlternates(scheduleData));
-    altFetchBtn.disabled = false;
   });
+  if (alternate) {
+    if (self && !overrideSELF) {
+      alternate.forEach(pd => {
+        if (pd.period === 'f') {
+          pd.period = 's';
+          pd.selfGrades = self;
+        }
+      });
+    }
+    scheduleData[dateName] = alternate;
+  } else {
+    // this is hardcoded, so if say SELF gets moved to Wednesday, this will need changing
+    if (weekDay === 4 && self !== defaultSelf) {
+      // if it's freshmen-only SELF or no SELF on Thursday :O
+      const clone = JSON.parse(JSON.stringify(normalSchedules[weekDay]));
+      if (self) {
+        clone[2].selfGrades = self;
+      } else {
+        clone[2].period = 'f';
+      }
+      scheduleData[dateName] = clone;
+    } else if (weekDay === 2 && self) {
+      // when there's SELF on Tuesday
+      const clone = JSON.parse(JSON.stringify(normalSchedules[weekDay]));
+      clone[2].period = 's'; // hardcoded
+      clone[2].selfGrades = self;
+      scheduleData[dateName] = clone;
+    } else {
+      scheduleData[dateName] = null;
+    }
+  }
 }
 
 /* ENCODING */
@@ -165,20 +174,11 @@ const selfCharOffset = 72;
 const alternateRegex = /([A-GblfI-W])([\dab]{3})([\dab]{3})/g;
 function decodeStoredAlternates(string = storage.getItem(SCHEDULE_DATA_KEY)) {
   const lines = string.split('|');
-  const firstLine = lines.shift();
-  const lastGeneratedDate = new Date(Date.UTC(+firstLine.slice(0, 4), parseInt(firstLine[4], 36), parseInt(firstLine[5], 36)));
-  const selfDays = {};
-  firstLine.slice(6).split('!').forEach(m => {
-    const month = String(parseInt(m[0], 36) + 1).padStart(2, '0');
-    for (let i = 1; i < m.length; i += 2) {
-      selfDays[month + '-' + String(parseInt(m[i], 36)).padStart(2, '0')] = m[i + 1].charCodeAt() - selfCharOffset;
-    }
-  });
   const schedules = {};
   lines.forEach(m => {
     const month = String(parseInt(m[0], 36) + 1).padStart(2, '0');
     m.slice(1).split('!').forEach(d => {
-      const schedule = d.length > 1 ? [] : null;
+      const schedule = [];
       if (d.length > 1) {
         d.slice(1).replace(alternateRegex, (_, period, start, end) => {
           const periodData = {
@@ -196,41 +196,27 @@ function decodeStoredAlternates(string = storage.getItem(SCHEDULE_DATA_KEY)) {
       schedules[month + '-' + String(parseInt(d[0], 36)).padStart(2, '0')] = schedule;
     });
   });
-  return {
-    lastGenerated: lastGeneratedDate,
-    selfDays: selfDays,
-    schedules: schedules
-  };
+  return schedules;
 }
-function encodeStoredAlternates({lastGenerated, selfDays, schedules}) {
-  let result = lastGenerated.getUTCFullYear() + lastGenerated.getUTCMonth().toString(36) + lastGenerated.getUTCDate().toString(36);
-  const selfMonths = {};
-  Object.keys(selfDays).forEach(day => {
-    let [month, date] = day.split('-').map(Number);
-    month = (month - 1).toString(36);
-    date = date.toString(36);
-    selfMonths[month] = (selfMonths[month] || month) + date + String.fromCharCode((selfDays[day] || defaultSelf) + selfCharOffset);
-  });
-  result += Object.values(selfMonths).join('!') + '|';
+function encodeStoredAlternates(schedules) {
   const schedMonths = {};
   Object.keys(schedules).forEach(day => {
+    if (!schedules[day]) return;
     let [month, date] = day.split('-').map(Number);
     month = (month - 1).toString(36);
     date = date.toString(36);
     if (schedMonths[month]) schedMonths[month] += '!';
     else schedMonths[month] = month;
     schedMonths[month] += date;
-    if (schedules[day])
-      schedMonths[month] += schedules[day].map(({period, start, end, selfGrades}) => (period === 's' ? String.fromCharCode((selfGrades || defaultSelf) + selfCharOffset) : period)
+    schedMonths[month] += schedules[day].map(({period, start, end, selfGrades}) => (period === 's' ? String.fromCharCode((selfGrades || defaultSelf) + selfCharOffset) : period)
         + start.toString(12).padStart(3, '0') + end.toString(12).padStart(3, '0')).join('');
   });
-  result += Object.values(schedMonths).join('|');
-  return result;
+  return Object.values(schedMonths).join('|');
 }
 
 /* NORMAL SCHEDULE */
 const normalSchedules = [
-  null,
+  [],
   [
     {period: 'A', start: 505, end: 585},
     {period: 'b', start: 585, end: 590},
@@ -256,7 +242,7 @@ const normalSchedules = [
   ], [
     {period: 'E', start: 505, end: 590},
     {period: 'b', start: 590, end: 595},
-    {period: 'f', start: 605, end: 655},
+    {period: 's', start: 605, end: 655, selfGrades: defaultSelf},
     {period: 'B', start: 665, end: 735},
     {period: 'l', start: 735, end: 765},
     {period: 'A', start: 775, end: 845},
@@ -270,7 +256,7 @@ const normalSchedules = [
     {period: 'F', start: 785, end: 855},
     {period: 'G', start: 865, end: 935}
   ],
-  null
+  []
 ];
 
 /* DEFAULTS */
@@ -286,36 +272,36 @@ const defaultColours = {
 };
 
 /* GET SCHEDULE */
-const SCHEDULE_DATA_KEY = '[ugwisha] alternates';
+const SCHEDULE_DATA_KEY = '[ugwisha] alternates-2'; // change when new school year
 let scheduleData = {};
 function getSchedule(dateObj) {
-  const string = dateObj.toISOString().slice(5, 10);
-  let schedule;
-  if (scheduleData.schedules[string] !== undefined) {
-    schedule = JSON.parse(JSON.stringify(scheduleData.schedules[string]));
-  } else {
-    schedule = JSON.parse(JSON.stringify(normalSchedules[dateObj.getUTCDay()]));
-  }
-  if (schedule && scheduleData.selfDays[string]) {
-    schedule.forEach(pd => {
-      if (pd.period === 'f') {
-        pd.period = 's';
-        pd.selfGrades = scheduleData.selfDays[string];
-      }
-    });
-  }
-  if (schedule === null) {
-    schedule = { noSchool: true };
+  const dateName = dateObj.toISOString().slice(5, 10);
+  let schedule = JSON.parse(JSON.stringify(scheduleData[dateName] || normalSchedules[dateObj.getUTCDay()]));
+  if (schedule.length === 0) {
+    schedule.noSchool = true;
   } else if (!options.showSELF) {
     schedule.forEach(pd => {
       if (pd.period === 's') pd.period = 'f';
     });
   }
-  if (scheduleData.schedules[string] !== undefined) {
+  // split double flex
+  for (let i = 0; i < schedule.length; i++) {
+    const pd = schedule[i];
+    if (pd.period === 'f' && pd.end - pd.start === DOUBLE_FLEX_LENGTH) {
+      const flexLength = (DOUBLE_FLEX_LENGTH - PASSING_PERIOD_LENGTH) / 2;
+      schedule.splice(i + 1, 0, {period: pd.period, start: pd.end - flexLength, end: pd.end});
+      pd.end = pd.start + flexLength;
+      i++;
+    }
+  }
+  if (scheduleData[dateName]) {
     schedule.alternate = true;
   }
   schedule.date = dateObj;
   return schedule;
+}
+function saveScheduleData() {
+  return encodeStoredAlternates(scheduleData);
 }
 function prepareScheduleData(storedSchedules) {
   scheduleData = decodeStoredAlternates(storedSchedules);

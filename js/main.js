@@ -169,8 +169,7 @@ function fetchEvents() {
       dateObj.setUTCDate(dateObj.getUTCDate() + 1);
     }
 
-    // TEMP: (uncomment later)
-    // storage.setItem(SCHEDULE_DATA_KEY, encodeStoredAlternates(scheduleData)); // generalize encoding?
+    storage.setItem(SCHEDULE_DATA_KEY, saveScheduleData());
     altFetchBtn.disabled = false;
   });
 }
