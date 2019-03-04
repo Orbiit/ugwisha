@@ -49,7 +49,7 @@ const colourPicker = createElement('div', {
   classes: 'colour-picker',
   children: [
     colourPickerInput = createElement('input', {
-      classes: 'colour-input',
+      classes: 'colour-input select-input',
       attributes: {
         type: 'text',
         placeholder: '#123ABC'

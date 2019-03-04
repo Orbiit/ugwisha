@@ -257,6 +257,16 @@ body {
   display: flex;
   align-items: flex-start;
 }
+#extension-icon {
+  width: 20px;
+  height: 20px;
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-position: center;
+  margin-top: 5px;
+  margin-right: 5px;
+  border-radius: 2px;
+}
 #extension-name {
   flex: auto;
 }
@@ -290,4 +300,16 @@ body {
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+}
+.extension-add-options, .extension-remove-options {
+  margin-right: 10px;
+  vertical-align: middle;
+}
+.extension-remove-options {
+  flex: auto;
+  width: 0;
+}
+.extension-remove-wrapper {
+  margin-top: 5px;
+  display: flex;
 }

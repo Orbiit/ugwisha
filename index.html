@@ -41,10 +41,10 @@
           <button class="icon-btn ripples" id="back-day" aria-label="view previous day"></button>
           <button class="button ripples" id="select-date">select date</button>
           <div id="date-selector" class="hidden">
-            <select id="months" disabled>
+            <select id="months" class="select-input" disabled>
               <option value="CHOOSE">Choose</option>
             </select>
-            <input type="text" id="date-input" placeholder="dd" disabled>
+            <input type="text" id="date-input" placeholder="dd" class="select-input" disabled>
             <p id="error"></p>
             <div>
               <button class="button ripples" id="cancel-select-date">Cancel</button>
@@ -64,7 +64,7 @@
         <h2>Events</h2>
         <div id="events" class="events"></div>
       </div>
-      <h2 class="extension-title"><span id="extension-name">yeet</span><button class="icon-btn ripples" id="extension-menu" aria-label="go to extension menu"></button></h2>
+      <h2 class="extension-title"><span id="extension-icon"></span><span id="extension-name"></span><button class="icon-btn ripples" id="extension-menu" aria-label="go to extension menu"></button></h2>
       <div id="extension-wrapper"></div>
       <hr>
       <div class="center">

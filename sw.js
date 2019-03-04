@@ -1,10 +1,10 @@
-const VERSION = 12; // change to force update
+const VERSION = 13; // change to force update
 
 const CACHE_NAME = 'ugwisha-sw-v' + VERSION;
 const BACKGROUND_CACHE_NAME = 'ugwisha-backgrounds'; // don't change this
+const EXTENSIONS_CACHE_NAME = 'ugwisha-extensions'; // don't change this either
 const urlsToCache = [
   './',
-  './paly',
   './manifest.json',
   './css/content.css',
   './css/main.css',
@@ -13,11 +13,12 @@ const urlsToCache = [
   './js/periods.js',
   './js/ripple.js',
   './js/gunn.js',
-  './js/paly.js',
+  './js/extensions/extensions.js',
   './images/material-check_box.svg',
   './images/material-keyboard_arrow_left.svg',
   './images/material-keyboard_arrow_right.svg',
   './images/material-keyboard_arrow_up.svg',
+  './images/material-apps.svg',
   './images/logo-192.png',
   './images/logo-512.png',
   './images/logo-ios.png',
@@ -41,5 +42,5 @@ self.addEventListener('fetch', e => {
   send({type: 'version', version: VERSION});
 });
 self.addEventListener('activate', e => {
-  e.waitUntil(caches.keys().then(names => Promise.all(names.map(cache => CACHE_NAME !== cache && BACKGROUND_CACHE_NAME !== cache ? caches.delete(cache) : undefined))).then(() => self.clients.claim()));
+  e.waitUntil(caches.keys().then(names => Promise.all(names.map(cache => CACHE_NAME !== cache && BACKGROUND_CACHE_NAME !== cache && EXTENSIONS_CACHE_NAME !== cache ? caches.delete(cache) : undefined))).then(() => self.clients.claim()));
 });
