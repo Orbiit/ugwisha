@@ -94,6 +94,7 @@ function createElement(tag, data = {}) {
     });
   }
   if (data.html) elem.innerHTML = data.html;
+  if (data.ripples) rippleify(elem);
   return elem;
 }
 function createFragment(elems) {
@@ -252,21 +253,9 @@ document.addEventListener('DOMContentLoaded', async e => {
     }
   });
 
-  // notes
-  const notes = document.getElementById('notes');
-  notes.value = storage.getItem('[ugwisha] notes');
-  setTimeout(() => notes.style.height = notes.scrollHeight + 2 + 'px', 0);
-  notes.addEventListener('input', e => {
-    notes.style.height = '0';
-    notes.style.height = notes.scrollHeight + 2 + 'px';
-    storage.setItem('[ugwisha] notes', notes.value);
-  });
-
   // window size
   let windowWidth = window.innerWidth, windowHeight = window.innerHeight;
   window.addEventListener('resize', e => {
-    notes.style.height = '0';
-    notes.style.height = notes.scrollHeight + 2 + 'px';
     windowWidth = window.innerWidth, windowHeight = window.innerHeight;
   });
 
@@ -466,12 +455,12 @@ document.addEventListener('DOMContentLoaded', async e => {
   dayElem = document.getElementById('weekday');
   altFetchBtn = document.getElementById('fetch-alts');
   let fetched = false;
-  if (params['get-alts'] || !localStorage.getItem(SCHEDULE_DATA_KEY)) {
+  if (params['get-alts'] || !storage.getItem(SCHEDULE_DATA_KEY)) {
     fetched = true;
     await fetchEvents();
     if (params.then) window.location.replace(params.then);
   }
-  prepareScheduleData(localStorage.getItem(SCHEDULE_DATA_KEY));
+  prepareScheduleData(storage.getItem(SCHEDULE_DATA_KEY));
   updateView();
   altFetchBtn.addEventListener('click', async e => {
     fetched = true;
@@ -683,6 +672,8 @@ document.addEventListener('DOMContentLoaded', async e => {
       cancelBtn.click();
     }
   });
+
+  UgwishaExtensions.start();
 }, {once: true});
 
 function loadSW(updateURL = '/ugwisha-updater.html') {
