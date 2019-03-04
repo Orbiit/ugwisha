@@ -290,10 +290,10 @@ function setFavicon(text) {
   fc.font = `100px 'Roboto Condensed', sans-serif`;
   const {width} = fc.measureText(text);
   const fontSize = FAVICON_SIZE / (width / 100);
-  fc.fillStyle = FAVICON_BACK_COLOUR;
-  fc.fillRect(0, (FAVICON_SIZE - fontSize) / 2 - 1, FAVICON_SIZE, fontSize + 2);
-  fc.font = `${fontSize}px 'Roboto Condensed', sans-serif`;
   fc.fillStyle = THEME_COLOUR;
+  fc.fillRect(0, (FAVICON_SIZE - fontSize * 1.2) / 2, FAVICON_SIZE, fontSize);
+  fc.font = `${fontSize}px 'Roboto Condensed', sans-serif`;
+  fc.fillStyle = 'white';
   fc.fillText(text, FAVICON_SIZE / 2, FAVICON_SIZE / 2);
   favicon.setAttribute('href', faviconCanvas.toDataURL());
 }
@@ -332,7 +332,7 @@ function updateStatus(startInterval = false, nextMinute = 0) {
       favicon.setAttribute('href', DEFAULT_FAVICON_URL);
       document.title = APP_NAME;
     } else {
-      setFavicon(formatDuration(status.value, true));
+      setFavicon(formatDuration(status.value, true, true));
       if (status.secondCounter) {
         function seconds() {
           const {secondsLeft, stop} = status.secondCounter();

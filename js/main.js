@@ -112,14 +112,14 @@ function formatTime(minutes, noAMPM = false) {
     return `${time} ${hour < 12 ? 'a' : 'p'}m`;
   }
 }
-function formatDuration(minutes, short) {
+function formatDuration(minutes, short = false, reallyShort = false) {
   if (!short) return minutes + ' minute' + (minutes === 1 ? '' : 's');
   // const hours = Math.floor(minutes / 60);
   // const mins = minutes % 60;
   // return (hours > 0 ? hours + ' hour' + (hours === 1 ? '' : 's') : '')
   //   + (hours > 0 && mins !== 0 ? ' and ' : '')
   //   + (mins !== 0 ? mins + ' minute' + (mins === 1 ? '' : 's') : '');
-  return Math.floor(minutes / 60) + ':' + ('0' + minutes % 60).slice(-2);
+  return (reallyShort && minutes < 60 ? '' : Math.floor(minutes / 60)) + ':' + ('0' + minutes % 60).slice(-2);
 }
 
 function splitEvents({items}) {
