@@ -491,7 +491,11 @@ document.addEventListener('DOMContentLoaded', async e => {
       const dateName = viewingDate.toISOString().slice(0, 10);
       eventsList.innerHTML = `<span class="events-message">Loading...</span>`;
       if (!events[dateName]) {
-        const {items} = await fetch(`${gCalURL}&timeMin=${encodeURIComponent(toLocalTime(viewingDate).toISOString())}&timeMax=${encodeURIComponent(toLocalTime(viewingDate, 1).toISOString())}`).then(r => r.json());
+        const {items} = await fetch(`${gCalURL}&timeMin=${encodeURIComponent(toLocalTime(viewingDate).toISOString())}&timeMax=${encodeURIComponent(toLocalTime(viewingDate, 1).toISOString())}`)
+          .then(r => r.json())
+          .catch(() => {
+            eventsList.innerHTML = `<span class="events-message">Unable to fetch events.</span>`;
+          });
         events[dateName] = items;
         if (parseEvents(splitEvents({items}), viewingDate)) {
           saveScheduleData();
