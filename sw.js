@@ -1,4 +1,4 @@
-const VERSION = 13; // change to force update
+const VERSION = 14; // change to force update
 
 const CACHE_NAME = 'ugwisha-sw-v' + VERSION;
 const BACKGROUND_CACHE_NAME = 'ugwisha-backgrounds'; // don't change this
