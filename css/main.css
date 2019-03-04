@@ -252,3 +252,64 @@ body {
   overflow: auto;
   display: block;
 }
+
+.extension-title {
+  display: flex;
+  align-items: flex-start;
+}
+#extension-icon {
+  width: 20px;
+  height: 20px;
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-position: center;
+  margin-top: 5px;
+  margin-right: 5px;
+  border-radius: 2px;
+}
+#extension-name {
+  flex: auto;
+}
+#extension-menu {
+  background-image: url('../images/material-apps.svg');
+  position: relative;
+  top: -5px;
+  margin-bottom: -50px; /* SUCC */
+}
+.extension-menu {
+  margin-right: -12px;
+}
+.extension-item {
+  width: 62px;
+  display: inline-block;
+  margin-bottom: 5px;
+  margin-right: 12px;
+}
+.extension-icon {
+  width: 60px;
+  height: 60px;
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-position: center;
+}
+.extension-name {
+  font-size: 14px;
+  color: rgba(255, 255, 255, 0.7);
+  text-align: center;
+  margin-top: 2px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.extension-add-options, .extension-remove-options {
+  margin-right: 10px;
+  vertical-align: middle;
+}
+.extension-remove-options {
+  flex: auto;
+  width: 0;
+}
+.extension-remove-wrapper {
+  margin-top: 5px;
+  display: flex;
+}
