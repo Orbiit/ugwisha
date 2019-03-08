@@ -116,7 +116,7 @@ window.UgwishaExtensions = (() => {
   ];
   const extensionIcons = createElement('div', {classes: 'extension-menu'});
   const addExtensionOption = createElement('select', {
-    classes: 'select-input extension-add-options',
+    classes: 'select-input extension-list',
     children: [
       createElement('option', {
         attributes: {value: 'CHOOSE', disabled: true},
@@ -156,7 +156,7 @@ window.UgwishaExtensions = (() => {
   });
   const removeOptions = {};
   const removeExtensionOption = createElement('select', {
-    classes: 'select-input extension-remove-options',
+    classes: 'select-input extension-list',
     children: [
       createElement('option', {
         attributes: {value: 'CHOOSE', disabled: true},
@@ -211,13 +211,14 @@ window.UgwishaExtensions = (() => {
       children: [
         extensionIcons,
         createElement('div', {
+          classes: 'extension-list-wrapper',
           children: [
             addExtensionOption,
             addExtensionBtn
           ]
         }),
         createElement('div', {
-          classes: 'extension-remove-wrapper',
+          classes: 'extension-list-wrapper',
           children: [
             removeExtensionOption,
             removeExtensionBtn

@@ -162,7 +162,7 @@ body {
 #select-date {
   margin: 0 5px;
 }
-#transition-background {
+.transition-background {
   position: fixed;
   top: 0;
   left: 0;
@@ -173,14 +173,10 @@ body {
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
-  display: none;
   background-color: #212121;
-}
-#transition-background.animating {
-  display: block;
   animation: fade-out 5s forwards;
 }
-.quick-transitions #transition-background.animating {
+.quick-transitions .transition-background {
   animation-duration: .5s;
 }
 @keyframes fade-out {
@@ -301,15 +297,13 @@ body {
   overflow: hidden;
   text-overflow: ellipsis;
 }
-.extension-add-options, .extension-remove-options {
+.extension-list {
   margin-right: 10px;
   vertical-align: middle;
-}
-.extension-remove-options {
   flex: auto;
   width: 0;
 }
-.extension-remove-wrapper {
+.extension-list-wrapper {
   margin-top: 5px;
   display: flex;
 }

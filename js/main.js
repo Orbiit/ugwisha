@@ -184,20 +184,14 @@ function randomGradient() {
   const colour2 = [randomInt(256), randomInt(256), randomInt(256)];
   return `linear-gradient(${Math.random() * 360}deg, rgb(${colour1.join(',')}), rgb(${colour2.join(',')}))`;
 }
-let backgroundTransitioner, transitioning = false;
 function setBackground(css) {
-  if (transitioning) {
-    document.body.style.backgroundImage = css;
-    return;
-  }
-  transitioning = true;
-  backgroundTransitioner.style.backgroundImage = document.body.style.backgroundImage;
-  backgroundTransitioner.classList.add('animating');
+  const transitioner = createElement('div', {classes: 'transition-background'});
+  transitioner.style.backgroundImage = document.body.style.backgroundImage;
+  transitioner.addEventListener('animationend', e => {
+    document.body.removeChild(transitioner);
+  });
+  document.body.insertBefore(transitioner, document.body.firstChild);
   document.body.style.backgroundImage = css;
-  setTimeout(() => {
-    backgroundTransitioner.classList.remove('animating');
-    transitioning = false;
-  }, options.quickTransitions ? 500 : 5000);
 }
 async function newBackground(url, id) {
   const headers = new Headers();
@@ -263,7 +257,6 @@ document.addEventListener('DOMContentLoaded', async e => {
   const setBackgroundBtn = document.getElementById('set-back');
   const resetBackground = document.getElementById('reset-back');
   const nextBackground = document.getElementById('next-back');
-  backgroundTransitioner = document.getElementById('transition-background');
   let randomGradientTimer = null;
   function startRandomGradients() {
     if (randomGradientTimer) clearInterval(randomGradientTimer);
