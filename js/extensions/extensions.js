@@ -104,15 +104,22 @@ window.UgwishaExtensions = (() => {
             })
           ]
         }));
+        if (data.styles) {
+          document.head.appendChild(createElement('link', {
+            attributes: {rel: 'stylesheet', href: data.styles}
+          }));
+        }
         const sources = data.sources || [];
         if (data.icon) sources.push(data.icon);
+        if (data.styles) sources.push(data.styles);
         if (sources.length)
           caches.open(EXTENSIONS_CACHE_NAME).then(cache => cache.addAll(sources));
       }
     }
   };
   const nativeExtensions = [
-    ['Notes', './js/extensions/notes.js']
+    ['Notes', './js/extensions/notes.js'],
+    ['Todo', './js/extensions/todo.js']
   ];
   const extensionIcons = createElement('div', {classes: 'extension-menu'});
   const addExtensionOption = createElement('select', {

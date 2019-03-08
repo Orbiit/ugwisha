@@ -22,6 +22,7 @@ UgwishaExtensions.register((() => {
     wrapper: wrapper,
     name: 'Notes',
     icon: './images/notes-icon.svg',
+    url: './js/extensions/notes.js',
     afterAdd() {
       visible = true;
       notes.style.height = notes.scrollHeight + 2 + 'px';

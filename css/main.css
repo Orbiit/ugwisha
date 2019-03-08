@@ -17,6 +17,9 @@ body {
 ::selection {
   background-color: rgba(0, 188, 212, 0.4);
 }
+::-webkit-input-placeholder {
+  color: rgba(255, 255, 255, 0.4);
+}
 .hidden {
   display: none;
 }
