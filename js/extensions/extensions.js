@@ -60,24 +60,24 @@ window.UgwishaExtensions = (() => {
   }
   function addExtension(url) {
     if (installed.includes(url)) return Promise.reject(new Error('Extension already added'));
+    installed.push(url);
     return install(url).then(() => {
-      installed.push(url);
       storage.setItem(INSTALLED_EXTENSIONS_KEY, JSON.stringify(installed));
       const entry = nativeExtensions.find(entry => entry[1] === url);
       if (entry) entry[2].disabled = true;
-      removeExtensionOption.appendChild(removeOptions[url] = createElement('option', {
-        attributes: {value: url},
-        html: url
-      }));
     });
   }
+  let removing = false;
   const obj = {
     start: start,
     register(data) {
-      if (extensions[data.id]) throw new Error('Extension with same ID already exists');
+      if (extensions[data.id])
+        throw new Error('Extension with same ID already exists: ' + data.id);
+      if (data.id !== 'menu' && !installed.includes(data.url))
+        throw new Error('No extensions are loaded with this URL: ' + data.url);
       extensions[data.id] = data;
       if (data.id !== 'menu') {
-        extensionIcons.appendChild(createElement('div', {
+        const item = createElement('div', {
           classes: 'extension-item',
           children: [
             createElement('div', {
@@ -90,7 +90,18 @@ window.UgwishaExtensions = (() => {
               },
               listeners: {
                 click(e) {
-                  obj.switch(data.id);
+                  if (removing) {
+                    delete extensions[data.id];
+                    const index = installed.indexOf(data.url);
+                    if (~index) {
+                      installed.splice(index, 1);
+                      storage.setItem(INSTALLED_EXTENSIONS_KEY, JSON.stringify(installed));
+                    }
+                    extensionIcons.removeChild(item);
+                    const entry = nativeExtensions.find(entry => entry[1] === data.url);
+                    if (entry) entry[2].disabled = false;
+                  }
+                  else obj.switch(data.id);
                 },
                 keydown(e) {
                   if (e.keyCode === 13) this.click();
@@ -103,7 +114,8 @@ window.UgwishaExtensions = (() => {
               children: [data.name]
             })
           ]
-        }));
+        });
+        extensionIcons.appendChild(item);
         if (data.styles) {
           document.head.appendChild(createElement('link', {
             attributes: {rel: 'stylesheet', href: data.styles}
@@ -161,57 +173,6 @@ window.UgwishaExtensions = (() => {
     },
     ripples: true
   });
-  const removeOptions = {};
-  const removeExtensionOption = createElement('select', {
-    classes: 'select-input extension-list',
-    children: [
-      createElement('option', {
-        attributes: {value: 'CHOOSE', disabled: true},
-        html: 'Remove app by URL'
-      }),
-      ...installed.map(url => removeOptions[url] = createElement('option', {
-        attributes: {value: url},
-        html: url
-      }))
-    ],
-    attributes: {value: 'CHOOSE'},
-    listeners: {
-      change(e) {
-        removeExtensionBtn.disabled = removeExtensionOption.value === 'CHOOSE';
-      }
-    }
-  });
-  const removeExtensionBtn = createElement('button', {
-    classes: 'button extension-remove',
-    children: ['Remove'],
-    attributes: {disabled: true},
-    listeners: {
-      click(e) {
-        let url = removeExtensionOption.value;
-        if (url !== 'CHOOSE') {
-          removeExtensionOption.removeChild(removeOptions[url]);
-          removeOptions[url] = null;
-          const index = installed.indexOf(url);
-          if (~index) {
-            installed.splice(index, 1);
-            storage.setItem(INSTALLED_EXTENSIONS_KEY, JSON.stringify(installed));
-          }
-          const entry = nativeExtensions.find(entry => entry[1] === url);
-          if (entry) entry[2].disabled = false;
-          removeMessage.style.display = null;
-        }
-        removeExtensionOption.value = 'CHOOSE';
-        removeExtensionBtn.disabled = true;
-      }
-    },
-    ripples: true
-  });
-  const removeMessage = createElement('p', {
-    styles: {
-      display: 'none'
-    },
-    html: 'Removed extensions will take effect upon reload.'
-  });
   obj.register({
     id: 'menu',
     wrapper: createElement('div', {
@@ -224,14 +185,25 @@ window.UgwishaExtensions = (() => {
             addExtensionBtn
           ]
         }),
-        createElement('div', {
-          classes: 'extension-list-wrapper',
-          children: [
-            removeExtensionOption,
-            removeExtensionBtn
-          ]
-        }),
-        removeMessage
+        createElement('button', {
+          classes: 'button extension-remove',
+          children: ['Remove apps'],
+          listeners: {
+            click(e) {
+              removing = !removing;
+              if (removing) {
+                extensionIcons.classList.add('extension-remove-mode');
+                this.classList.add('extension-removing');
+                this.childNodes[0].nodeValue = 'Done';
+              } else {
+                extensionIcons.classList.remove('extension-remove-mode');
+                this.classList.remove('extension-removing');
+                this.childNodes[0].nodeValue = 'Remove apps';
+              }
+            }
+          },
+          ripples: true
+        })
       ]
     }),
     name: 'Apps'

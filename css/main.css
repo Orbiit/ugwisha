@@ -290,6 +290,7 @@ body {
   background-size: cover;
   background-repeat: no-repeat;
   background-position: center;
+  transition: all .2s;
 }
 .extension-name {
   font-size: 14px;
@@ -309,4 +310,25 @@ body {
 .extension-list-wrapper {
   margin-top: 5px;
   display: flex;
+}
+.extension-remove-mode .extension-icon {
+  border-color: #ff5959;
+  background-color: rgba(255, 89, 89, 0.2);
+}
+.extension-remove-mode .extension-name {
+  color: rgba(255, 89, 89, 0.8);
+}
+.extension-remove {
+  margin-top: 10px;
+}
+.extension-remove.extension-removing {
+  animation: pulse .5s cubic-bezier(0.5, 0, 0.5, 1) infinite alternate;
+  border-color: #ff5959;
+}
+@keyframes pulse {
+  from { background-color: rgba(255, 89, 89, 0.5); }
+  to   { background-color: rgba(255, 89, 89, 0); }
+}
+.extension-remove-mode .extension-icon .ripple, .extension-remove.extension-removing .ripple {
+  background-color: rgba(255, 89, 89, 0.5);
 }
