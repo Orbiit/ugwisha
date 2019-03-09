@@ -305,10 +305,11 @@ function updateStatus(startInterval = false, nextMinute = 0) {
   if (startInterval && now < nextMinute) {
     return setTimeout(() => updateStatus(true, nextMinute), Math.min(nextMinute - now, 1000));
   }
-  const today = new Date().toISOString().slice(0, 10);
-  if (todayDate !== today) {
-    todayDate = today;
-    todaySchedule = getSchedule(getToday());
+  const today = getToday();
+  const todayStr = new Date().toISOString().slice(0, 10);
+  if (todayDate !== todayStr) {
+    todayDate = todayStr;
+    todaySchedule = getSchedule(today);
     if (todaySchedule.noSchool) {
       progressBar.style.opacity = 0;
       favicon.setAttribute('href', DEFAULT_FAVICON_URL);

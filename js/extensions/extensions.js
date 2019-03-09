@@ -100,6 +100,9 @@ window.UgwishaExtensions = (() => {
                     extensionIcons.removeChild(item);
                     const entry = nativeExtensions.find(entry => entry[1] === data.url);
                     if (entry) entry[2].disabled = false;
+                    caches.open(EXTENSIONS_CACHE_NAME)
+                      .then(cache => Promise.all([data.url, ...sources].map(url => cache.delete(url))))
+                      .then(() => console.log('Extension cache deleted'));
                   }
                   else obj.switch(data.id);
                 },

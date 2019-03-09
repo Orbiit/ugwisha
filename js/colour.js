@@ -78,9 +78,9 @@ function rgbToHsvOptimized({r, g, b}) {
   const max = Math.max(r, g, b);
   const diff = max - min;
   let h = max === min && r === g && g === b ? 0
-          : max === r ? 60 * (g - b) / diff
-          : max === g ? 60 * (2 + (b - r) / diff)
-          : 60 * (4 + (r - g) / diff);
+        : max === r ? 60 * (g - b) / diff
+        : max === g ? 60 * (2 + (b - r) / diff)
+        : 60 * (4 + (r - g) / diff);
   if (h < 0) h += 360;
   const s = max === 0 && min === 0 ? 0 : diff / max;
   const v = max;
