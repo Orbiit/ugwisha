@@ -15,8 +15,9 @@ Ugwisha currently supports:
   - custom period names and colours
   - PSA system
   - optional SELF
-  - show week previews (like UGWA)
-  - show events
+  - week previews
+  - events
+  - barcode generator
 - Ugwita features
   - automatically change date when there's a new day
   - linking to dates by URL: `?day=yyyy-mm-dd`
@@ -35,10 +36,6 @@ Perhaps Ugwisha may also support:
 - better date selector
 - randomly selected sheep doodles
 - weather
-- barcode generator
-
-Ugwisha will probably not have:
-
 - club and staff lists
 - campus map
 
