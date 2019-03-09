@@ -135,7 +135,8 @@ window.UgwishaExtensions = (() => {
   const nativeExtensions = [
     ['Notes', './js/extensions/notes.js'],
     ['Todo', './js/extensions/todo.js'],
-    ['Barcode', './js/extensions/barcode.js']
+    ['Barcode', './js/extensions/barcode.js'],
+    ['Min. Score Calc.', './js/extensions/min-score.js']
   ];
   const extensionIcons = createElement('div', {classes: 'extension-menu'});
   const addExtensionOption = createElement('select', {

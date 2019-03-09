@@ -187,8 +187,12 @@ function randomGradient() {
 function setBackground(css) {
   const transitioner = createElement('div', {classes: 'transition-background'});
   transitioner.style.backgroundImage = document.body.style.backgroundImage;
+  const stopper = setTimeout(() => { // just in case
+    document.body.removeChild(transitioner);
+  }, 10000);
   transitioner.addEventListener('animationend', e => {
     document.body.removeChild(transitioner);
+    clearTimeout(stopper);
   });
   document.body.insertBefore(transitioner, document.body.firstChild);
   document.body.style.backgroundImage = css;
