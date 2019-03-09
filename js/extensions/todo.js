@@ -147,6 +147,6 @@ UgwishaExtensions.register((() => {
     icon: './images/todo-icon.svg',
     url: './js/extensions/todo.js',
     styles: './js/extensions/todo.css',
-    sources: ['./images/material-add.svg', './images/material-remove.svg']
+    sources: ['./images/material-add.svg?for=todo', './images/material-remove.svg?for=todo']
   };
 })());

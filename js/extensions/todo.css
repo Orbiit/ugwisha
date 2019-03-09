@@ -5,10 +5,10 @@
   left: -10px;
 }
 .todo-add {
-  background-image: url('../../images/material-add.svg');
+  background-image: url('../../images/material-add.svg?for=todo');
 }
 .todo-remove {
-  background-image: url('../../images/material-remove.svg');
+  background-image: url('../../images/material-remove.svg?for=todo');
 }
 .todo-content {
   -webkit-appearance: none;

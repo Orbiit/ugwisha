@@ -1,0 +1,73 @@
+.barcode-wrapper {
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  margin-bottom: 5px;
+}
+.barcode-input {
+  -webkit-appearance: none;
+  border-radius: 5px;
+  padding: 5px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: none;
+  font: inherit;
+  font-size: 16px;
+  color: rgba(255, 255, 255, 0.7);
+  width: 100%;
+  flex: auto;
+  cursor: pointer;
+  box-sizing: border-box;
+}
+.barcode-input:focus {
+  outline: none;
+  color: white;
+  cursor: auto;
+  border-color: rgba(255, 255, 255, 0.3);
+}
+.barcode-id-wrapper {
+  margin-top: 5px;
+}
+.barcode-id-wrapper, .barcode-canvas-wrapper {
+  display: flex;
+  align-items: center;
+}
+.barcode-display, .barcode-remove {
+  flex: none;
+  margin-left: 5px;
+}
+.barcode-remove {
+  background-image: url('../../images/material-delete_outline.svg?for=barcode');
+}
+.barcode-canvas {
+  flex: auto;
+  width: 0;
+  height: 20px;
+  border-radius: 2px;
+  border: 5px solid white;
+}
+.barcode-displaying .barcode-canvas-wrapper {
+  position: fixed;
+  z-index: 1000;
+  background: white;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  justify-content: center;
+}
+.barcode-displaying .barcode-remove {
+  display: none;
+}
+.barcode-displaying .barcode-canvas {
+  border-radius: 0;
+  padding: 0;
+  width: 320px;
+  height: 40px;
+  border: none;
+  flex: none;
+}
+@media (orientation: portrait) {
+
+  .barcode-displaying .barcode-canvas {
+    transform: rotate(90deg);
+  }
+
+}
