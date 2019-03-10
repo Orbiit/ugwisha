@@ -38,7 +38,7 @@ self.addEventListener('install', e => {
   e.waitUntil(caches.open(CACHE_NAME).then(cache => cache.addAll(urlsToCache)).then(() => self.skipWaiting()));
 });
 self.addEventListener('fetch', e => {
-  e.respondWith(caches.match(e.request).then(response => response || fetch(e.request)));
+  e.respondWith(caches.match(e.request, {ignoreSearch: true}).then(response => response || fetch(e.request)));
   caches.open(EXTENSIONS_CACHE_NAME) // update cache if it's in the extension cache
     .then(cache => cache.match(e.request)
       .then(response => response && cache.add(e.request)));
