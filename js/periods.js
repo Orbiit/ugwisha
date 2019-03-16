@@ -306,7 +306,7 @@ function updateStatus(startInterval = false, nextMinute = 0) {
     return setTimeout(() => updateStatus(true, nextMinute), Math.min(nextMinute - now, 1000));
   }
   const today = getToday();
-  const todayStr = new Date().toISOString().slice(0, 10);
+  const todayStr = today.toISOString().slice(0, 10);
   if (todayDate !== todayStr) {
     todayDate = todayStr;
     todaySchedule = getSchedule(today);
@@ -319,7 +319,6 @@ function updateStatus(startInterval = false, nextMinute = 0) {
   const status = timeLeft(todaySchedule);
   if (todaySchedule.noSchool) {
     previewTime.textContent = formatTime(status.value, true);
-    return;
   } else {
     if (status.type === 'left in') {
       progressBar.style.opacity = 1;
