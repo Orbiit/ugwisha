@@ -1,5 +1,7 @@
 /* PARSING */
 const EARLIEST_AM_HOUR = 6;
+const PASSING_PERIOD_LENGTH = 10;
+const DOUBLE_FLEX_LENGTH = 80; // longer flex might not be double - see 2018-10-10
 
 const HTMLnewlineRegex = /<(p|div|br).*?>|\),? *(?=[A-Z0-9])/g;
 const noHTMLRegex = /<.*?>/g;
@@ -7,19 +9,19 @@ const noNbspRegex = /&nbsp;/g;
 const timeGetterRegex = /\(?(1?[0-9]):([0-9]{2}) *(?:-|–) *(1?[0-9]):([0-9]{2}) *(pm)?\)?/;
 const newLineRegex = /\r?\n/g;
 const getPeriodLetterRegex = /\b[A-G]\b/;
-const selfGradeRegex = /(1?[9012])th/gi;
-const periodSelfGradeRegex = /self for (.+?) grader/gi;
-const gradeToInt = {'9': 1, '10': 2, '11': 4, '12': 8};
+const selfGradeRegex = /(1?[9012])th|(freshmen|sophomore|junior|senior)/gi;
+const periodSelfGradeRegex = /self for (.+?) grader|self for (freshmen|sophomore|junior|senior)/gi;
+const gradeToInt = {'9': 1, '10': 2, '11': 4, '12': 8, freshmen: 1, sophomore: 2, junior: 4, senior: 8};
 const defaultSelf = 0b11;
 
 function parseAlternate(summary, description) {
   if (/schedule|extended|lunch/i.test(summary)) {
     if (!description) return;
     description = '\n' + description.replace(HTMLnewlineRegex, '\n').replace(noHTMLRegex, '').replace(noNbspRegex, ' ');
-    let periods = [];
+    const periods = [];
     description.split(newLineRegex).forEach(str => {
       let times;
-      const name = str.replace(timeGetterRegex, (...matches) => {
+      let name = str.replace(timeGetterRegex, (...matches) => {
         times = matches;
         return '';
       }).trim();
@@ -31,43 +33,71 @@ function parseAlternate(summary, description) {
       sH = +sH; sM = +sM; eH = +eH; eM = +eM;
       if (sH < EARLIEST_AM_HOUR || pm) sH += 12;
       if (eH < EARLIEST_AM_HOUR || pm) eH += 12;
-      const startTime = sH * 60 + sM,
+      let startTime = sH * 60 + sM,
       endTime = eH * 60 + eM;
 
-      const duplicatePeriod = periods.findIndex(p => p.start === startTime);
-      if (~duplicatePeriod) {
-        const duplicate = periods[duplicatePeriod];
-        // keep longer duplicate period (see 2019-01-11 schedule)
-        if (duplicate.end - duplicate.start < endTime - startTime) {
-          if (duplicate.period === 's') {
-            periods.selfInSchedule--;
+      // handle duplicate periods
+      const isRedundant = periods.find(pd => {
+        if (pd.retire) return false;
+        if (pd.start === startTime && pd.end === endTime) {
+          // duplicate period
+          pd.raw += '\n' + name;
+          return true;
+        } else if (pd.start <= startTime && pd.end >= endTime) {
+          // longer period takes place during this period
+          name += '\n' + pd.raw;
+          // assumes there's passing period
+          const beforeEnd = startTime - PASSING_PERIOD_LENGTH;
+          const afterStart = endTime + PASSING_PERIOD_LENGTH;
+          // TEMP: assumes that there can't be both a beforePart and an afterPart
+          if (beforeEnd - pd.start > 0) {
+            pd.end = beforeEnd;
+          } else if (pd.end - afterStart > 0) {
+            pd.start = afterStart;
+          } else {
+            pd.retire = true;
           }
-          periods.splice(duplicatePeriod, 1);
-        } else {
-          return;
+        } else if (pd.start >= startTime && pd.end <= endTime) {
+          // shorter period takes place during this period
+          pd.raw += '\n' + name;
+          // same problems here as above
+          const beforePart = pd.start - PASSING_PERIOD_LENGTH;
+          const afterPart = pd.end + PASSING_PERIOD_LENGTH;
+          if (beforeEnd - startTime > 0) {
+            endTime = beforeEnd;
+          } else if (endTime - afterStart > 0) {
+            startTime = afterStart;
+          } else {
+            return true;
+          }
         }
-      }
-      const period = identifyPeriod(name);
-      const periodData = {
-        period: period,
+        // assumes there won't be a case like (8:40-9:10) and (8:30 - 9:00)
+      });
+      if (!isRedundant) periods.push({
+        raw: name,
         start: startTime,
         end: endTime
-      };
+      });
+    });
+    return periods.filter(pd => {
+      if (pd.retire) return false;
+      const period = identifyPeriod(pd.raw);
+      pd.period = period;
       if (period === 's') {
         periods.selfInSchedule = (periods.selfInSchedule || 0) + 1;
         periodSelfGradeRegex.lastIndex = 0;
-        const selfSlice = periodSelfGradeRegex.exec(name);
+        const selfSlice = periodSelfGradeRegex.exec(pd.raw);
         if (selfSlice) {
           let grades = 0;
-          selfSlice[1].replace(selfGradeRegex, (_, grade) => grades += gradeToInt[grade]);
-          periodData.selfGrades = grades || defaultSelf;
+          (selfSlice[1] || selfSlice[2]).replace(selfGradeRegex, (match, grade) => grades += gradeToInt[grade || match] || 0);
+          pd.selfGrades = grades || defaultSelf;
         } else {
-          periodData.selfGrades = defaultSelf;
+          pd.selfGrades = defaultSelf;
         }
       }
-      if (period) periods.push(periodData);
-    });
-    return periods;
+      delete pd.raw;
+      return period;
+    }).sort((a, b) => a.start - b.start);
   } else if (/holiday|no\sstudents|break|development/i.test(summary)) {
     if (description) return;
     return null;
@@ -92,21 +122,12 @@ function identifyPeriod(name) {
   else return;
 }
 
-/* FETCHING */
-const SCHEDULES_CALENDAR_ID = 'u5mgb2vlddfj70d7frf3r015h0@group.calendar.google.com';
-const EVENTS_CALENDAR_ID = 'u5mgb2vlddfj70d7frf3r015h0@group.calendar.google.com';
-const CALENDAR_KEYWORDS = ['self', 'schedule', 'extended', 'holiday', 'no students', 'break', 'development'];
-
-// please set this to your own if you fork Ugwisha, thanks
-const GOOGLE_API_KEY = 'AIzaSyDBYs4DdIaTjYx5WDz6nfdEAftXuctZV0o';
-
-const PASSING_PERIOD_LENGTH = 10;
-const DOUBLE_FLEX_LENGTH = 80; // longer flex might not be double - see 2018-10-10
 function parseEvents(events, dateObj) {
   const dateName = dateObj.toISOString().slice(5, 10);
   const weekDay = dateObj.getUTCDay();
   const oldEntry = scheduleData[dateName];
   let self, alternate, overrideSELF = false;
+  // duplicate events happen infrequently; they're not a concern
   events.forEach(({summary, description}) => {
     if (summary.includes('SELF') && summary.includes('graders')) {
       let grades = 0;
@@ -149,7 +170,7 @@ function parseEvents(events, dateObj) {
       });
     }
     scheduleData[dateName] = alternate;
-    return JSON.stringify(oldEntry) === JSON.stringify(alternate);
+    return JSON.stringify(oldEntry) !== JSON.stringify(alternate);
   } else {
     // this is hardcoded, so if say SELF gets moved to Wednesday, this will need changing
     if (weekDay === 4 && self !== defaultSelf) {
@@ -175,6 +196,14 @@ function parseEvents(events, dateObj) {
     }
   }
 }
+
+/* FETCHING */
+const SCHEDULES_CALENDAR_ID = 'u5mgb2vlddfj70d7frf3r015h0@group.calendar.google.com';
+const EVENTS_CALENDAR_ID = 'u5mgb2vlddfj70d7frf3r015h0@group.calendar.google.com';
+const CALENDAR_KEYWORDS = ['self', 'schedule', 'extended', 'holiday', 'no students', 'break', 'development'];
+
+// please set this to your own if you fork Ugwisha, thanks
+const GOOGLE_API_KEY = 'AIzaSyDBYs4DdIaTjYx5WDz6nfdEAftXuctZV0o';
 
 /* ENCODING */
 const selfCharOffset = 72;

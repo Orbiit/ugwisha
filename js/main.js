@@ -495,7 +495,7 @@ document.addEventListener('DOMContentLoaded', async e => {
           });
         events[dateName] = items;
         if (parseEvents(splitEvents({items}), viewingDate)) {
-          saveScheduleData();
+          storage.setItem(SCHEDULE_DATA_KEY, saveScheduleData());
           updateView();
         }
       }
