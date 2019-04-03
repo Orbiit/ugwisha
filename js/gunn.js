@@ -205,6 +205,9 @@ const CALENDAR_KEYWORDS = ['self', 'schedule', 'extended', 'holiday', 'no studen
 // please set this to your own if you fork Ugwisha, thanks
 const GOOGLE_API_KEY = 'AIzaSyDBYs4DdIaTjYx5WDz6nfdEAftXuctZV0o';
 
+const firstDay = new Date(Date.UTC(2018, 7, 13));
+const lastDay = new Date(Date.UTC(2019, 4, 31));
+
 /* ENCODING */
 const selfCharOffset = 72;
 const alternateRegex = /([A-GblfI-W])([\dab]{3})([\dab]{3})/g;
@@ -344,6 +347,7 @@ function prepareScheduleData(storedSchedules) {
 }
 
 /* PERIOD CARD NOTES */
+const gradeName = ['freshmen', 'sophomores', 'juniors', 'seniors'];
 function getNote(periodData) {
   return periodData.period === 's' ? 'For ' + (periodData.selfGrades || defaultSelf).toString(2).split('').reverse().map((n, i) => n === '1' ? gradeName[i] : '').filter(n => n).join(', ') : undefined;
 }
@@ -354,4 +358,4 @@ const DEFAULT_FAVICON_URL = './images/logo-192.png';
 const APP_NAME = 'Ugwisha';
 const PERIOD_OPTION_PREFIX = '';
 
-loadSW('/ugwisha-updater.html');
+const UPDATER_URL = '/ugwisha-updater.html';

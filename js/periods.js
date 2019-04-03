@@ -1,13 +1,45 @@
-/*
- * GIVEN: defaultNames, defaultColours, getNote, THEME_COLOUR,
- *   DEFAULT_FAVICON_URL, APP_NAME, PERIOD_OPTION_PREFIX
- * GIVES: *nothing*
- *
- * PERIODS.js
- * displays schedules and calculates time left
+/**
+ * Size of the canvas for creating a custom favicon
+ * @type {number}
  */
-
 const FAVICON_SIZE = 32;
+
+/**
+ * Formats a time string according to user preferences
+ * @param {number} minutes Number of minutes since the beginning of the day
+ * @param {boolean} [noAMPM=false] If the AM/PM should be excluded, regardless
+ *                                 of if the user is using 12-hour
+ * @return {string} The time string
+ */
+function formatTime(minutes, noAMPM = false) {
+  const hour = Math.floor(minutes / 60);
+  const min = ('0' + minutes % 60).slice(-2);
+  let time = options.metricTime ? `${hour}:${min}` : `${(hour + 11) % 12 + 1}:${min}`;
+  if (options.metricTime || noAMPM) {
+    return time;
+  } else {
+    return `${time} ${hour < 12 ? 'a' : 'p'}m`;
+  }
+}
+
+/**
+ * Formats a duration
+ * @param {number} minutes Number of minutes
+ * @param {boolean} [short=false] False the word "minutes" should be used
+ * @param {boolean} [reallyShort=false] True if a leading 0 before the colon
+ *                                      should be excluded (eg 0:03 -> :03);
+ *                                      used in the favicon
+ * @return {string} The duration string
+ */
+function formatDuration(minutes, short = false, reallyShort = false) {
+  if (!short) return minutes + ' minute' + (minutes === 1 ? '' : 's');
+  // const hours = Math.floor(minutes / 60);
+  // const mins = minutes % 60;
+  // return (hours > 0 ? hours + ' hour' + (hours === 1 ? '' : 's') : '')
+  //   + (hours > 0 && mins !== 0 ? ' and ' : '')
+  //   + (mins !== 0 ? mins + ' minute' + (mins === 1 ? '' : 's') : '');
+  return (reallyShort && minutes < 60 ? '' : Math.floor(minutes / 60)) + ':' + ('0' + minutes % 60).slice(-2);
+}
 
 function getPdName(pd) {
   return options['periodName_' + PERIOD_OPTION_PREFIX + pd];
@@ -24,9 +56,12 @@ function setPdColour(pd, newColour) {
 
 let scheduleWrapper, weekPreviewWrapper;
 let inputs, periodCards;
-const gradeName = ['freshmen', 'sophomores', 'juniors', 'seniors'];
-const hexColourRegex = /([0-9a-f]{6})|([0-9a-f])([0-9a-f])([0-9a-f])/;
 let colourPickerInput, colourPickerCheckbox;
+
+/**
+ * Closes a colour picker after something loses focus and the focus has gone
+ * somewhere other than the colour picker.
+ */
 function checkThenDestroy() {
   setTimeout(() => {
     if (!scheduleWrapper.contains(document.activeElement)) {
@@ -35,6 +70,20 @@ function checkThenDestroy() {
     }
   }, 0);
 }
+
+/**
+ * Regex for detecting a hex colour; the capture groups are done so three-digit
+ * hex colours can be easily turned into six-digit ones.
+ * @type {Regex}
+ */
+const hexColourRegex = /([0-9a-f]{6})|([0-9a-f])([0-9a-f])([0-9a-f])/;
+
+/**
+ * Isolates a hexadecimal colour code from a string; supports three-digit hex
+ * colours.
+ * @param {string} val The string containing the hex colour
+ * @return {?string} A six digit hexadecimal value (without a hash character)
+ */
 function parseColour(val) {
   const regexified = hexColourRegex.exec(val.toLowerCase());
   if (regexified) {
@@ -45,6 +94,13 @@ function parseColour(val) {
     }
   }
 }
+
+let periodBeingColoured = null;
+
+/**
+ * The colour picker wrapper
+ * @type {HTMLElement}
+ */
 const colourPicker = createElement('div', {
   classes: 'colour-picker',
   children: [
@@ -104,7 +160,11 @@ const colourPicker = createElement('div', {
     })
   ]
 });
-let periodBeingColoured = null;
+
+/**
+ * Renders the given schedule
+ * @param {Schedule} schedule The schedule to render
+ */
 function setSchedule(schedule) {
   empty(scheduleWrapper);
   if (schedule.alternate) {
@@ -183,7 +243,18 @@ function setSchedule(schedule) {
     return wrapper;
   })));
 }
+
+/**
+ * Letters representing days of the week used in the week preview.
+ * @type {string[]}
+ */
 const dayInitials = ['S', 'M', 'T', 'W', '&Theta;', 'F', 'S'];
+
+/**
+ * Renders the week preview
+ * @param {Schedule[]} schedules Schedules of each day of the week
+ * @param {number} selectedDay Index of the day being previewed
+ */
 function showWeekPreview(schedules, selectedDay) {
   empty(weekPreviewWrapper);
   weekPreviewWrapper.appendChild(createFragment(schedules.map((schedule, i) => createElement('div', {
@@ -238,7 +309,20 @@ function showWeekPreview(schedules, selectedDay) {
   }))));
 }
 
-const timezone = new Date().getTimezoneOffset(); // could try to sync it to PT for everyone, but DST :(
+/**
+ * Time zone offset of the user in minutes relative to GMT (so GMT-0700 becomes
+ * 420)
+ * @type {number}
+ */
+const timezone = new Date().getTimezoneOffset();
+
+/**
+ * Calculates the current time left
+ * @param {Schedule} schedule Schedule to use for calculating time left
+ * @param {number} [offset=0] Number of milliseconds to add to the current time
+ *                            (for testing)
+ * @return {Object} Some info to be used by updateStatus()
+ */
 function timeLeft(schedule, offset = 0) {
   const now = Date.now() + offset;
   const minutes = Math.floor((now / 60000 - timezone) % 1440);
@@ -276,6 +360,12 @@ function timeLeft(schedule, offset = 0) {
   }
   return status;
 }
+
+/**
+ * Generates HTML for a "period chip" in the preview
+ * @param {string} period The ID of the period
+ * @return {string} The HTML
+ */
 function getPeriodChipHTML(period) {
   const colour = getPdColour(period);
   let str = '<span class="period-chip';
@@ -285,6 +375,19 @@ function getPeriodChipHTML(period) {
   str += `>${getPdName(period)}</span>`;
   return str;
 }
+
+const faviconCanvas = createElement('canvas', {
+  attributes: {
+    width: FAVICON_SIZE,
+    height: FAVICON_SIZE
+  }
+});
+const fc = faviconCanvas.getContext('2d');
+
+/**
+ * Sets the favicon
+ * @param {string} text Content of the favicon (shorter is better)
+ */
 function setFavicon(text) {
   fc.clearRect(0, 0, FAVICON_SIZE, FAVICON_SIZE);
   fc.font = `100px 'Roboto Condensed', sans-serif`;
@@ -298,7 +401,7 @@ function setFavicon(text) {
   favicon.setAttribute('href', faviconCanvas.toDataURL());
 }
 
-let previewTime, previewMsg, progressBar, favicon, faviconCanvas, fc;
+let previewTime, previewMsg, progressBar, favicon;
 let todaySchedule, todayDate;
 function updateStatus(startInterval = false, nextMinute = 0) {
   const now = Date.now();
@@ -353,7 +456,7 @@ function updateStatus(startInterval = false, nextMinute = 0) {
   if (startInterval) setTimeout(() => updateStatus(true, status.nextMinute), Math.min(status.nextMinute - now, 1000));
 }
 
-ready.push(() => {
+window.ready.push(() => {
   scheduleWrapper = document.getElementById('periods');
   Object.keys(defaultNames).forEach(pd => {
     if (getPdName(pd) === undefined)
@@ -367,13 +470,6 @@ ready.push(() => {
   previewMsg = document.getElementById('preview-msg');
   progressBar = document.getElementById('progress');
   favicon = document.getElementById('favicon');
-  faviconCanvas = createElement('canvas', {
-    attributes: {
-      width: FAVICON_SIZE,
-      height: FAVICON_SIZE
-    }
-  });
-  fc = faviconCanvas.getContext('2d');
   fc.textAlign = 'center';
   fc.textBaseline = 'middle';
   weekPreviewWrapper = document.getElementById('week-preview')
