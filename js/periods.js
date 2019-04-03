@@ -321,7 +321,7 @@ const timezone = new Date().getTimezoneOffset();
  * @param {Schedule} schedule Schedule to use for calculating time left
  * @param {number} [offset=0] Number of milliseconds to add to the current time
  *                            (for testing)
- * @return {Object} Some info to be used by updateStatus()
+ * @return {Object} Some info to be used by updateStatus
  */
 function timeLeft(schedule, offset = 0) {
   const now = Date.now() + offset;
@@ -403,6 +403,13 @@ function setFavicon(text) {
 
 let previewTime, previewMsg, progressBar, favicon;
 let todaySchedule, todayDate;
+
+/**
+ * Renders the preview
+ * @param {boolean} [startInterval=false] Whether or not to start the clock
+ * @param {number} [nextMinute=0] The time when the minute changes and the
+ *                                preview would need rerendering
+ */
 function updateStatus(startInterval = false, nextMinute = 0) {
   const now = Date.now();
   if (startInterval && now < nextMinute) {
@@ -422,6 +429,7 @@ function updateStatus(startInterval = false, nextMinute = 0) {
   const status = timeLeft(todaySchedule);
   if (todaySchedule.noSchool) {
     previewTime.textContent = formatTime(status.value, true);
+    previewMsg.textContent = '';
   } else {
     if (status.type === 'left in') {
       progressBar.style.opacity = 1;

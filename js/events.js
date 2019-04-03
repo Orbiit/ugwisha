@@ -191,9 +191,10 @@ window.ready.push(async () => {
   if (params['get-alts'] || !storage.getItem(SCHEDULE_DATA_KEY)) {
     window.fetchedAlts = true;
     await fetchEvents();
-    if (params.then) window.location.replace(params.then);
+    if (params.then) return window.location.replace(params.then);
+    todaySchedule = getSchedule(getToday());
+    updateStatus();
   }
   prepareScheduleData(storage.getItem(SCHEDULE_DATA_KEY));
   updateView();
-  updateStatus();
 });
