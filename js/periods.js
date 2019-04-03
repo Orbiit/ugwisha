@@ -106,7 +106,7 @@ const colourPicker = createElement('div', {
 });
 let periodBeingColoured = null;
 function setSchedule(schedule) {
-  scheduleWrapper.innerHTML = '';
+  empty(scheduleWrapper);
   if (schedule.alternate) {
     scheduleWrapper.appendChild(createElement('p', {
       classes: 'alternate-note',
@@ -185,7 +185,7 @@ function setSchedule(schedule) {
 }
 const dayInitials = ['S', 'M', 'T', 'W', '&Theta;', 'F', 'S'];
 function showWeekPreview(schedules, selectedDay) {
-  weekPreviewWrapper.innerHTML = '';
+  empty(weekPreviewWrapper);
   weekPreviewWrapper.appendChild(createFragment(schedules.map((schedule, i) => createElement('div', {
     classes: ['week-preview-col', selectedDay === i ? 'week-preview-today' : undefined],
     attributes: {

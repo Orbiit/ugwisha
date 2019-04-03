@@ -102,6 +102,9 @@ function createFragment(elems) {
   deundefine(elems).forEach(e => frag.appendChild(e));
   return frag;
 }
+function empty(elem) {
+  while (elem.firstChild) elem.removeChild(elem.firstChild);
+}
 
 function formatTime(minutes, noAMPM = false) {
   const hour = Math.floor(minutes / 60);
@@ -499,7 +502,7 @@ document.addEventListener('DOMContentLoaded', async e => {
           updateView();
         }
       }
-      eventsList.innerHTML = '';
+      empty(eventsList);
       eventsList.appendChild(events[dateName].length ? createFragment(events[dateName].map(event => createElement('div', {
         classes: 'event',
         children: [
