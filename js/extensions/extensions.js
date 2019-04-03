@@ -44,6 +44,10 @@ window.UgwishaExtensions = (() => {
       obj.switch('menu');
     });
     initialInstalls.then(() => obj.switch(params['app'] || localStorage.getItem(LAST_EXTENSION_KEY) || 'menu'));
+
+    window.onconnection.push(online => {
+      if (!online) addExtensionOption.disabled = true;
+    });
   }
   const installed = JSON.parse(storage.getItem(INSTALLED_EXTENSIONS_KEY) || '["./js/extensions/notes.js"]');
   const initialInstalls = Promise.all(installed.map(install));

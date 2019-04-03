@@ -42,6 +42,7 @@ function setBackground(css) {
 /**
  * Cache name for the nature and custom images
  * @type {string}
+ * @const
  */
 const BACKGROUND_CACHE_NAME = 'ugwisha-backgrounds';
 

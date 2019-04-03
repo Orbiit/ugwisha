@@ -1,6 +1,7 @@
 /**
  * Size of the canvas for creating a custom favicon
  * @type {number}
+ * @const
  */
 const FAVICON_SIZE = 32;
 

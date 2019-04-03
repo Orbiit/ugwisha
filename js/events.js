@@ -58,7 +58,9 @@ async function renderEvents() {
         .then(r => r.json())
         .catch(() => {
           eventsList.innerHTML = `<span class="events-message">Unable to fetch events.</span>`;
+          return {items: null};
         });
+      if (!items) return;
       events[dateName] = items;
       if (parseEvents(splitEvents({items}), viewingDate)) {
         storage.setItem(SCHEDULE_DATA_KEY, saveScheduleData());
