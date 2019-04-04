@@ -1,9 +1,9 @@
 // Helper functions for dancing with the DOM
 
 function deundefine(obj) {
-  if (Array.isArray(obj)) return obj.filter(i => i !== undefined);
+  if (Array.isArray(obj)) return obj.filter(i => i !== undefined && i !== null);
   else {
-    Object.keys(obj).forEach(prop => obj[prop] === undefined && delete obj[prop]);
+    Object.keys(obj).forEach(prop => (obj[prop] === undefined || obj[prop] === null) && delete obj[prop]);
     return obj;
   }
 }
@@ -13,11 +13,16 @@ function createElement(tag, data = {}) {
     if (typeof data.classes === 'string') elem.className = data.classes;
     else deundefine(data.classes).forEach(c => elem.classList.add(c));
   }
-  if (data.children) deundefine(data.children).forEach(c => elem.appendChild(typeof c === 'string' ? document.createTextNode(c) : c));
+  if (data.children) deundefine(data.children).forEach(c => elem.appendChild(typeof c !== 'object' ? document.createTextNode(c) : c));
   if (data.attributes) {
     Object.keys(deundefine(data.attributes)).forEach(attr => {
       if (elem[attr] !== undefined) elem[attr] = data.attributes[attr];
       else elem.setAttribute(attr, data.attributes[attr]);
+    });
+  }
+  if (data.data) {
+    Object.keys(deundefine(data.data)).forEach(attr => {
+      elem.dataset[attr] = data.data[attr];
     });
   }
   if (data.listeners) {

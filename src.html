@@ -41,19 +41,14 @@
         <div>
           <button class="button ripples" id="today">today</button>
         </div>
-        <div>
+        <div class="date-controls">
           <button class="icon-btn ripples" id="back-day" aria-label="view previous day"></button>
           <button class="button ripples" id="select-date">select date</button>
           <div id="date-selector" class="hidden">
-            <select id="months" class="select-input" disabled>
-              <option value="CHOOSE">Choose</option>
-            </select>
-            <input type="text" id="date-input" placeholder="dd" class="select-input" disabled>
-            <p id="error"></p>
-            <div>
-              <button class="button ripples" id="cancel-select-date">Cancel</button>
-              <button class="button ripples" id="actually-select-date" disabled>Select</button>
-            </div>
+            <div id="date-selector-month-year"></div>
+            <div id="date-selector-day-headings"></div>
+            <div id="date-selector-days"></div>
+            <button class="button ripples" id="cancel-select-date">Cancel</button>
           </div>
           <button class="icon-btn ripples" id="forth-day" aria-label="view next day"></button>
         </div>

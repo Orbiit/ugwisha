@@ -431,60 +431,113 @@ document.addEventListener('DOMContentLoaded', e => {
 
   // date selector
   const dateSelector = document.getElementById('date-selector');
-  const monthSelect = document.getElementById('months');
-  const dateSelect = document.getElementById('date-input');
-  const actualDateSelect = document.getElementById('actually-select-date');
-  const error = document.getElementById('error');
-  const cancelBtn = document.getElementById('cancel-select-date');
-  const schoolMonths = [];
+  const monthName = document.getElementById('date-selector-month-year');
+  const monthNames = [
+    'January', 'February', 'March', 'April', 'May', 'June', 'July', 'August',
+    'September', 'October', 'November', 'December'
+  ];
+  const daysWrapper = document.getElementById('date-selector-days');
+  const fragment = document.createDocumentFragment();
+  const months = [];
+  const days = {};
   const firstDay = new Date(FIRST_DAY);
   const firstYear = firstDay.getUTCFullYear();
   const firstMonth = firstDay.getUTCMonth();
-  const tempDate = new Date(Date.UTC(firstYear, firstMonth, 1));
+  const tempDate = new Date(Date.UTC(firstYear, firstMonth, firstDay.getUTCDate() - firstDay.getUTCDay()));
+  let currentMonth;
+  let weekNum = -1;
+  const todayTime = getToday().getTime();
   while (tempDate.getTime() <= LAST_DAY) {
-    schoolMonths.push(months[tempDate.getUTCMonth()] + ' ' + tempDate.getUTCFullYear());
-    tempDate.setUTCMonth(tempDate.getUTCMonth() + 1);
+    const month = tempDate.getUTCMonth();
+    if (tempDate.getUTCDay() === 0) weekNum++;
+    if (currentMonth !== month) {
+      currentMonth = month;
+      const wrapper = createElement('span', {
+        classes: 'date-selector-month'
+      });
+      fragment.appendChild(wrapper);
+      months.push({
+        month,
+        year: tempDate.getUTCFullYear(),
+        wrapper,
+        start: weekNum
+      });
+    }
+    const entry = months[months.length - 1];
+    const time = tempDate.getTime();
+    const date = tempDate.getUTCDate();
+    // so that if there's only a single day in the first week, it doesn't claim the entire week
+    if (date <= 5) entry.start = weekNum;
+    const outOfBounds = time < FIRST_DAY || time > LAST_DAY;
+    const schedule = outOfBounds || getSchedule(tempDate); // if schedule gets updated later, it won't update until reload
+    const dayID = tempDate.toISOString().slice(0, 10);
+    const day = createElement('span', { // TODO: separate element creation from schedule check
+      classes: [
+        'date-selector-day',
+        outOfBounds ? 'date-selector-out-of-bounds' : null,
+        !outOfBounds && schedule.noSchool ? 'date-selector-no-school' : null,
+        !outOfBounds && schedule.alternate ? 'date-selector-alternate' : null,
+        time === todayTime ? 'date-selector-today' : null
+      ],
+      children: [date],
+      data: {
+        date: dayID,
+        week: weekNum
+      }
+    });
+    days[dayID] = day;
+    entry.wrapper.appendChild(day);
+    tempDate.setUTCDate(tempDate.getUTCDate() + 1);
   }
-  monthSelect.appendChild(createFragment(schoolMonths.map((m, i) => createElement('option', { attributes: { value: i }, html: m }))));
-  document.getElementById('select-date').addEventListener('click', e => {
-    dateSelector.classList.remove('hidden');
-    monthSelect.value = 'CHOOSE';
-    monthSelect.disabled = false;
-    dateSelect.disabled = true;
-    actualDateSelect.disabled = true;
-    error.innerHTML = '';
-    dateSelect.value = '';
-  });
-  monthSelect.addEventListener('change', e => {
-    monthSelect.disabled = true;
-    dateSelect.disabled = false;
-    actualDateSelect.disabled = false;
-    dateSelect.focus();
-  });
-  cancelBtn.addEventListener('click', e => {
-    dateSelector.classList.add('hidden');
-    monthSelect.disabled = true;
-    dateSelect.disabled = true;
-    actualDateSelect.disabled = true;
-  });
-  actualDateSelect.addEventListener('click', e => {
-    const errors = [];
-    if (monthSelect.value === 'CHOOSE') errors.push('You did not choose a month.');
-    const date = +dateSelect.value;
-    if (isNaN(date)) errors.push('The date is not a number.');
-    if (date % 1 !== 0) errors.push('The date is not an integer.');
-    const dateObj = new Date(Date.UTC(firstYear, firstMonth + +monthSelect.value, date));
-    if (dateObj.getTime() < FIRST_DAY || dateObj.getTime() > LAST_DAY)
-      errors.push('The date is not during the school year.');
-    if (errors.length) {
-      error.innerHTML = errors.join('<br>') + '<br>You have issues.';
-    } else {
-      viewingDate = dateObj;
-      updateView();
-      updateDateWrapperLink();
-      cancelBtn.click();
+  daysWrapper.appendChild(fragment);
+  let selectedMonth = months[0];
+  selectedMonth.wrapper.classList.add('date-selector-month-selected');
+  monthName.textContent = monthNames[selectedMonth.month] + ' ' + selectedMonth.year;
+  const WEEK_HEIGHT = 24; // in pixels
+  const CALENDAR_HEIGHT = 6 * WEEK_HEIGHT;
+  daysWrapper.addEventListener('scroll', e => {
+    const scrollPos = (daysWrapper.scrollTop + CALENDAR_HEIGHT / 2) / WEEK_HEIGHT;
+    const index = months.findIndex(month => month.start >= scrollPos);
+    const month = months[(~index ? index : months.length) - 1];
+    if (month && month !== selectedMonth) {
+      selectedMonth.wrapper.classList.remove('date-selector-month-selected');
+      selectedMonth = month;
+      month.wrapper.classList.add('date-selector-month-selected');
+      monthName.textContent = monthNames[month.month] + ' ' + month.year;
     }
   });
+  daysWrapper.addEventListener('click', e => {
+    if (
+      e.target.classList.contains('date-selector-day')
+      && !e.target.classList.contains('date-selector-out-of-bounds')
+    ) {
+      viewingDate = new Date(e.target.dataset.date);
+      updateView();
+      updateDateWrapperLink();
+      if (selectedDay) selectedDay.classList.remove('date-selector-selected');
+      e.target.classList.add('date-selector-selected');
+      selectedDay = e.target;
+    }
+  });
+  let selectedDay;
+  document.getElementById('select-date').addEventListener('click', e => {
+    dateSelector.classList.remove('hidden');
+    if (selectedDay) selectedDay.classList.remove('date-selector-selected');
+    const day = days[viewingDate.toISOString().slice(0, 10)];
+    if (day) {
+      daysWrapper.scrollTop = (+day.dataset.week + 0.5) * WEEK_HEIGHT - CALENDAR_HEIGHT / 2;
+      day.classList.add('date-selector-selected');
+      selectedDay = day;
+    }
+  });
+  document.getElementById('cancel-select-date').addEventListener('click', e => {
+    dateSelector.classList.add('hidden');
+  });
+  document.getElementById('date-selector-day-headings')
+    .appendChild(createFragment(dayInitials.map(d => createElement('span', {
+      classes: 'date-selector-day-heading',
+      html: d
+    }))));
 }, {once: true});
 
 if ('serviceWorker' in navigator) {

@@ -103,7 +103,7 @@
   position: absolute;
   background-color: rgba(0, 0, 0, 0.7);
   padding: 5px;
-  border-radius: 5px;
+  border-radius: 10px;
 }
 .colour-picker:focus {
   outline: none;
@@ -118,7 +118,7 @@
   color: rgba(255, 255, 255, 0.8);
   padding: 5px;
   cursor: pointer;
-  border-radius: 2px;
+  border-radius: 5px;
   box-sizing: content-box;
 }
 input.select-input {
@@ -137,24 +137,83 @@ input.select-input {
   margin-right: 5px;
   margin-left: 15px;
 }
+
+.date-controls {
+  position: relative;
+}
 #date-selector {
   padding: 10px;
-  transform: translateY(-10px);
   z-index: 2;
+  top: -32px;
+  left: 0;
+  right: 0;
 }
-#months, #cancel-select-date {
-  margin-right: 10px;
+#cancel-select-date {
+  width: 100%;
 }
-#months {
-  margin-bottom: 10px;
+#date-selector-month-year {
+  font-size: 24px;
+  color: rgba(255, 255, 255, 0.8);
 }
-#date-input {
-  width: 2.5ch;
-  text-align: right;
+#date-selector-day-headings {
+  display: flex;
+  margin: 5px 0;
 }
-#months, #date-input {
-  vertical-align: top;
+.date-selector-day-heading {
+  display: inline-block;
+  flex: 1 0 0;
 }
+#date-selector-days {
+  overflow: auto;
+  overflow: -moz-scrollbars-none;
+  -ms-overflow-style: none;
+  height: 144px;
+  text-align: left;
+  cursor: pointer;
+}
+#date-selector-days::-webkit-scrollbar {
+  width: 0;
+}
+.date-selector-month {
+  opacity: 0.3;
+  transition: opacity .2s;
+}
+.date-selector-day {
+  display: inline-block;
+  font-size: 16px;
+  line-height: 24px;
+  color: rgba(255, 255, 255, 0.8);
+  width: 14.2857142%;
+  text-align: center;
+  position: relative;
+}
+.date-selector-no-school {
+  color: rgba(255, 255, 255, 0.4);
+}
+.date-selector-selected::before {
+  content: '';
+  position: absolute;
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background-color: rgba(255, 255, 255, 0.3);
+  z-index: -1;
+  pointer-events: none;
+}
+.date-selector-out-of-bounds {
+  visibility: hidden;
+}
+.date-selector-month-selected {
+  opacity: 1;
+}
+.date-selector-today {
+  color: white;
+  text-shadow: 0 0 3px white;
+}
+
 #week-preview {
   display: flex;
 }
@@ -173,7 +232,7 @@ input.select-input {
 .week-preview-today {
   background-color: rgba(255, 255, 255, 0.1);
 }
-.week-preview-day-heading, .week-preview-alternate {
+.week-preview-day-heading, .week-preview-alternate, .date-selector-day-heading {
   font-size: 12px;
   text-align: center;
   line-height: 12px;
