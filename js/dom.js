@@ -46,3 +46,7 @@ function createFragment(elems) {
 function empty(elem) {
   while (elem.firstChild) elem.removeChild(elem.firstChild);
 }
+
+window.createElement = createElement;
+window.createFragment = createFragment;
+window.empty = empty;
