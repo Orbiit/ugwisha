@@ -64,7 +64,7 @@ async function renderEvents() {
       events[dateName] = items;
       if (parseEvents(splitEvents({items}), viewingDate)) {
         storage.setItem(SCHEDULE_DATA_KEY, saveScheduleData());
-        updateView();
+        renderSchedule();
         todayDate = null;
         updateStatus();
       }
@@ -208,7 +208,7 @@ ready.push(async () => {
   altFetchBtn = document.getElementById('fetch-alts');
   altFetchBtn.addEventListener('click', e => {
     fetchedAlts = true;
-    fetchEvents().then(updateView);
+    fetchEvents().then(renderSchedule);
   });
 
   onconnection.push(online => {

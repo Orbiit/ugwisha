@@ -208,7 +208,8 @@ const days = ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 
 let dateWrapper, backDay, forthDay;
 
 /**
- * Rerenders the schedule and week preview
+ * Rerenders the schedule and week preview. Call this directly when the schedule
+ * may have changed, but not the date.
  */
 function renderSchedule() {
   setSchedule(getSchedule(viewingDate));
@@ -221,7 +222,8 @@ function renderSchedule() {
 }
 
 /**
- * Rerenders the date and calls renderSchedule
+ * Rerenders the date and calls renderSchedule. Call this if the date has
+ * changed.
  */
 function updateView() {
   renderSchedule();
@@ -298,7 +300,7 @@ document.addEventListener('DOMContentLoaded', e => {
         save();
         if (!fetchedAlts && html.includes('[REFETCH]')) {
           fetchedAlts = true;
-          fetchEvents().then(updateView);
+          fetchEvents().then(renderSchedule);
         }
       }
       psaOpen.focus();

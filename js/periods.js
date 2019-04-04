@@ -421,7 +421,7 @@ let previewTime, previewMsg, progressBar, favicon;
 let todaySchedule, todayDate;
 
 /**
- * Renders the preview
+ * Renders the preview. Call this when the schedule may have changed.
  * @param {boolean} [startInterval=false] Whether or not to start the clock
  * @param {number} [nextMinute=0] The time when the minute changes and the
  *                                preview would need rerendering
