@@ -26,12 +26,24 @@ const options = {
 };
 
 read('src.html').then(async html => {
-  let jsPromise;
-  const newHTML = html.replace(/<!-- BEGIN: scripts -->(.|\r?\n)+<!-- END: scripts -->/, match => {
-    const files = match.match(/(?<=<script src=")[^"]+(?=" charset="utf-8"><\/script>)/g);
-    jsPromise = Promise.all(files.map(path => read(path)));
-    return `<script src="./ugwisha.js" charset="utf-8"></script>`;
-  }).replace(/\s{2,}|\r?\n/g, '');
+  let jsPromise, cssPromise;
+  const newHTML = html
+    .replace(/<!-- BEGIN: scripts -->(.|\r?\n)+<!-- END: scripts -->/, match => {
+      const files = match.match(/(?<=<script src=")[^"]+(?=" charset="utf-8"><\/script>)/g);
+      jsPromise = Promise.all(files.map(path => read(path)));
+      return `<script src="./ugwisha.js" charset="utf-8"></script>`;
+    })
+    .replace(/<!-- BEGIN: styles -->(.|\r?\n)+<!-- END: styles -->/, match => {
+      const files = match.match(/(?<=<link rel="stylesheet" href=")[^"]+(?=">)/g);
+      cssPromise = Promise.all(files.map(path => read(path)))
+        .then(css => write('./css/ugwisha.css', css
+          .join('\n')
+          .replace(/\/\*.*?\*\//g, '')
+          .replace(/(:|,)\s+/g, '$1')
+          .replace(/\s{2,}|\r?\n/g, '')));
+      return `<link rel="stylesheet" href="./css/ugwisha.css">`;
+    })
+    .replace(/\s{2,}|\r?\n/g, '');
   if (!jsPromise) throw new Error("Can't find scripts oof");
   const jsFiles = (await jsPromise).join('\n\n');
   console.log('Minifying...');
@@ -41,7 +53,8 @@ read('src.html').then(async html => {
   await Promise.all([
     write('./index.html', newHTML),
     write('./ugwisha.js', `(()=>{${result.code}})()\n`),
-    read('./sw.js').then(js => write('./sw.js', js.replace(/(?<=ugwisha-sw-v)\d+/, Date.now())))
+    read('./sw.js').then(js => write('./sw.js', js.replace(/(?<=ugwisha-sw-v)\d+/, Date.now()))),
+    cssPromise
   ]);
   console.log('Done.');
 });
