@@ -13,7 +13,7 @@ UgwishaExtensions.register((() => {
   const badChars = /[^0-9.]|\.(?=[^.]*\.)/g;
   function createInput(label, defaultValue, id) {
     const input = createElement('input', {
-      classes: 'min-score-input',
+      classes: 'basic-input min-score-input',
       attributes: {
         value: defaultValue,
         id: id

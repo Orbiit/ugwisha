@@ -30,9 +30,10 @@ UgwishaExtensions.register((() => {
       ripples: true
     });
     const input = createElement('input', {
-      classes: 'todo-content',
+      classes: 'todo-content basic-input',
       attributes: {
-        value: entry.content
+        value: entry.content,
+        type: 'text'
       },
       listeners: {
         change(e) {
@@ -112,9 +113,10 @@ UgwishaExtensions.register((() => {
     ripples: true
   });
   const addInput = createElement('input', {
-    classes: 'todo-content',
+    classes: 'todo-content basic-input',
     attributes: {
-      placeholder: 'Add to-do item'
+      placeholder: 'Add to-do item',
+      type: 'text'
     },
     listeners: {
       keydown(e) {

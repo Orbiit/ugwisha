@@ -56,10 +56,11 @@ UgwishaExtensions.register((() => {
       classes: 'barcode-wrapper',
       children: [
         createElement('input', {
-          classes: 'barcode-input',
+          classes: 'basic-input barcode-input',
           attributes: {
             value: entry[0],
-            placeholder: 'Whose ID?'
+            placeholder: 'Whose ID?',
+            type: 'text'
           },
           listeners: {
             input(e) {
@@ -72,10 +73,11 @@ UgwishaExtensions.register((() => {
           classes: 'barcode-id-wrapper',
           children: [
             createElement('input', {
-              classes: 'barcode-input',
+              classes: 'basic-input barcode-input',
               attributes: {
                 value: entry[1],
-                placeholder: 'Student ID'
+                placeholder: 'Student ID',
+                type: 'text'
               },
               listeners: {
                 input(e) {

@@ -11,16 +11,6 @@
   background-image: url('../../images/material-remove.svg?for=todo');
 }
 .todo-content {
-  -webkit-appearance: none;
-  border-radius: 0;
-  border: none;
-  background: none;
-  font: inherit;
   color: rgba(255, 255, 255, 0.8);
   flex: auto;
-  font-size: 16px;
-}
-.todo-content:focus {
-  outline: none;
-  color: white;
 }
