@@ -14,9 +14,31 @@
  * @property {number} end Same as start but until the end of the period
  */
 
-window.ready = [];
-window.onconnection = [isOnline => window.isOnline = isOnline];
-window.onoptionchange = {};
+const ready = [];
+const onconnection = [isOnline => window.isOnline = isOnline];
+const onoptionchange = {};
+
+const {
+  parseEvents,
+  getSchedule,
+  getNote,
+  saveScheduleData,
+  prepareScheduleData,
+  SCHEDULE_DATA_KEY,
+  SCHEDULES_CALENDAR_ID,
+  EVENTS_CALENDAR_ID,
+  CALENDAR_KEYWORDS,
+  GOOGLE_API_KEY,
+  FIRST_DAY,
+  LAST_DAY,
+  DEFAULT_NAMES: defaultNames,
+  DEFAULT_COLOURS: defaultColours,
+  THEME_COLOUR,
+  DEFAULT_FAVICON_URL,
+  APP_NAME,
+  PERIOD_OPTION_PREFIX,
+  UPDATER_URL
+} = window.ugwishaOptions;
 
 // avoid crashing if accessing localStorage in private mode results in an
 // error (eg Edge)
@@ -85,7 +107,7 @@ function getToday() {
 document.addEventListener('DOMContentLoaded', e => {
   // ready functions - it's important to do this first because updateView relies
   // on period.js
-  window.ready.forEach(r => r());
+  ready.forEach(r => r());
   UgwishaExtensions.start();
 
   // tab focus
@@ -128,8 +150,8 @@ document.addEventListener('DOMContentLoaded', e => {
       if (options.lastPSA !== version) {
         options.lastPSA = version;
         save();
-        if (!window.fetchedAlts && html.includes('[REFETCH]')) {
-          window.fetchedAlts = true;
+        if (!fetchedAlts && html.includes('[REFETCH]')) {
+          fetchedAlts = true;
           fetchEvents().then(updateView);
         }
       }
@@ -139,7 +161,7 @@ document.addEventListener('DOMContentLoaded', e => {
       psaDialog.classList.remove('hidden');
       psaClose.focus();
     });
-    window.onconnection.forEach(listener => listener(true));
+    onconnection.forEach(listener => listener(true));
   }).catch(() => {
     document.getElementById('offline-msg').classList.remove('hidden');
     const reloadBtn = document.getElementById('reload');
@@ -152,7 +174,7 @@ document.addEventListener('DOMContentLoaded', e => {
     if (!options.natureLoaded) {
       document.getElementById('nature-back').disabled = true;
     }
-    window.onconnection.forEach(listener => listener(false));
+    onconnection.forEach(listener => listener(false));
   });
 
   // window size
@@ -236,7 +258,7 @@ document.addEventListener('DOMContentLoaded', e => {
     const prop = toggle.dataset.option;
     if (options[prop] === undefined) options[prop] = toggle.dataset.default === 'true';
     toggle.checked = options[prop];
-    const onchange = optionChange[prop] || window.onoptionchange[prop];
+    const onchange = optionChange[prop] || onoptionchange[prop];
     if (onchange) onchange(toggle.checked);
     toggle.addEventListener('change', e => {
       options[prop] = toggle.checked;
@@ -255,8 +277,8 @@ document.addEventListener('DOMContentLoaded', e => {
   });
   window.updateDateWrapperLink = () => {
     const viewingTime = viewingDate.getTime();
-    backDay.disabled = viewingTime <= firstDay.getTime();
-    forthDay.disabled = viewingTime >= lastDay.getTime();
+    backDay.disabled = viewingTime <= FIRST_DAY;
+    forthDay.disabled = viewingTime >= LAST_DAY;
     dateWrapper.href = (params['no-sw'] ? '?no-sw&' : '?') + 'day=' + viewingDate.toISOString().slice(0, 10);
     renderEvents();
   };
@@ -286,11 +308,13 @@ document.addEventListener('DOMContentLoaded', e => {
   const error = document.getElementById('error');
   const cancelBtn = document.getElementById('cancel-select-date');
   const schoolMonths = [];
+  const firstDay = new Date(FIRST_DAY);
   const firstYear = firstDay.getUTCFullYear();
   const firstMonth = firstDay.getUTCMonth();
   const tempDate = new Date(Date.UTC(firstYear, firstMonth, 1));
-  for (const endTime = lastDay.getTime(); tempDate.getTime() <= endTime; tempDate.setUTCMonth(tempDate.getUTCMonth() + 1)) {
+  while (tempDate.getTime() <= LAST_DAY) {
     schoolMonths.push(months[tempDate.getUTCMonth()] + ' ' + tempDate.getUTCFullYear());
+    tempDate.setUTCMonth(tempDate.getUTCMonth() + 1);
   }
   monthSelect.appendChild(createFragment(schoolMonths.map((m, i) => createElement('option', { attributes: { value: i }, html: m }))));
   document.getElementById('select-date').addEventListener('click', e => {
@@ -321,7 +345,7 @@ document.addEventListener('DOMContentLoaded', e => {
     if (isNaN(date)) errors.push('The date is not a number.');
     if (date % 1 !== 0) errors.push('The date is not an integer.');
     const dateObj = new Date(Date.UTC(firstYear, firstMonth + +monthSelect.value, date));
-    if (dateObj.getTime() < firstDay.getTime() || dateObj.getTime() > lastDay.getTime())
+    if (dateObj.getTime() < FIRST_DAY || dateObj.getTime() > LAST_DAY)
       errors.push('The date is not during the school year.');
     if (errors.length) {
       error.innerHTML = errors.join('<br>') + '<br>You have issues.';

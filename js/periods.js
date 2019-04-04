@@ -465,7 +465,7 @@ function updateStatus(startInterval = false, nextMinute = 0) {
   if (startInterval) setTimeout(() => updateStatus(true, status.nextMinute), Math.min(status.nextMinute - now, 1000));
 }
 
-window.ready.push(() => {
+ready.push(() => {
   scheduleWrapper = document.getElementById('periods');
   Object.keys(defaultNames).forEach(pd => {
     if (getPdName(pd) === undefined)

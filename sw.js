@@ -1,6 +1,4 @@
-const VERSION = 19; // change to force update
-
-const CACHE_NAME = 'ugwisha-sw-v' + VERSION;
+const CACHE_NAME = 'ugwisha-sw-v1554338628590';
 const BACKGROUND_CACHE_NAME = 'ugwisha-backgrounds'; // don't change this
 const EXTENSIONS_CACHE_NAME = 'ugwisha-extensions'; // don't change this either
 const urlsToCache = [
@@ -9,14 +7,7 @@ const urlsToCache = [
   './css/content.css',
   './css/main.css',
   './css/periods.css',
-  './js/main.js',
-  './js/periods.js',
-  './js/ripple.js',
-  './js/gunn.js',
-  './js/extensions/extensions.js',
-  './js/dom.js',
-  './js/backgrounds.js',
-  './js/events.js',
+  './ugwisha.js',
   './images/material-check_box.svg',
   './images/material-keyboard_arrow_left.svg',
   './images/material-keyboard_arrow_right.svg',

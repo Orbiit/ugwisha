@@ -60,6 +60,6 @@ function rippleify(elem) {
   });
 }
 
-window.ready.push(() => {
+ready.push(() => {
   Array.from(document.getElementsByClassName('ripples')).forEach(btn => rippleify(btn));
 });

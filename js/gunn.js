@@ -1,3 +1,5 @@
+(() => {
+
 /* PARSING */
 const EARLIEST_AM_HOUR = 6;
 const PASSING_PERIOD_LENGTH = 10;
@@ -197,17 +199,6 @@ function parseEvents(events, dateObj) {
   }
 }
 
-/* FETCHING */
-const SCHEDULES_CALENDAR_ID = 'u5mgb2vlddfj70d7frf3r015h0@group.calendar.google.com';
-const EVENTS_CALENDAR_ID = 'u5mgb2vlddfj70d7frf3r015h0@group.calendar.google.com';
-const CALENDAR_KEYWORDS = ['self', 'schedule', 'extended', 'holiday', 'no students', 'break', 'development'];
-
-// please set this to your own if you fork Ugwisha, thanks
-const GOOGLE_API_KEY = 'AIzaSyDBYs4DdIaTjYx5WDz6nfdEAftXuctZV0o';
-
-const firstDay = new Date(Date.UTC(2018, 7, 13));
-const lastDay = new Date(Date.UTC(2019, 4, 31));
-
 /* ENCODING */
 const selfCharOffset = 72;
 const alternateRegex = /([A-GblfI-W])([\dab]{3})([\dab]{3})/g;
@@ -298,18 +289,6 @@ const normalSchedules = [
   []
 ];
 
-/* DEFAULTS */
-const defaultNames = {
-  A: 'Period A', B: 'Period B', C: 'Period C', D: 'Period D',
-  E: 'Period E', F: 'Period F', G: 'Period G',
-  b: 'Brunch', l: 'Lunch', f: 'Flex', s: 'SELF'
-};
-const defaultColours = {
-  A: 'f44336', B: '3F51B5', C: 'FFEB3B', D: '795548',
-  E: 'FF9800', F: '9C27B0', G: '4CAF50',
-  b: null, l: null, f: '607D8B', s: '9E9E9E'
-};
-
 /* GET SCHEDULE */
 const SCHEDULE_DATA_KEY = '[ugwisha] alternates-2'; // change when new school year
 let scheduleData = {};
@@ -339,12 +318,6 @@ function getSchedule(dateObj) {
   schedule.date = dateObj;
   return schedule;
 }
-function saveScheduleData() {
-  return encodeStoredAlternates(scheduleData);
-}
-function prepareScheduleData(storedSchedules) {
-  scheduleData = decodeStoredAlternates(storedSchedules);
-}
 
 /* PERIOD CARD NOTES */
 const gradeName = ['freshmen', 'sophomores', 'juniors', 'seniors'];
@@ -352,10 +325,48 @@ function getNote(periodData) {
   return periodData.period === 's' ? 'For ' + (periodData.selfGrades || defaultSelf).toString(2).split('').reverse().map((n, i) => n === '1' ? gradeName[i] : '').filter(n => n).join(', ') : undefined;
 }
 
-/* THEME */
-const THEME_COLOUR = '#ff5959';
-const DEFAULT_FAVICON_URL = './images/logo-192.png';
-const APP_NAME = 'Ugwisha';
-const PERIOD_OPTION_PREFIX = '';
+window.ugwishaOptions = {
+  parseEvents,
+  getSchedule,
+  getNote,
+  saveScheduleData() {
+    return encodeStoredAlternates(scheduleData);
+  },
+  prepareScheduleData(storedSchedules) {
+    scheduleData = decodeStoredAlternates(storedSchedules);
+  },
 
-const UPDATER_URL = '/ugwisha-updater.html';
+  SCHEDULE_DATA_KEY,
+
+  /* FETCHING */
+  SCHEDULES_CALENDAR_ID: 'u5mgb2vlddfj70d7frf3r015h0@group.calendar.google.com',
+  EVENTS_CALENDAR_ID: 'u5mgb2vlddfj70d7frf3r015h0@group.calendar.google.com',
+  CALENDAR_KEYWORDS: ['self', 'schedule', 'extended', 'holiday', 'no students', 'break', 'development'],
+
+  // please set this to your own if you fork Ugwisha, thanks
+  GOOGLE_API_KEY: 'AIzaSyDBYs4DdIaTjYx5WDz6nfdEAftXuctZV0o',
+
+  FIRST_DAY: Date.UTC(2018, 7, 13),
+  LAST_DAY: Date.UTC(2019, 4, 31),
+
+  /* DEFAULTS */
+  DEFAULT_NAMES: {
+    A: 'Period A', B: 'Period B', C: 'Period C', D: 'Period D',
+    E: 'Period E', F: 'Period F', G: 'Period G',
+    b: 'Brunch', l: 'Lunch', f: 'Flex', s: 'SELF'
+  },
+  DEFAULT_COLOURS: {
+    A: 'f44336', B: '3F51B5', C: 'FFEB3B', D: '795548',
+    E: 'FF9800', F: '9C27B0', G: '4CAF50',
+    b: null, l: null, f: '607D8B', s: '9E9E9E'
+  },
+
+  /* THEME */
+  THEME_COLOUR: '#ff5959',
+  DEFAULT_FAVICON_URL: './images/logo-192.png',
+  APP_NAME: 'Ugwisha',
+  PERIOD_OPTION_PREFIX: '',
+  UPDATER_URL: '/ugwisha-updater.html'
+};
+
+})();

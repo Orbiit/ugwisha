@@ -45,7 +45,7 @@ window.UgwishaExtensions = (() => {
     });
     initialInstalls.then(() => obj.switch(params['app'] || localStorage.getItem(LAST_EXTENSION_KEY) || 'menu'));
 
-    window.onconnection.push(online => {
+    onconnection.push(online => {
       if (!online) addExtensionOption.disabled = true;
     });
   }

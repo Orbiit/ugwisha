@@ -102,8 +102,8 @@ async function renderEvents() {
 
 // ALTERNATE SCHEDULE EVENTS
 
-const eventsMinDate = new Date(firstDay.getTime() + 25200000); // TODO: should probably explain these numbers
-const eventsMaxDate = new Date(lastDay.getTime() + 111599999); // also adds a day - 1 to include last day
+const eventsMinDate = new Date(FIRST_DAY + 25200000); // TODO: what do these numbers mean??
+const eventsMaxDate = new Date(LAST_DAY + 111599999); // also adds a day - 1 to include last day (uh what?)
 
 /**
  * Google Calendar API URL for fetching alternate schedule events throughout
@@ -132,8 +132,8 @@ function fetchEvents() {
     }));
 
     // parse events per day
-    const dateObj = new Date(firstDay.getTime());
-    const endDate = lastDay.getTime();
+    const dateObj = new Date(FIRST_DAY);
+    const endDate = LAST_DAY;
     while (dateObj.getTime() <= endDate) {
       parseEvents(events[dateObj.toISOString().slice(0, 10)] || [], dateObj);
       dateObj.setUTCDate(dateObj.getUTCDate() + 1);
@@ -175,23 +175,23 @@ function splitEvents({items}) {
 }
 
 let eventsList, dateElem, dayElem, altFetchBtn;
-window.ready.push(async () => {
+let fetchedAlts = false; // used by PSA [REFETCH] feature
+ready.push(async () => {
   eventsList = document.getElementById('events');
   dateElem = document.getElementById('date');
   dayElem = document.getElementById('weekday');
   altFetchBtn = document.getElementById('fetch-alts');
-  window.fetchedAlts = false; // used by PSA [REFETCH] feature
   altFetchBtn.addEventListener('click', e => {
-    window.fetchedAlts = true;
+    fetchedAlts = true;
     fetchEvents().then(updateView);
   });
 
-  window.onconnection.push(online => {
+  onconnection.push(online => {
     if (!online) altFetchBtn.disabled = true;
   });
 
   if (params['get-alts'] || !storage.getItem(SCHEDULE_DATA_KEY)) {
-    window.fetchedAlts = true;
+    fetchedAlts = true;
     await fetchEvents();
     if (params.then) return window.location.replace(params.then);
     todaySchedule = getSchedule(getToday());

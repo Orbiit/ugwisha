@@ -63,7 +63,7 @@ async function newBackground(url, id) {
   await cache.put(new Request(id), res);
 }
 
-window.ready.push(() => {
+ready.push(() => {
   const setBackgroundBtn = document.getElementById('set-back');
   const resetBackground = document.getElementById('reset-back');
   const nextBackground = document.getElementById('next-back');
@@ -159,7 +159,7 @@ window.ready.push(() => {
   });
   nextBackground.addEventListener('click', newNatureBackground);
 
-  window.onoptionchange.natureBackground = yes => {
+  onoptionchange.natureBackground = yes => {
     if (options.backgroundURL) return;
     if (yes) {
       if (randomGradientTimer) clearInterval(randomGradientTimer);
@@ -169,14 +169,14 @@ window.ready.push(() => {
       nextBackground.disabled = true;
     }
   };
-  window.onoptionchange.randomGradients = yes => {
+  onoptionchange.randomGradients = yes => {
     if (yes) {
       if (!options.natureBackground && !options.backgroundURL) startRandomGradients();
     }
     else if (randomGradientTimer) clearInterval(randomGradientTimer);
   };
 
-  window.onconnection.push(online => {
+  onconnection.push(online => {
     if (!online) nextBackground.disabled = setBackgroundBtn.disabled = true;
   });
 });

@@ -1,0 +1,8 @@
+{
+  "scripts": {
+    "build": "node minify.js"
+  },
+  "dependencies": {
+    "uglify-es": "^3.3.9"
+  }
+}
