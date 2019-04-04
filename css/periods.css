@@ -209,6 +209,9 @@ input.select-input {
 .date-selector-month-selected {
   opacity: 1;
 }
+.date-selector-alternate {
+  font-style: italic;
+}
 .date-selector-today {
   color: white;
   text-shadow: 0 0 3px white;

@@ -205,11 +205,12 @@ if (window.location.search) {
 
 const months = 'jan. feb. mar. apr. may jun. jul. aug. sept. oct. nov. dec.'.split(' ');
 const days = ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'];
+let dateWrapper, backDay, forthDay;
 
 /**
- * Rerenders the schedule, week preview, and date
+ * Rerenders the schedule and week preview
  */
-function updateView() {
+function renderSchedule() {
   setSchedule(getSchedule(viewingDate));
   const day = viewingDate.getUTCDay();
   const weekSchedules = [];
@@ -217,8 +218,20 @@ function updateView() {
     weekSchedules.push(getSchedule(new Date(viewingDate.getTime() - (day - i) * 86400000)));
   }
   showWeekPreview(weekSchedules, day);
+}
+
+/**
+ * Rerenders the date and calls renderSchedule
+ */
+function updateView() {
+  renderSchedule();
   dateElem.innerHTML = months[viewingDate.getUTCMonth()] + ' ' + viewingDate.getUTCDate();
-  dayElem.innerHTML = days[day];
+  dayElem.innerHTML = days[viewingDate.getUTCDay()];
+  const viewingTime = viewingDate.getTime();
+  backDay.disabled = viewingTime <= FIRST_DAY;
+  forthDay.disabled = viewingTime >= LAST_DAY;
+  dateWrapper.href = (params['no-sw'] ? '?no-sw&' : '?') + 'day=' + viewingDate.toISOString().slice(0, 10);
+  renderEvents();
 }
 
 let viewingDate = params.day ? new Date(params.day) : getToday();
@@ -229,11 +242,15 @@ let viewingDate = params.day ? new Date(params.day) : getToday();
  * @return {Date} Today's date
  */
 function getToday() {
-  // return new Date('2018-11-16');
+  // return new Date('2019-03-26');
   return new Date(Date.UTC(...(d => [d.getFullYear(), d.getMonth(), d.getDate()])(new Date())));
 }
 
 document.addEventListener('DOMContentLoaded', e => {
+  dateWrapper = document.getElementById('date-wrapper');
+  backDay = document.getElementById('back-day');
+  forthDay = document.getElementById('forth-day');
+
   // ready functions - it's important to do this first because updateView relies
   // on period.js
   ready.forEach(r => r());
@@ -368,27 +385,31 @@ document.addEventListener('DOMContentLoaded', e => {
       else document.body.classList.remove('show-time');
     },
     metricTime() {
-      updateView();
+      renderSchedule();
       updateStatus();
     },
     showSELF() {
-      updateView();
+      renderSchedule();
+      todayDate = null;
+      updateStatus();
     },
     quickTransitions(yes) {
       if (yes) document.body.classList.add('quick-transitions');
       else document.body.classList.remove('quick-transitions');
     },
     showEvents(yes) {
-      if (yes && eventsWrapper.style.display) renderEvents();
+      if (yes) renderEvents();
       eventsWrapper.style.display = yes ? null : 'none';
     }
   };
+  if (options.showDuration) document.body.classList.add('show-duration');
+  if (options.showTime) document.body.classList.add('show-time');
+  if (options.quickTransitions) document.body.classList.add('quick-transitions');
   Array.from(document.getElementsByClassName('toggle-setting'), toggle => {
     const prop = toggle.dataset.option;
     if (options[prop] === undefined) options[prop] = toggle.dataset.default === 'true';
     toggle.checked = options[prop];
     const onchange = optionChange[prop] || onoptionchange[prop];
-    if (onchange) onchange(toggle.checked);
     toggle.addEventListener('change', e => {
       options[prop] = toggle.checked;
       if (onchange) onchange(toggle.checked);
@@ -397,37 +418,22 @@ document.addEventListener('DOMContentLoaded', e => {
   });
 
   // simple date navigation buttons
-  const dateWrapper = document.getElementById('date-wrapper');
-  const backDay = document.getElementById('back-day');
-  const forthDay = document.getElementById('forth-day');
   dateWrapper.addEventListener('click', e => {
     window.history.pushState({}, '', dateWrapper.href);
     e.preventDefault();
   });
-  window.updateDateWrapperLink = () => {
-    const viewingTime = viewingDate.getTime();
-    backDay.disabled = viewingTime <= FIRST_DAY;
-    forthDay.disabled = viewingTime >= LAST_DAY;
-    dateWrapper.href = (params['no-sw'] ? '?no-sw&' : '?') + 'day=' + viewingDate.toISOString().slice(0, 10);
-    renderEvents();
-  };
-  updateDateWrapperLink();
   backDay.addEventListener('click', e => {
     viewingDate.setUTCDate(viewingDate.getUTCDate() - 1);
     updateView();
-    updateDateWrapperLink();
   });
   forthDay.addEventListener('click', e => {
     viewingDate.setUTCDate(viewingDate.getUTCDate() + 1);
     updateView();
-    updateDateWrapperLink();
   });
   document.getElementById('today').addEventListener('click', e => {
     viewingDate = getToday();
     updateView();
-    updateDateWrapperLink();
   });
-  updateStatus(true, 0);
 
   // date selector
   const dateSelector = document.getElementById('date-selector');
@@ -437,70 +443,81 @@ document.addEventListener('DOMContentLoaded', e => {
     'September', 'October', 'November', 'December'
   ];
   const daysWrapper = document.getElementById('date-selector-days');
-  const fragment = document.createDocumentFragment();
   const months = [];
   const days = {};
-  const firstDay = new Date(FIRST_DAY);
-  const firstYear = firstDay.getUTCFullYear();
-  const firstMonth = firstDay.getUTCMonth();
-  const tempDate = new Date(Date.UTC(firstYear, firstMonth, firstDay.getUTCDate() - firstDay.getUTCDay()));
-  let currentMonth;
-  let weekNum = -1;
-  const todayTime = getToday().getTime();
-  while (tempDate.getTime() <= LAST_DAY) {
-    const month = tempDate.getUTCMonth();
-    if (tempDate.getUTCDay() === 0) weekNum++;
-    if (currentMonth !== month) {
-      currentMonth = month;
-      const wrapper = createElement('span', {
-        classes: 'date-selector-month'
-      });
-      fragment.appendChild(wrapper);
-      months.push({
-        month,
-        year: tempDate.getUTCFullYear(),
-        wrapper,
-        start: weekNum
-      });
-    }
-    const entry = months[months.length - 1];
-    const time = tempDate.getTime();
-    const date = tempDate.getUTCDate();
-    // so that if there's only a single day in the first week, it doesn't claim the entire week
-    if (date <= 5) entry.start = weekNum;
-    const outOfBounds = time < FIRST_DAY || time > LAST_DAY;
-    const schedule = outOfBounds || getSchedule(tempDate); // if schedule gets updated later, it won't update until reload
-    const dayID = tempDate.toISOString().slice(0, 10);
-    const day = createElement('span', { // TODO: separate element creation from schedule check
-      classes: [
-        'date-selector-day',
-        outOfBounds ? 'date-selector-out-of-bounds' : null,
-        !outOfBounds && schedule.noSchool ? 'date-selector-no-school' : null,
-        !outOfBounds && schedule.alternate ? 'date-selector-alternate' : null,
-        time === todayTime ? 'date-selector-today' : null
-      ],
-      children: [date],
-      data: {
-        date: dayID,
-        week: weekNum
+  let daysCreated = false;
+  function createDays() {
+    const fragment = document.createDocumentFragment();
+    const firstDay = new Date(FIRST_DAY);
+    const tempDate = new Date(Date.UTC(
+      firstDay.getUTCFullYear(),
+      firstDay.getUTCMonth(),
+      firstDay.getUTCDate() - firstDay.getUTCDay()
+    ));
+    let currentMonth;
+    let weekNum = -1;
+    while (tempDate.getTime() <= LAST_DAY) {
+      const month = tempDate.getUTCMonth();
+      if (tempDate.getUTCDay() === 0) weekNum++;
+      if (currentMonth !== month) {
+        currentMonth = month;
+        const wrapper = createElement('span', {
+          classes: 'date-selector-month'
+        });
+        fragment.appendChild(wrapper);
+        months.push({
+          month,
+          year: tempDate.getUTCFullYear(),
+          wrapper,
+          start: weekNum
+        });
       }
-    });
-    days[dayID] = day;
-    entry.wrapper.appendChild(day);
-    tempDate.setUTCDate(tempDate.getUTCDate() + 1);
+      const entry = months[months.length - 1];
+      const time = tempDate.getTime();
+      const date = tempDate.getUTCDate();
+      // so that if there's only a single day in the first week, it doesn't claim the entire week
+      if (date <= 5) entry.start = weekNum;
+      const outOfBounds = time < FIRST_DAY || time > LAST_DAY;
+      const dayID = tempDate.toISOString().slice(0, 10);
+      const day = createElement('span', {
+        classes: [
+          'date-selector-day',
+          outOfBounds ? 'date-selector-out-of-bounds' : null
+        ],
+        children: [date],
+        data: {
+          date: dayID,
+          week: weekNum
+        }
+      });
+      if (!outOfBounds) days[dayID] = day;
+      entry.wrapper.appendChild(day);
+      tempDate.setUTCDate(tempDate.getUTCDate() + 1);
+    }
+    daysWrapper.appendChild(fragment);
   }
-  daysWrapper.appendChild(fragment);
-  let selectedMonth = months[0];
-  selectedMonth.wrapper.classList.add('date-selector-month-selected');
-  monthName.textContent = monthNames[selectedMonth.month] + ' ' + selectedMonth.year;
+  function updateDays() {
+    const todayID = getToday().toISOString().slice(0, 10);
+    Object.keys(days).forEach(dayID => {
+      const day = days[dayID];
+      const dateObj = new Date(dayID);
+      const schedule = getSchedule(dateObj);
+      day.classList[schedule.noSchool ? 'add' : 'remove']('date-selector-no-school');
+      day.classList[schedule.alternate ? 'add' : 'remove']('date-selector-alternate');
+      day.classList[dayID === todayID ? 'add' : 'remove']('date-selector-today');
+    });
+  }
   const WEEK_HEIGHT = 24; // in pixels
   const CALENDAR_HEIGHT = 6 * WEEK_HEIGHT;
+  let selectedMonth, selectedDay;
   daysWrapper.addEventListener('scroll', e => {
     const scrollPos = (daysWrapper.scrollTop + CALENDAR_HEIGHT / 2) / WEEK_HEIGHT;
     const index = months.findIndex(month => month.start >= scrollPos);
     const month = months[(~index ? index : months.length) - 1];
     if (month && month !== selectedMonth) {
-      selectedMonth.wrapper.classList.remove('date-selector-month-selected');
+      if (selectedMonth) {
+        selectedMonth.wrapper.classList.remove('date-selector-month-selected');
+      }
       selectedMonth = month;
       month.wrapper.classList.add('date-selector-month-selected');
       monthName.textContent = monthNames[month.month] + ' ' + month.year;
@@ -513,14 +530,44 @@ document.addEventListener('DOMContentLoaded', e => {
     ) {
       viewingDate = new Date(e.target.dataset.date);
       updateView();
-      updateDateWrapperLink();
       if (selectedDay) selectedDay.classList.remove('date-selector-selected');
       e.target.classList.add('date-selector-selected');
       selectedDay = e.target;
     }
   });
-  let selectedDay;
+  daysWrapper.addEventListener('keydown', e => {
+    if (e.keyCode >= 37 && e.keyCode <= 40) {
+      let offset;
+      switch (e.keyCode) {
+        case 37: offset = -1; break;
+        case 38: offset = -7; break;
+        case 39: offset = 1; break;
+        case 40: offset = 7; break;
+      }
+      const newDate = new Date(
+        viewingDate.getUTCFullYear(),
+        viewingDate.getUTCMonth(),
+        viewingDate.getUTCDate() + offset
+      );
+      if (newDate.getTime() >= FIRST_DAY && newDate.getTime() <= LAST_DAY) {
+        viewingDate = newDate;
+        updateView();
+        const day = days[newDate.toISOString().slice(0, 10)];
+        if (day) {
+          if (selectedDay) selectedDay.classList.remove('date-selector-selected');
+          day.classList.add('date-selector-selected');
+          selectedDay = day;
+        }
+      }
+      e.preventDefault();
+    }
+  });
   document.getElementById('select-date').addEventListener('click', e => {
+    if (!daysCreated) {
+      createDays();
+      daysCreated = true;
+    }
+    updateDays();
     dateSelector.classList.remove('hidden');
     if (selectedDay) selectedDay.classList.remove('date-selector-selected');
     const day = days[viewingDate.toISOString().slice(0, 10)];
@@ -529,6 +576,7 @@ document.addEventListener('DOMContentLoaded', e => {
       day.classList.add('date-selector-selected');
       selectedDay = day;
     }
+    daysWrapper.focus();
   });
   document.getElementById('cancel-select-date').addEventListener('click', e => {
     dateSelector.classList.add('hidden');

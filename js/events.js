@@ -65,6 +65,8 @@ async function renderEvents() {
       if (parseEvents(splitEvents({items}), viewingDate)) {
         storage.setItem(SCHEDULE_DATA_KEY, saveScheduleData());
         updateView();
+        todayDate = null;
+        updateStatus();
       }
     }
     empty(eventsList);
@@ -217,9 +219,9 @@ ready.push(async () => {
     fetchedAlts = true;
     await fetchEvents();
     if (params.then) return window.location.replace(params.then);
-    todaySchedule = getSchedule(getToday());
-    updateStatus();
+    todayDate = null;
   }
   prepareScheduleData(storage.getItem(SCHEDULE_DATA_KEY));
   updateView();
+  updateStatus(true, 0);
 });

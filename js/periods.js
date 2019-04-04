@@ -316,7 +316,6 @@ function showWeekPreview(schedules, selectedDay) {
         // BUG: current allows user to click outside of school year, oh well
         viewingDate = schedule.date;
         updateView();
-        updateDateWrapperLink();
       },
       keydown(e) {
         // BUG: focus is lost
