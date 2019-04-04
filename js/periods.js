@@ -251,12 +251,28 @@ function setSchedule(schedule) {
  */
 const dayInitials = ['S', 'M', 'T', 'W', '&Theta;', 'F', 'S'];
 
+let lastWeekSchedules;
+
 /**
  * Renders the week preview
  * @param {Schedule[]} schedules Schedules of each day of the week
  * @param {number} selectedDay Index of the day being previewed
  */
 function showWeekPreview(schedules, selectedDay) {
+  // don't rerender the same week
+  const scheduleCache = JSON.stringify(schedules);
+  if (lastWeekSchedules === scheduleCache) {
+    for (let i = 0; i < 7; i++) {
+      const column = weekPreviewWrapper.children[i];
+      if (selectedDay === i) column.classList.add('week-preview-today');
+      else if (column.classList.contains('week-preview-today')) {
+        column.classList.remove('week-preview-today');
+      }
+    }
+    return;
+  }
+  lastWeekSchedules = scheduleCache;
+
   empty(weekPreviewWrapper);
   weekPreviewWrapper.appendChild(createFragment(schedules.map((schedule, i) => createElement('div', {
     classes: ['week-preview-col', selectedDay === i ? 'week-preview-today' : undefined],
