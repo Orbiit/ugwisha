@@ -111,7 +111,7 @@ const eventsMaxDate = new Date(LAST_DAY + 111599999); // also adds a day - 1 to 
  * @type {string}
  */
 const gCalYearURL = 'https://www.googleapis.com/calendar/v3/calendars/'
-  + encodeURIComponent(EVENTS_CALENDAR_ID)
+  + encodeURIComponent(SCHEDULES_CALENDAR_ID)
   + '/events?singleEvents=true&fields='
   + encodeURIComponent('items(description,end(date,dateTime),start(date,dateTime),summary)')
   + '&key=' + GOOGLE_API_KEY
@@ -145,10 +145,33 @@ function fetchEvents() {
 }
 
 /**
+ * An event object from the Google Calendar API
+ * @typedef {object} GoogleEvent
+ * @property {string} summary The title of the event
+ * @property {?string} description The description of the event
+ * @property {?string} location A description of the location of the event
+ * @property {object} start The start time and date
+ * @property {?string} start.date The start date in YYYY-MM-DD format
+ * @property {?string} start.dateTime The start time in ISO 8601 format
+ * @property {object} end The end time and date; same properties as start
+ */
+
+/**
+ * A GoogleEvent can span multiple days and the date and dateTime properties
+ * are messy; the parser would like to deal with something more friendly.
+ * splitEvents splits a GoogleEvent into multiple ParserEvents so they can each
+ * be individually parsed.
+ * @typedef {object} ParserEvent
+ * @property {string} summary The title of the event
+ * @property {?string} description The description of the event
+ * @property {string} date The date of the event
+ */
+
+/**
  * Splits events spanning multiple days into multiple single-day events
  * @param {Object} events JSON returned from the Google Calendar API
- * @param {Object[]} events.items the actual event objects
- * @return {Object[]} the simplified event objects
+ * @param {GoogleEvent[]} events.items the actual event objects
+ * @return {ParserEvent[]} the simplified event objects
  */
 function splitEvents({items}) {
   const events = [];

@@ -202,7 +202,7 @@ function parseEvents(events, dateObj) {
 /* ENCODING */
 const selfCharOffset = 72;
 const alternateRegex = /([A-GblfI-W])([\dab]{3})([\dab]{3})/g;
-function decodeStoredAlternates(string = storage.getItem(SCHEDULE_DATA_KEY)) {
+function decodeStoredAlternates(string) {
   const lines = string.split('|');
   const schedules = {};
   lines.forEach(m => {
@@ -290,7 +290,6 @@ const normalSchedules = [
 ];
 
 /* GET SCHEDULE */
-const SCHEDULE_DATA_KEY = '[ugwisha] alternates-2'; // change when new school year
 let scheduleData = {};
 function getSchedule(dateObj) {
   const dateName = dateObj.toISOString().slice(5, 10);
@@ -322,7 +321,7 @@ function getSchedule(dateObj) {
 /* PERIOD CARD NOTES */
 const gradeName = ['freshmen', 'sophomores', 'juniors', 'seniors'];
 function getNote(periodData) {
-  return periodData.period === 's' ? 'For ' + (periodData.selfGrades || defaultSelf).toString(2).split('').reverse().map((n, i) => n === '1' ? gradeName[i] : '').filter(n => n).join(', ') : undefined;
+  return periodData.period === 's' ? 'For ' + (periodData.selfGrades || defaultSelf).toString(2).split('').reverse().map((n, i) => n === '1' ? gradeName[i] : '').filter(n => n).join(', ') : null;
 }
 
 window.ugwishaOptions = {
@@ -336,7 +335,7 @@ window.ugwishaOptions = {
     scheduleData = decodeStoredAlternates(storedSchedules);
   },
 
-  SCHEDULE_DATA_KEY,
+  SCHEDULE_DATA_KEY: '[ugwisha] alternates-2', // change when new school year
 
   /* FETCHING */
   SCHEDULES_CALENDAR_ID: 'u5mgb2vlddfj70d7frf3r015h0@group.calendar.google.com',
