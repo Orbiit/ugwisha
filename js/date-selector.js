@@ -186,10 +186,12 @@ ready.push(() => {
       e.preventDefault();
     } else if (e.keyCode === 27) { // escape
       dateSelector.classList.add('hidden');
+      selectDateBtn.focus();
     }
   });
 
-  document.getElementById('select-date').addEventListener('click', e => {
+  const selectDateBtn = document.getElementById('select-date');
+  selectDateBtn.addEventListener('click', e => {
     if (!daysCreated) {
       daysWrapper.appendChild(createDays());
       daysCreated = true;
@@ -209,6 +211,7 @@ ready.push(() => {
 
   document.getElementById('cancel-select-date').addEventListener('click', e => {
     dateSelector.classList.add('hidden');
+    selectDateBtn.focus();
   });
 
   document.addEventListener('click', e => {

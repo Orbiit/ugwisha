@@ -148,6 +148,7 @@ document.addEventListener('DOMContentLoaded', e => {
     if (options.lastPSA && options.lastPSA !== version) {
       psaDialog.classList.remove('hidden');
       psaClose.focus();
+      document.body.style.overflow = 'hidden';
     }
     if (!options.lastPSA) {
       options.lastPSA = version;
@@ -164,10 +165,12 @@ document.addEventListener('DOMContentLoaded', e => {
         }
       }
       psaOpen.focus();
+      document.body.style.overflow = null;
     });
     psaOpen.addEventListener('click', e => {
       psaDialog.classList.remove('hidden');
       psaClose.focus();
+      document.body.style.overflow = 'hidden';
     });
     onconnection.forEach(listener => listener(true));
   }).catch(() => {

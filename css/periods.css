@@ -165,8 +165,9 @@ input.select-input {
 }
 #date-selector-days {
   overflow: auto;
-  overflow: -moz-scrollbars-none;
-  -ms-overflow-style: none;
+  overflow: -moz-scrollbars-none; /* older Firefox */
+  -ms-overflow-style: none; /* Microsoft browsers */
+  scrollbar-width: none; /* newer Firefox */
   height: 144px;
   text-align: left;
   cursor: pointer;
@@ -174,9 +175,11 @@ input.select-input {
 }
 #date-selector-days:focus {
   outline: none;
+}
+.tab-focus #date-selector-days:focus {
   box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.3);
 }
-#date-selector-days::-webkit-scrollbar {
+#date-selector-days::-webkit-scrollbar { /* Safari and Chrome */
   width: 0;
 }
 .date-selector-month {

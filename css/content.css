@@ -1,3 +1,7 @@
+a, button, input, select, #date-selector-days {
+  -webkit-tap-highlight-color: transparent;
+}
+
 .kind-of-button, .button {
   border: 1px solid rgba(255, 255, 255, 0.5);
   border-radius: 5px;
@@ -5,7 +9,6 @@
   cursor: pointer;
   position: relative;
   overflow: hidden;
-  -webkit-tap-highlight-color: transparent;
   word-wrap: break-word;
 }
 .button {
@@ -39,7 +42,6 @@
   cursor: pointer;
   position: relative;
   overflow: hidden;
-  -webkit-tap-highlight-color: transparent;
   background-repeat: no-repeat;
   background-position: center;
   background-size: 24px;
