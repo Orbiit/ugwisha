@@ -149,7 +149,7 @@ function fetchEvents() {
 /**
  * An event object from the Google Calendar API
  * @typedef {object} GoogleEvent
- * @property {string} summary The title of the event
+ * @property {?string} summary The title of the event
  * @property {?string} description The description of the event
  * @property {?string} location A description of the location of the event
  * @property {object} start The start time and date

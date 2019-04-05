@@ -130,7 +130,7 @@ function parseEvents(events, dateObj) {
   const oldEntry = scheduleData[dateName];
   let self, alternate, overrideSELF = false;
   // duplicate events happen infrequently; they're not a concern
-  events.forEach(({summary, description}) => {
+  events.forEach(({summary = '', description}) => {
     if (summary.includes('SELF') && summary.includes('graders')) {
       let grades = 0;
       summary.replace(selfGradeRegex, (_, grade) => grades += gradeToInt[grade]);
