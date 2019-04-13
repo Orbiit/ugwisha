@@ -267,10 +267,6 @@ document.addEventListener('DOMContentLoaded', e => {
       eventsWrapper.style.display = yes ? null : 'none';
     }
   };
-  if (options.showDuration) document.body.classList.add('show-duration');
-  if (options.showTime) document.body.classList.add('show-time');
-  if (options.quickTransitions) document.body.classList.add('quick-transitions');
-  if (!options.showEvents) eventsWrapper.style.display = 'none';
   Array.from(document.getElementsByClassName('toggle-setting'), toggle => {
     const prop = toggle.dataset.option;
     if (options[prop] === undefined) options[prop] = toggle.dataset.default === 'true';
@@ -282,6 +278,10 @@ document.addEventListener('DOMContentLoaded', e => {
       save();
     });
   });
+  if (options.showDuration) document.body.classList.add('show-duration');
+  if (options.showTime) document.body.classList.add('show-time');
+  if (options.quickTransitions) document.body.classList.add('quick-transitions');
+  if (!options.showEvents) eventsWrapper.style.display = 'none';
 
   // simple date navigation buttons
   dateWrapper.addEventListener('click', e => {
