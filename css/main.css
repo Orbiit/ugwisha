@@ -110,6 +110,10 @@ body {
     overflow: auto;
   }
 
+  #drag-handle {
+    display: none;
+  }
+
   .preview {
     position: absolute;
     top: 45%;
