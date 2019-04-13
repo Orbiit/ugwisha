@@ -314,6 +314,7 @@ document.addEventListener('DOMContentLoaded', e => {
     document.removeEventListener(e.type === 'mouseup' ? 'mousemove' : 'touchmove', pointerMove);
     document.removeEventListener(e.type, pointerEnd);
     e.preventDefault();
+    save();
   }
   handle.addEventListener('mousedown', e => {
     document.addEventListener('mousemove', pointerMove);
