@@ -304,15 +304,13 @@ document.addEventListener('DOMContentLoaded', e => {
   // change sidebar width
   const sidebar = document.getElementById('content');
   const handle = document.getElementById('drag-handle');
-  let touchID = null;
   function pointerMove(e) {
-    const pointer = e.type[0] === 'm' ? e : e.touches.find(t => t.identifier === touchID);
+    const pointer = e.type[0] === 'm' ? e : e.changedTouches[0];
     options.sidebarWidth = Math.max(250, Math.min(700, windowWidth - 200, pointer.clientX - 100));
     sidebar.style.setProperty('--custom-width', (options.sidebarWidth || 250) + 'px');
     e.preventDefault();
   }
   function pointerEnd(e) {
-    touchID = null;
     document.removeEventListener(e.type === 'mouseup' ? 'mousemove' : 'touchmove', pointerMove);
     document.removeEventListener(e.type, pointerEnd);
     e.preventDefault();
@@ -323,11 +321,10 @@ document.addEventListener('DOMContentLoaded', e => {
     e.preventDefault();
   });
   handle.addEventListener('touchstart', e => {
-    touchID = e.changedTouches[0].identifier;
     document.addEventListener('touchmove', pointerMove, {passive: false});
     document.addEventListener('touchend', pointerEnd, {passive: false});
     e.preventDefault();
-  }, {passive: true});
+  }, {passive: false});
   sidebar.style.setProperty('--custom-width', (options.sidebarWidth || 250) + 'px');
 }, {once: true});
 
