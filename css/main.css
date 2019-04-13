@@ -25,13 +25,24 @@ body {
 }
 .content {
   background-color: rgba(0, 0, 0, 0.5);
-  width: 250px;
+  min-width: 250px;
+  max-width: calc(100vw - 200px);
   padding: 20px;
   margin-left: 100px;
   box-sizing: border-box;
   min-height: 100%;
-  overflow: auto;
   position: relative;
+  width: var(--custom-width);
+  --custom-width: 250px;
+}
+#drag-handle {
+  position: absolute;
+  top: 0;
+  right: -10px;
+  width: 20px;
+  height: 100%;
+  cursor: ew-resize;
+  cursor: col-resize;
 }
 .preview {
   position: fixed;
@@ -94,6 +105,7 @@ body {
     border-top-left-radius: 50px;
     border-top-right-radius: 50px;
     height: auto;
+    overflow: auto;
   }
 
   .preview {
