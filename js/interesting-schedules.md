@@ -45,3 +45,7 @@ Flextime for freshmen, sophomores & seniors (10:15-12:15)
 BBQ Lunch for test-takers! (12:15-1:05)
 Staff Collaboration (1:15-3:30)
 ```
+
+# 2019-04-11
+
+Last-minute schedule change not reflected on the website; brunch was moved from before SELF to after.
