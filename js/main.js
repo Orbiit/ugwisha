@@ -113,6 +113,14 @@ document.addEventListener('DOMContentLoaded', e => {
   backDay = document.getElementById('back-day');
   forthDay = document.getElementById('forth-day');
 
+  const checkboxes = Array.from(document.getElementsByClassName('toggle-setting'));
+  checkboxes.forEach(toggle => {
+    const prop = toggle.dataset.option;
+    if (options[prop] === undefined) {
+      options[prop] = toggle.dataset.default === 'true';
+    }
+  });
+
   // ready functions - it's important to do this first because updateView relies
   // on period.js
   ready.forEach(r => r());
@@ -267,9 +275,8 @@ document.addEventListener('DOMContentLoaded', e => {
       eventsWrapper.style.display = yes ? null : 'none';
     }
   };
-  Array.from(document.getElementsByClassName('toggle-setting'), toggle => {
+  checkboxes.forEach(toggle => {
     const prop = toggle.dataset.option;
-    if (options[prop] === undefined) options[prop] = toggle.dataset.default === 'true';
     toggle.checked = options[prop];
     const onchange = optionChange[prop] || onoptionchange[prop];
     toggle.addEventListener('change', e => {
