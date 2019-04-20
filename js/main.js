@@ -142,7 +142,7 @@ document.addEventListener('DOMContentLoaded', e => {
   const psaContent = document.getElementById('psa-content');
   const psaClose = document.getElementById('psa-close');
   const psaOpen = document.getElementById('last-psa');
-  fetch('./psa.html?=' + Date.now()).then(r => r.text()).then(html => {
+  fetch('./psa.html?v=' + Date.now()).then(r => r.text()).then(html => {
     psaContent.innerHTML = html;
     const version = html.slice(6, 9);
     if (options.lastPSA && options.lastPSA !== version) {

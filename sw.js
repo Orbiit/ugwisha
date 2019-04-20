@@ -1,4 +1,4 @@
-const CACHE_NAME = 'ugwisha-sw-v1555126372409';
+const CACHE_NAME = 'ugwisha-sw-v1555134506061';
 const BACKGROUND_CACHE_NAME = 'ugwisha-backgrounds'; // don't change this
 const EXTENSIONS_CACHE_NAME = 'ugwisha-extensions'; // don't change this either
 const urlsToCache = [
@@ -6,6 +6,7 @@ const urlsToCache = [
   './manifest.json',
   './css/ugwisha.css',
   './ugwisha.js',
+  './js/gunn.js',
   './images/material-check_box.svg',
   './images/material-keyboard_arrow_left.svg',
   './images/material-keyboard_arrow_right.svg',
