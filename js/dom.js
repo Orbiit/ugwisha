@@ -20,6 +20,11 @@ function createElement(tag, data = {}) {
       else elem.setAttribute(attr, data.attributes[attr]);
     });
   }
+  if (data.dataset) {
+    Object.keys(deundefine(data.dataset)).forEach(attr => {
+      elem.dataset[attr] = data.dataset[attr];
+    });
+  }
   if (data.data) {
     Object.keys(deundefine(data.data)).forEach(attr => {
       elem.dataset[attr] = data.data[attr];

@@ -55,7 +55,7 @@ function setPdColour(pd, newColour) {
   return options['periodColour_' + PERIOD_OPTION_PREFIX + pd] = newColour;
 }
 
-let scheduleWrapper, weekPreviewWrapper;
+let scheduleWrapper, weekPreviewColumns;
 let inputs, periodCards;
 let colourPickerInput, colourPickerCheckbox;
 
@@ -70,6 +70,40 @@ function checkThenDestroy() {
       periodBeingColoured = null;
     }
   }, 0);
+}
+
+const sheepImages = [ // 14 sheep
+  'left-sheep-curious.svg',
+  'left-sheep-running-sad-D.svg',
+  'left-sheep-standing-blowing-caterpillars.svg',
+  'right-sheep-D-mouth.svg',
+  'right-sheep-fishing.svg',
+  'right-sheep-hot-air-balloon.svg',
+  'right-sheep-sleeping.svg',
+  'standing-sheep-arms-out.svg',
+  'standing-sheep-classy.svg',
+  'standing-sheep-doing-ballet.svg',
+  'standing-sheep-flowers.svg',
+  'standing-sheep-hungry.svg',
+  'two-sheep-ice-cream.svg',
+  'two-sheep-stack.svg'
+];
+
+
+/**
+ * Consistently selects a sheep based on a date for the day for no school days
+ * @param {number} time The time of a Date object
+ * @return {string} The URL of the sheep image to use
+ */
+function sheepFromDate(time) {
+  // alternate between two sets of sheep so the same sheep never appears twice
+  // in a row
+  const even = time / 86400000 % 2 === 0;
+  // not using modulo so it's not a cycle of sheep, though it might still end up
+  // being one; using base 7 because there are 2 sets of a total of 14 sheep
+  // character 9 seems to be somewhat more random than the others
+  const index = +time.toString(7)[9];
+  return sheepImages[(even ? 0 : 7) + index];
 }
 
 /**
@@ -181,7 +215,10 @@ function setSchedule(schedule) {
         createElement('span', {
           html: 'No school!'
         })
-      ]
+      ],
+      styles: {
+        backgroundImage: `url('./images/sheep/${sheepFromDate(schedule.date.getTime())}')`
+      }
     }));
     return;
   }
@@ -251,43 +288,19 @@ function setSchedule(schedule) {
  */
 const dayInitials = ['S', 'M', 'T', 'W', '&Theta;', 'F', 'S'];
 
-let lastWeekSchedules;
-
 /**
  * Renders the week preview
  * @param {Schedule[]} schedules Schedules of each day of the week
  * @param {number} selectedDay Index of the day being previewed
  */
 function showWeekPreview(schedules, selectedDay) {
-  // don't rerender the same week
-  const scheduleCache = JSON.stringify(schedules);
-  if (lastWeekSchedules === scheduleCache) {
-    for (let i = 0; i < 7; i++) {
-      const column = weekPreviewWrapper.children[i];
-      if (selectedDay === i) column.classList.add('week-preview-today');
-      else if (column.classList.contains('week-preview-today')) {
-        column.classList.remove('week-preview-today');
-      }
-    }
-    return;
-  }
-  lastWeekSchedules = scheduleCache;
-
-  empty(weekPreviewWrapper);
-  weekPreviewWrapper.appendChild(createFragment(schedules.map((schedule, i) => createElement('div', {
-    classes: ['week-preview-col', selectedDay === i ? 'week-preview-today' : undefined],
-    attributes: {
-      tabindex: 0
-    },
-    children: [
-      createElement('span', {
-        classes: 'week-preview-cell week-preview-day-heading',
-        html: dayInitials[i],
-        attributes: {
-          title: days[i],
-          'aria-label': days[i]
-        }
-      }),
+  weekPreviewColumns.forEach((col, i) => {
+    if (selectedDay === i) col.wrapper.classList.add('week-preview-today');
+    else col.wrapper.classList.remove('week-preview-today');
+    empty(col.content);
+    const schedule = schedules[i];
+    col.date = schedule.date;
+    col.content.appendChild(createFragment([
       ...(schedule.noSchool ? [] : schedule.map((pd, i) => createElement('span', {
         classes: [
           'week-preview-cell',
@@ -310,19 +323,8 @@ function showWeekPreview(schedules, selectedDay) {
           'aria-label': 'This is an alternate schedule'
         }
       }) : undefined
-    ],
-    listeners: {
-      click: e => {
-        // BUG: current allows user to click outside of school year, oh well
-        viewingDate = schedule.date;
-        updateView();
-      },
-      keydown(e) {
-        // BUG: focus is lost
-        if (e.keyCode === 13) this.click();
-      }
-    }
-  }))));
+    ]));
+  });
 }
 
 /**
@@ -482,6 +484,7 @@ function updateStatus(startInterval = false, nextMinute = 0) {
 
 ready.push(() => {
   scheduleWrapper = document.getElementById('periods');
+
   Object.keys(defaultNames).forEach(pd => {
     if (getPdName(pd) === undefined)
       setPdName(pd, defaultNames[pd]);
@@ -490,11 +493,46 @@ ready.push(() => {
     if (getPdColour(pd) === undefined)
       setPdColour(pd, defaultColours[pd]);
   });
+
   previewTime = document.getElementById('preview-time');
   previewMsg = document.getElementById('preview-msg');
   progressBar = document.getElementById('progress');
+
   favicon = document.getElementById('favicon');
   fc.textAlign = 'center';
   fc.textBaseline = 'middle';
-  weekPreviewWrapper = document.getElementById('week-preview')
+
+  weekPreviewColumns = [];
+  for (let i = 0; i < 7; i++) {
+    const entry = {};
+    entry.wrapper = createElement('div', {
+      classes: 'week-preview-col',
+      attributes: {
+        tabindex: 0
+      },
+      children: [
+        createElement('span', {
+          classes: 'week-preview-cell week-preview-day-heading',
+          html: dayInitials[i],
+          attributes: {
+            title: days[i],
+            'aria-label': days[i]
+          }
+        }),
+        entry.content = createElement('div')
+      ],
+      listeners: {
+        click: e => {
+          // BUG: current allows user to click outside of school year, oh well
+          viewingDate = entry.date;
+          updateView();
+        },
+        keydown(e) {
+          if (e.keyCode === 13) this.click();
+        }
+      }
+    });
+    weekPreviewColumns.push(entry);
+  }
+  document.getElementById('week-preview').appendChild(createFragment(weekPreviewColumns.map(({wrapper}) => wrapper)));
 });

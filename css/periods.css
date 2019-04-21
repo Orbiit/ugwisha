@@ -88,8 +88,8 @@
   text-align: center;
   box-sizing: border-box;
   padding: 20px;
-  background-image: url('../images/temp-sheep.png');
-  background-size: 150px;
+  /* background-image: url('../images/temp-sheep.png'); */
+  background-size: 150px 150px;
   background-position: 50% 25%;
   background-repeat: no-repeat;
 }

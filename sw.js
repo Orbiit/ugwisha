@@ -1,4 +1,4 @@
-const CACHE_NAME = 'ugwisha-sw-v1555735510755';
+const CACHE_NAME = 'ugwisha-sw-v1555820323422';
 const BACKGROUND_CACHE_NAME = 'ugwisha-backgrounds'; // don't change this
 const EXTENSIONS_CACHE_NAME = 'ugwisha-extensions'; // don't change this either
 const urlsToCache = [
@@ -18,7 +18,20 @@ const urlsToCache = [
   './images/logo-paly-192.png',
   './images/logo-paly-512.png',
   './images/logo-paly-ios.png',
-  './images/temp-sheep.png',
+  './images/sheep/left-sheep-curious.svg',
+  './images/sheep/left-sheep-running-sad-D.svg',
+  './images/sheep/left-sheep-standing-blowing-caterpillars.svg',
+  './images/sheep/right-sheep-D-mouth.svg',
+  './images/sheep/right-sheep-fishing.svg',
+  './images/sheep/right-sheep-hot-air-balloon.svg',
+  './images/sheep/right-sheep-sleeping.svg',
+  './images/sheep/standing-sheep-arms-out.svg',
+  './images/sheep/standing-sheep-classy.svg',
+  './images/sheep/standing-sheep-doing-ballet.svg',
+  './images/sheep/standing-sheep-flowers.svg',
+  './images/sheep/standing-sheep-hungry.svg',
+  './images/sheep/two-sheep-ice-cream.svg',
+  './images/sheep/two-sheep-stack.svg',
   'https://fonts.googleapis.com/css?family=Roboto+Condensed',
   'https://fonts.gstatic.com/s/robotocondensed/v16/ieVl2ZhZI2eCN5jzbjEETS9weq8-19K7DQ.woff2'
 ];

@@ -3,6 +3,7 @@
  * @typedef {Period[]} Schedule
  * @property {boolean} noSchool True if there's no school
  * @property {boolean} alternate True if it should be marked as an alternate schedule
+ * @property {Date} date The date of the schedule
  */
 
 /**
@@ -296,11 +297,11 @@ document.addEventListener('DOMContentLoaded', e => {
     e.preventDefault();
   });
   backDay.addEventListener('click', e => {
-    viewingDate.setUTCDate(viewingDate.getUTCDate() - 1);
+    viewingDate = new Date(viewingDate.getTime() - 86400000);
     updateView();
   });
   forthDay.addEventListener('click', e => {
-    viewingDate.setUTCDate(viewingDate.getUTCDate() + 1);
+    viewingDate = new Date(viewingDate.getTime() + 86400000);
     updateView();
   });
   document.getElementById('today').addEventListener('click', e => {
