@@ -4,6 +4,12 @@ Ugwisha is the descendent of [Ugwita](https://orbiit.github.io/gunn-web-app/lite
 
 Feel free to fork this repository and make your own app; just credit me somewhere.
 
+## `ugwisha.js`
+
+Ugwisha can be used for a different school. Before loading [`ugwisha.js`](./ugwisha.js), run some JavaScript that defines a global JS object `window.ugwishaOptions` that sets some parameters for Ugwisha. You can see what options you need to specify for Ugwisha in [`js/ugwisha-options.js`](js/ugwisha-options.js) and how they are used in [`js/gunn.js`](./js/gunn.js).
+
+## Features
+
 Ugwisha currently supports:
 
 - features all Gunn apps have:
@@ -18,6 +24,7 @@ Ugwisha currently supports:
   - week previews
   - events
   - barcode generator
+  - better date selector
 - Ugwita features
   - automatically change date when there's a new day
   - linking to dates by URL: `?day=yyyy-mm-dd`
@@ -27,14 +34,13 @@ Ugwisha currently supports:
   - time until next period in favicon (so Ugwisha can be pinned)
   - split double flex
   - remove passing periods from brunch/lunch
+  - randomly selected sheep doodles
 
 Perhaps Ugwisha may also support:
 
 - a better colour picker
 - period descriptions
 - zero, H, and staff periods support
-- better date selector
-- randomly selected sheep doodles
 - weather
 - club and staff lists
 - campus map
