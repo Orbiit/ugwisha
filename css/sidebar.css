@@ -94,27 +94,6 @@
     display: none;
   }
 
-  .preview {
-    position: absolute;
-    top: 45%;
-    transform: translateY(-50%);
-    left: 0;
-    width: 100%;
-    margin: 0;
-    text-align: center;
-    bottom: auto;
-  }
-
-  #progress {
-    left: 0;
-    margin-left: auto;
-    margin-right: auto;
-  }
-
-  .abbrev-wednesday {
-    display: inline;
-  }
-
   #jump {
     display: inline-block;
   }
