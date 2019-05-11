@@ -535,4 +535,40 @@ ready.push(() => {
     weekPreviewColumns.push(entry);
   }
   document.getElementById('week-preview').appendChild(createFragment(weekPreviewColumns.map(({wrapper}) => wrapper)));
+
+  let currentTouch = null;
+  scheduleWrapper.addEventListener('touchstart', e => {
+    if (!currentTouch && options.allowSliding) {
+      const touch = e.changedTouches[0];
+      currentTouch = {id: touch.identifier, startX: touch.clientX, slide: false};
+    }
+  });
+  scheduleWrapper.addEventListener('touchmove', e => {
+    if (currentTouch) {
+      const touch = Array.from(e.touches).find(t => t.identifier === currentTouch.id);
+      if (touch) {
+        const changeX = touch.clientX - currentTouch.startX;
+        if (!currentTouch.slide) {
+          if (Math.abs(changeX) > 30) currentTouch.slide = true;
+        }
+        if (currentTouch.slide) {
+          scheduleWrapper.style.transform = `translateX(${changeX / 5}px)`;
+          scheduleWrapper.style.opacity = Math.abs(changeX) > 60 ? 0.5 : null;
+        }
+      }
+    }
+  });
+  scheduleWrapper.addEventListener('touchend', e => {
+    if (currentTouch) {
+      const touch = Array.from(e.changedTouches).find(t => t.identifier === currentTouch.id);
+      if (touch) {
+        const changeX = touch.clientX - currentTouch.startX;
+        if (changeX > 60) forthDay.click();
+        else if (changeX < -60) backDay.click();
+      }
+      scheduleWrapper.style.transform = null;
+      scheduleWrapper.style.opacity = null;
+      currentTouch = null;
+    }
+  });
 });
