@@ -1,52 +1,3 @@
-a, button, input, select, #date-selector-days {
-  -webkit-tap-highlight-color: transparent;
-}
-
-.kind-of-button, .button {
-  border: 1px solid rgba(255, 255, 255, 0.5);
-  border-radius: 5px;
-  color: rgba(255, 255, 255, 0.8);
-  cursor: pointer;
-  position: relative;
-  overflow: hidden;
-  word-wrap: break-word;
-}
-.button {
-  vertical-align: middle;
-  background: none;
-  -webkit-appearance: none;
-  font: inherit;
-  font-size: 14px;
-  padding: 5px 15px;
-  text-transform: uppercase;
-}
-.kind-of-button:focus, .button:focus, .icon-btn:focus {
-  outline: none;
-}
-.kind-of-button:active, .button:active {
-  box-shadow: 0 1px 5px rgba(0, 0, 0, 0.5);
-}
-.tab-focus .kind-of-button:focus, .tab-focus .button:focus, .tab-focus .icon-btn:focus {
-  box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.2);
-}
-
-.icon-btn {
-  vertical-align: middle;
-  -webkit-appearance: none;
-  border: none;
-  background: none;
-  border-radius: 50%;
-  padding: 20px;
-  box-sizing: content-box;
-  color: rgba(255, 255, 255, 0.8);
-  cursor: pointer;
-  position: relative;
-  overflow: hidden;
-  background-repeat: no-repeat;
-  background-position: center;
-  background-size: 24px;
-}
-
 .basic-input {
   -webkit-appearance: none;
   border-radius: 0;
@@ -142,21 +93,4 @@ textarea:focus {
 h3, h4, h5, h6 {
   font-weight: normal;
   margin-bottom: 0;
-}
-
-option {
-  background-color: black;
-}
-
-#error {
-  color: #ff5959;
-  margin-top: -5px;
-}
-
-:disabled {
-  opacity: 0.5;
-  cursor: default !important; /* reee */
-}
-.center {
-  text-align: center;
 }

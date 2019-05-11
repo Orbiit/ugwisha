@@ -1,0 +1,80 @@
+.extension-title {
+  display: flex;
+  align-items: flex-start;
+}
+#extension-icon {
+  width: 20px;
+  height: 20px;
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-position: center;
+  margin-top: 5px;
+  margin-right: 5px;
+  border-radius: 2px;
+}
+#extension-name {
+  flex: auto;
+}
+#extension-menu {
+  background-image: url('../images/material-apps.svg');
+  position: relative;
+  top: -5px;
+  margin-bottom: -50px; /* SUCC */
+}
+.extension-menu {
+  margin-right: -12px;
+}
+.extension-item {
+  width: 62px;
+  display: inline-block;
+  margin-bottom: 5px;
+  margin-right: 12px;
+}
+.extension-icon {
+  width: 60px;
+  height: 60px;
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-position: center;
+  transition: all .2s;
+}
+.extension-name {
+  font-size: 14px;
+  color: rgba(255, 255, 255, 0.7);
+  text-align: center;
+  margin-top: 2px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.extension-list {
+  margin-right: 10px;
+  vertical-align: middle;
+  flex: auto;
+  width: 0;
+}
+.extension-list-wrapper {
+  margin-top: 5px;
+  display: flex;
+}
+.extension-remove-mode .extension-icon {
+  border-color: #ff5959;
+  background-color: rgba(255, 89, 89, 0.2);
+}
+.extension-remove-mode .extension-name {
+  color: rgba(255, 89, 89, 0.8);
+}
+.extension-remove {
+  margin-top: 10px;
+}
+.extension-remove.extension-removing {
+  animation: pulse .5s cubic-bezier(0.5, 0, 0.5, 1) infinite alternate;
+  border-color: #ff5959;
+}
+@keyframes pulse {
+  from { background-color: rgba(255, 89, 89, 0.5); }
+  to   { background-color: rgba(255, 89, 89, 0); }
+}
+.extension-remove-mode .extension-icon .ripple, .extension-remove.extension-removing .ripple {
+  background-color: rgba(255, 89, 89, 0.5);
+}

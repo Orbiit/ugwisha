@@ -1,0 +1,33 @@
+#week-preview {
+  display: flex;
+}
+.week-preview-col {
+  flex: 1 0 0;
+  padding: 0 2px;
+  cursor: pointer;
+  border-radius: 5px;
+}
+.week-preview-col:focus {
+  outline: none;
+}
+.tab-focus .week-preview-col:focus {
+  box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.2);
+}
+.week-preview-today {
+  background-color: rgba(255, 255, 255, 0.1);
+}
+.week-preview-day-heading, .week-preview-alternate, .date-selector-day-heading {
+  font-size: 12px;
+  text-align: center;
+  line-height: 12px;
+  color: rgba(255, 255, 255, 0.6);
+}
+.week-preview-cell {
+  display: block;
+  height: 12px;
+  margin: 4px 0;
+  border-radius: 2px;
+}
+.week-preview-transparent {
+  background-color: rgba(0, 0, 0, 0.1);
+}

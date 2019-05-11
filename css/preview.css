@@ -1,0 +1,61 @@
+.preview {
+  position: fixed;
+  bottom: 0;
+  right: 0;
+  text-align: right;
+  margin: 50px;
+}
+#preview-time {
+  display: block;
+  color: white;
+  font-size: 120px;
+}
+#preview-msg {
+  display: block;
+  color: rgba(255, 255, 255, 0.7);
+  font-size: 36px;
+}
+#progress {
+  position: absolute;
+  right: 0;
+  top: 100%;
+  background-color: rgba(255, 255, 255, 0.2);
+  height: 3px;
+  width: 250px;
+  margin-top: 20px;
+  border-radius: 3px;
+}
+#progress::before {
+  content: '';
+  display: block;
+  background-color: rgba(255, 255, 255, 0.8);
+  width: var(--progress);
+  height: 100%;
+  border-radius: 3px;
+}
+
+.period-chip {
+  background-color: rgba(0, 0, 0, 0.2);
+  padding: 5px 10px;
+  padding-right: 15px;
+  border-radius: 1em;
+  --colour: transparent;
+  color: rgba(255, 255, 255, 0.9);
+}
+.period-chip::before {
+  content: '';
+  display: inline-block;
+  height: 0.5em;
+  width: 0.5em;
+  background-color: var(--colour);
+  border-radius: 50%;
+  margin: 0.1em;
+  margin-right: 10px;
+}
+.period-chip.transparent {
+  background-color: transparent;
+  padding: 0;
+}
+.period-chip.transparent::before {
+  display: none;
+}

@@ -1,0 +1,34 @@
+#psa {
+  display: flex;
+  position: fixed;
+  top: 0;
+  left: 0;
+  background-color: rgba(0, 0, 0, 0.7);
+  width: 100%;
+  height: 100%;
+  align-items: center;
+  justify-content: center;
+}
+#psa-wrapper {
+  width: 100%;
+  max-width: 500px;
+  padding: 20px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 20px;
+  margin: 20px;
+  max-height: 80%;
+  overflow: auto;
+  background-color: rgba(0, 0, 0, 0.3);
+}
+#psa-wrapper > h2 {
+  margin-top: 0;
+}
+#psa-wrapper > p {
+  text-align: right;
+}
+#psa-content {
+  font-size: 16px;
+  color: rgba(255, 255, 255, 0.7);
+  line-height: 1.5;
+}
+#psa.hidden { display: none; }
