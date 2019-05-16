@@ -563,8 +563,8 @@ ready.push(() => {
       const touch = Array.from(e.changedTouches).find(t => t.identifier === currentTouch.id);
       if (touch) {
         const changeX = touch.clientX - currentTouch.startX;
-        if (changeX > 60) forthDay.click();
-        else if (changeX < -60) backDay.click();
+        if (changeX > 60) backDay.click();
+        else if (changeX < -60) forthDay.click();
       }
       scheduleWrapper.style.transform = null;
       scheduleWrapper.style.opacity = null;
