@@ -42,7 +42,7 @@ UgwishaExtensions.register((() => {
 
   const STORAGE_KEY = '[ugwisha] barcodes';
   const barcodeWrapper = document.createElement('div');
-  if (!storage.getItem(STORAGE_KEY)) storage.setItem(STORAGE_KEY, '[["Me", "95012345"]]');
+  if (!storage.getItem(STORAGE_KEY)) storage.setItem(STORAGE_KEY, '[["Me", "950XXXXX"]]');
   const barcodes = JSON.parse(storage.getItem(STORAGE_KEY));
   function save() {
     storage.setItem(STORAGE_KEY, JSON.stringify(barcodes));
