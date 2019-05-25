@@ -1,25 +1,15 @@
 .colour-picker, #date-selector {
   position: absolute;
   background-color: rgba(0, 0, 0, 0.7);
-  padding: 5px;
+  padding: 10px;
   border-radius: 10px;
-}
-
-.colour-picker:focus {
-  outline: none;
-}
-.colour-picker input[type=checkbox] {
-  margin-top: 7.5px;
-  margin-right: 5px;
-  margin-left: 15px;
+  z-index: 2;
 }
 
 .date-controls {
   position: relative;
 }
 #date-selector {
-  padding: 10px;
-  z-index: 2;
   top: -32px;
   left: 0;
   right: 0;

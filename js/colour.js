@@ -1,67 +1,10 @@
-// DO NOT USE DIRECTLY
-// this was for testing purposes lol
-
 /**
- * see https://en.wikipedia.org/wiki/HSL_and_HSV#From_HSV
- * @param {number} hue - hue [0, 360)
- * @param {number} saturation - saturation [0, 1]
- * @param {number} value - value [0, 1]
- * @returns {number[]} - RGB
+ * Converts HSV to RGB unrounded
+ * Based on https://en.wikipedia.org/wiki/HSL_and_HSV#Alternative_HSV_conversion
+ * @param {Object} hsvColour Object representing a colour in HSV with properties h [0, 360), s [0, 1], and v [0, 1]
+ * @return {Object} Object representing a colour in RGB with properties r, g, and b (all [0, 255])
  */
-function hsvToRgb(hue, saturation, value) {
-  const chroma = value * saturation;
-  const huePrime = hue / 60;
-  const x = chroma * (1 - Math.abs(huePrime % 2 - 1));
-  const [redPrime, greenPrime, bluePrime] = (0 <= huePrime <= 1 ? [chroma, x, 0]
-                            : 1 < huePrime <= 2 ? [x, chroma, 0]
-                            : 2 < huePrime <= 3 ? [0, chroma, x]
-                            : 3 < huePrime <= 4 ? [0, x, chroma]
-                            : 4 < huePrime <= 5 ? [x, 0, chroma]
-                            : 5 < huePrime <= 6 ? [chroma, 0, x]
-                            : [0, 0, 0]);
-  const m = value - chroma;
-  return [redPrime + m, greenPrime + m, bluePrime + m];
-}
-
-/**
- * see https://en.wikipedia.org/wiki/HSL_and_HSV#Alternative_HSV_conversion
- * @param {number} hue - hue [0, 360)
- * @param {number} saturation - saturation [0, 1]
- * @param {number} value - value [0, 1]
- * @returns {number[]} - RGB
- */
-function hsvToRgbAlternate(hue, saturation, value) {
-  function f(n) {
-    const k = (n + hue / 60) % 6;
-    return value - value * saturation * Math.max(Math.min(k, 4 - k, 1), 0);
-  }
-  return [f(5), f(3), f(1)];
-}
-
-/**
- * see https://en.wikipedia.org/wiki/HSL_and_HSV#Conversion_RGB_to_HSL/HSV_used_commonly_in_software_programming
- * @param {number} red - [0, 1]
- * @param {number} green - [0, 1]
- * @param {number} blue - [0, 1]
- * @returns {number[]} - HSV
- */
-function rgbToHsv(red, green, blue) {
-  const min = Math.min(red, green, blue);
-  const max = Math.max(red, green, blue);
-  let hue = max === min && red === green && green === blue ? 0
-          : max === red ? 60 * (green - blue) / (max - min)
-          : max === green ? 60 * (2 + (blue - red) / (max - min))
-          : 60 * (4 + (red - green) / (max - min)); // if max is blue
-  if (hue < 0) hue += 360;
-  const saturation = max === 0 && red === green && green === blue && blue === 0 ? 0 : (max - min) / max;
-  const value = max;
-  return [hue, saturation, value];
-}
-
-/**
- * Converts HSV [0, 360), [0, 1], [0, 1] to RGB [0, 255] unrounded
- */
-function hsvToRgbOptimized({h, s, v}) {
+function hsvToRgb({h, s, v}) {
   const f = n => {
     const k = (n + h / 60) % 6;
     return v - v * s * Math.max(Math.min(k, 4 - k, 1), 0);
@@ -70,9 +13,12 @@ function hsvToRgbOptimized({h, s, v}) {
 }
 
 /**
- * Converts RGB [0, 255] to HSV [0, 360), [0, 1], [0, 1] unrounded
+ * Converts RGB to HSV unrounded
+ * Based on https://en.wikipedia.org/wiki/HSL_and_HSV#Conversion_RGB_to_HSL/HSV_used_commonly_in_software_programming
+ * @param {Object} rgbColour Object representing a colour in RGB with properties r, g, and b (all [0, 255])
+ * @return {Object} Object representing a colour in HSV with properties h [0, 360), s [0, 1], and v [0, 1]
  */
-function rgbToHsvOptimized({r, g, b}) {
+function rgbToHsv({r, g, b}) {
   r /= 255, g /= 255, b /= 255;
   const min = Math.min(r, g, b);
   const max = Math.max(r, g, b);
@@ -85,4 +31,179 @@ function rgbToHsvOptimized({r, g, b}) {
   const s = max === 0 && min === 0 ? 0 : diff / max;
   const v = max;
   return {h, s, v};
+}
+
+/**
+ * Converts a hex string to an RGB object for use by rgbToHsv
+ * @param {string} hex Six-digit hex colour string, without the #
+ * @return {Object} Object representing an RGB colour
+ */
+function hexToRgb(hex) {
+  return {r: parseInt(hex.slice(0, 2), 16), g: parseInt(hex.slice(2, 4), 16), b: parseInt(hex.slice(4), 16)}
+}
+/**
+ * Converts an RGB object to a hex string
+ * @param {Object} rgbColour Object representing an RGB colour
+ * @return {string} Six-digit hex colour string, without the #
+ */
+function rgbToHex({r, g, b}) {
+  return [r, g, b].map(c => Math.floor(c).toString(16).padStart(2, '0')).join('');
+}
+
+/**
+ * Converts an RGB object to a CSS rgb colour
+ * @param {Object} rgbColour Object representing an RGB colour
+ * @return {string} CSS rgb colour
+ */
+function rgbToCSS({r, g, b}) {
+  return `rgb(${r}, ${g}, ${b})`;
+}
+
+/**
+ * Regex for detecting a hex colour; the capture groups are done so three-digit
+ * hex colours can be easily turned into six-digit ones.
+ * @type {Regex}
+ */
+const hexColourRegex = /([0-9a-f]{6})|([0-9a-f])([0-9a-f])([0-9a-f])/i;
+
+/**
+ * Isolates a hexadecimal colour code from a string; supports three-digit hex
+ * colours.
+ * @param {string} val The string containing the hex colour
+ * @return {?string} A six digit hexadecimal value (without a hash character)
+ */
+function parseColour(val) {
+  const regexified = hexColourRegex.exec(val.toLowerCase());
+  if (regexified) {
+    if (regexified[1]) return regexified[1];
+    else {
+      return regexified.slice(2, 5).map(c => c + c).join('');
+    }
+  } else {
+    return null;
+  }
+}
+
+const hues = [0, 60, 120, 180, 240, 300, 360];
+
+function drag(elem, onchange) {
+  let rect;
+  function getXY(e) {
+    const pointer = e.type.slice(0, 5) === 'touch' ? e.touches[0] : e;
+    onchange((pointer.clientX - rect.left) / rect.width, (pointer.clientY - rect.top) / rect.height);
+  }
+  function down(e) {
+    rect = elem.getBoundingClientRect();
+    getXY(e);
+    document.addEventListener(e.type === 'touchstart' ? 'touchmove' : 'mousemove', move, {passive: false});
+    document.addEventListener(e.type === 'touchstart' ? 'touchend' : 'mouseup', up, {passive: false});
+    e.stopPropagation();
+    e.preventDefault();
+  }
+  function move(e) {
+    getXY(e);
+    e.preventDefault();
+  }
+  function up(e) {
+    document.removeEventListener(e.type === 'touchend' ? 'touchmove' : 'mousemove', move);
+    document.removeEventListener(e.type, up);
+    e.preventDefault();
+  }
+  elem.addEventListener('mousedown', down, {passive: false});
+  elem.addEventListener('touchstart', down, {passive: false});
+}
+
+function cap(val, min = 0, max = 1) {
+  if (val > max) return max;
+  else if (val < min) return min;
+  else return val;
+}
+
+function colourPicker(onupdate, currentColour = '00BCD4', allowTransparent = true, fallbackColour = '009688') {
+  let colour = rgbToHsv(hexToRgb(currentColour || fallbackColour));
+  let hexInput, transparent, squareSlider, hueSlider;
+  function update(src = {}) {
+    const hex = src.hex || rgbToHex(hsvToRgb(colour));
+    hexInput.value = '#' + hex;
+    if (src.type !== 'initial') {
+      onupdate(allowTransparent && transparent.checked ? null : hex);
+    }
+    squareSlider.style.backgroundColor = `hsl(${colour.h}, 100%, 50%)`;
+    squareSlider.style.setProperty('--x', colour.s * 100 + '%');
+    squareSlider.style.setProperty('--y', (1 - colour.v) * 100 + '%');
+    hueSlider.style.backgroundImage = `linear-gradient(to bottom, ${hues.map(h => rgbToCSS(hsvToRgb({h, s: colour.s, v: colour.v}))).join(',')})`;
+    hueSlider.style.setProperty('--val', colour.h / 360 * 100 + '%');
+  }
+  const wrapper = createElement('div', {
+    classes: 'colour-picker',
+    children: [
+      hexInput = createElement('input', {
+        classes: 'colour-input select-input',
+        attributes: {
+          type: 'text',
+          placeholder: '#123ABC'
+        },
+        listeners: {
+          change() {
+            const parsedHexColour = parseColour(hexInput.value);
+            if (parsedHexColour) {
+              colour = rgbToHsv(hexToRgb(parsedHexColour));
+              if (allowTransparent && transparent.checked) {
+                transparent.checked = false;
+              }
+              update({type: 'hex-input', hex: parsedHexColour});
+            } else {
+              hexInput.value = '#' + rgbToHex(hsvToRgb(colour));
+            }
+          }
+        }
+      }),
+      createElement('div', {
+        classes: 'colour-boxes-wrapper',
+        children: [
+          squareSlider = createElement('div', {
+            classes: 'colour-box'
+          }),
+          hueSlider = createElement('div', {
+            classes: 'colour-slider'
+          })
+        ]
+      }),
+      allowTransparent ? createElement('label', {
+        classes: 'colour-transparent-label',
+        children: [
+          transparent = createElement('input', {
+            classes: 'colour-transparent-checkbox',
+            attributes: {
+              type: 'checkbox'
+            },
+            listeners: {
+              change() {
+                update();
+              }
+            }
+          }),
+          'Transparent?'
+        ]
+      }) : null
+    ]
+  });
+  if (allowTransparent && currentColour === null) transparent.checked = true;
+  drag(squareSlider, (x, y) => {
+    colour.s = cap(x);
+    colour.v = 1 - cap(y);
+    if (allowTransparent && transparent.checked) {
+      transparent.checked = false;
+    }
+    update({type: 'square'});
+  });
+  drag(hueSlider, (x, y) => {
+    colour.h = cap(y) * 360;
+    if (allowTransparent && transparent.checked) {
+      transparent.checked = false;
+    }
+    update({type: 'hue'});
+  });
+  update({type: 'initial', hex: currentColour || fallbackColour});
+  return wrapper;
 }

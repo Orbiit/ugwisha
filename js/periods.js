@@ -56,21 +56,6 @@ function setPdColour(pd, newColour) {
 }
 
 let scheduleWrapper, weekPreviewColumns;
-let inputs, periodCards;
-let colourPickerInput, colourPickerCheckbox;
-
-/**
- * Closes a colour picker after something loses focus and the focus has gone
- * somewhere other than the colour picker.
- */
-function checkThenDestroy() {
-  setTimeout(() => {
-    if (!scheduleWrapper.contains(document.activeElement)) {
-      colourPicker.parentNode.removeChild(colourPicker);
-      periodBeingColoured = null;
-    }
-  }, 0);
-}
 
 const sheepImages = [ // 14 sheep
   'left-sheep-curious.svg',
@@ -107,96 +92,6 @@ function sheepFromDate(time) {
 }
 
 /**
- * Regex for detecting a hex colour; the capture groups are done so three-digit
- * hex colours can be easily turned into six-digit ones.
- * @type {Regex}
- */
-const hexColourRegex = /([0-9a-f]{6})|([0-9a-f])([0-9a-f])([0-9a-f])/;
-
-/**
- * Isolates a hexadecimal colour code from a string; supports three-digit hex
- * colours.
- * @param {string} val The string containing the hex colour
- * @return {?string} A six digit hexadecimal value (without a hash character)
- */
-function parseColour(val) {
-  const regexified = hexColourRegex.exec(val.toLowerCase());
-  if (regexified) {
-    let colour;
-    if (regexified[1]) return regexified[1];
-    else {
-      return regexified.slice(2, 5).map(c => c + c).join('');
-    }
-  }
-}
-
-let periodBeingColoured = null;
-
-/**
- * The colour picker wrapper
- * @type {HTMLElement}
- */
-const colourPicker = createElement('div', {
-  classes: 'colour-picker',
-  children: [
-    colourPickerInput = createElement('input', {
-      classes: 'colour-input select-input',
-      attributes: {
-        type: 'text',
-        placeholder: '#123ABC'
-      },
-      listeners: {
-        change() {
-          const colour = parseColour(colourPickerInput.value);
-          if (colour) {
-            setPdColour(periodBeingColoured, colour);
-            periodCards[periodBeingColoured].forEach(p => p.style.setProperty('--colour', '#' + colour));
-            save();
-            updateStatus();
-          } else {
-            colourPickerInput.value = '#' + getPdColour(periodBeingColoured);
-          }
-        },
-        blur: checkThenDestroy
-      }
-    }),
-    colourPickerCheckbox = createElement('input', {
-      attributes: {
-        type: 'checkbox',
-        name: 'colour-picker-checkbox'
-      },
-      listeners: {
-        change() {
-          colourPickerInput.disabled = colourPickerCheckbox.checked;
-          if (colourPickerCheckbox.checked) {
-            setPdColour(periodBeingColoured, null);
-            periodCards[periodBeingColoured].forEach(p => {
-              p.classList.add('transparent');
-              p.style.setProperty('--colour', null);
-            });
-          } else {
-            setPdColour(periodBeingColoured, parseColour(colourPickerInput.value) || defaultColours[periodBeingColoured] || '000');
-            periodCards[periodBeingColoured].forEach(p => {
-              p.classList.remove('transparent');
-              p.style.setProperty('--colour', '#' + getPdColour(periodBeingColoured));
-            });
-          }
-          save();
-          updateStatus();
-        },
-        blur: checkThenDestroy
-      }
-    }),
-    createElement('label', {
-      attributes: {
-        for: 'colour-picker-checkbox'
-      },
-      html: 'Transparent?'
-    })
-  ]
-});
-
-/**
  * Renders the given schedule
  * @param {Schedule} schedule The schedule to render
  */
@@ -222,8 +117,14 @@ function setSchedule(schedule) {
     }));
     return;
   }
-  inputs = {};
-  periodCards = {};
+  const periods = {}; // for updating duplicate periods' names/colours
+  let currentPickerWrapper, currentPickerParent;
+  document.addEventListener('click', e => {
+    if (currentPickerWrapper && !currentPickerParent.contains(e.target)) {
+      currentPickerWrapper.parentNode.removeChild(currentPickerWrapper);
+      currentPickerWrapper = currentPickerParent = null;
+    }
+  });
   scheduleWrapper.appendChild(createFragment(schedule.map(pd => {
     const periodName = createElement('input', {
       classes: 'period-name',
@@ -237,20 +138,37 @@ function setSchedule(schedule) {
           setPdName(pd.period, periodName.value);
           save();
           updateStatus();
-          inputs[pd.period].forEach(input => input !== periodName && (input.value = periodName.value));
+          periods[pd.period].inputs.forEach(input => input !== periodName && (input.value = periodName.value));
         },
         focus() {
-          if (colourPicker.parentNode) colourPicker.parentNode.removeChild(colourPicker);
-          periodName.parentNode.insertBefore(colourPicker, periodName.nextElementSibling);
-          colourPickerInput.value = '#' + (getPdColour(pd.period) || defaultColours[pd.period] || '000');
-          colourPickerInput.disabled = colourPickerCheckbox.checked = getPdColour(pd.period) === null;
-          periodBeingColoured = pd.period;
-        },
-        blur: checkThenDestroy
+          if (currentPickerParent === wrapper) return;
+          if (currentPickerWrapper) {
+            currentPickerWrapper.parentNode.removeChild(currentPickerWrapper);
+          }
+          currentPickerWrapper = colourPicker(
+            colour => {
+              setPdColour(pd.period, colour);
+              save();
+              updateStatus();
+              periods[pd.period].cards.forEach(p => {
+                if (colour === null) {
+                  p.classList.add('transparent');
+                  p.style.setProperty('--colour', null);
+                } else {
+                  p.classList.remove('transparent');
+                  p.style.setProperty('--colour', '#' + colour);
+                }
+              });
+            },
+            getPdColour(pd.period),
+            true,
+            defaultColours[pd.period] || '000000'
+          );
+          periodName.parentNode.insertBefore(currentPickerWrapper, periodName.nextElementSibling);
+          currentPickerParent = wrapper;
+        }
       }
     });
-    if (!inputs[pd.period]) inputs[pd.period] = [];
-    inputs[pd.period].push(periodName);
     const note = getNote(pd);
     const wrapper = createElement('div', {
       classes: [
@@ -276,8 +194,9 @@ function setSchedule(schedule) {
         }) : undefined
       ]
     });
-    if (!periodCards[pd.period]) periodCards[pd.period] = [];
-    periodCards[pd.period].push(wrapper);
+    if (!periods[pd.period]) periods[pd.period] = {inputs: [], cards: []};
+    periods[pd.period].inputs.push(periodName);
+    periods[pd.period].cards.push(wrapper);
     return wrapper;
   })));
 }

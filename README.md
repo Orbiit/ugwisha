@@ -24,7 +24,8 @@ Ugwisha currently supports:
   - week previews
   - events
   - barcode generator
-  - better date selector
+  - proper date selector
+  - proper colour picker
 - Ugwita features
   - automatically change date when there's a new day
   - linking to dates by URL: `?day=yyyy-mm-dd`
@@ -38,7 +39,6 @@ Ugwisha currently supports:
 
 Perhaps Ugwisha may also support:
 
-- a better colour picker
 - period descriptions
 - zero, H, and staff periods support
 - weather
