@@ -41,130 +41,95 @@ UgwishaExtensions.register((() => {
   }
 
   const STORAGE_KEY = '[ugwisha] barcodes';
-  const barcodeWrapper = document.createElement('div');
+  const barcodeWrapper = Elem('div');
   if (!storage.getItem(STORAGE_KEY)) storage.setItem(STORAGE_KEY, '[["Me", "950XXXXX"]]');
   const barcodes = JSON.parse(storage.getItem(STORAGE_KEY));
   function save() {
     storage.setItem(STORAGE_KEY, JSON.stringify(barcodes));
   }
   function createBarcodeEditor(entry) {
-    const canvas = document.createElement('canvas');
+    const canvas = Elem('canvas');
     canvas.classList.add('barcode-canvas');
     const render = createRenderer(canvas);
     render(entry[1]);
-    const parent = createElement('div', {
-      classes: 'barcode-wrapper',
-      children: [
-        createElement('input', {
-          classes: 'basic-input barcode-input',
-          attributes: {
-            value: entry[0],
-            placeholder: 'Whose ID?',
-            type: 'text'
-          },
-          listeners: {
-            input(e) {
-              entry[0] = this.value;
+    const parent = Elem('div', {className: 'barcode-wrapper'}, [
+      Elem('input', {
+        className: 'basic-input barcode-input',
+        value: entry[0],
+        placeholder: 'Whose ID?',
+        type: 'text',
+        oninput(e) {
+          entry[0] = this.value;
+          save();
+        }
+      }),
+      Elem('div', {className: 'barcode-id-wrapper'}, [
+        Elem('input', {
+          className: 'basic-input barcode-input',
+          value: entry[1],
+          placeholder: 'Student ID',
+          type: 'text',
+          oninput(e) {
+            render(this.value);
+            entry[1] = this.value;
+            save();
+          }
+        }),
+        Elem('button', {
+          className: 'barcode-display button',
+          'aria-label': 'Display barcode for scanner',
+          ripple: true,
+          onclick(e) {
+            parent.classList.add('barcode-displaying');
+          }
+        }, ['view'])
+      ]),
+      Elem('div', {
+        className: 'barcode-canvas-wrapper',
+        onclick(e) {
+          parent.classList.remove('barcode-displaying');
+        }
+      }, [
+        canvas,
+        Elem('button', {
+          className: 'barcode-remove icon-btn',
+          'aria-label': 'Remove barcode',
+          ripple: true,
+          onclick(e) {
+            const index = barcodes.indexOf(entry);
+            if (~index) {
+              barcodes.splice(index, 1);
               save();
             }
-          }
-        }),
-        createElement('div', {
-          classes: 'barcode-id-wrapper',
-          children: [
-            createElement('input', {
-              classes: 'basic-input barcode-input',
-              attributes: {
-                value: entry[1],
-                placeholder: 'Student ID',
-                type: 'text'
-              },
-              listeners: {
-                input(e) {
-                  render(this.value);
-                  entry[1] = this.value;
-                  save();
-                }
-              }
-            }),
-            createElement('button', {
-              classes: 'barcode-display button',
-              children: ['view'],
-              attributes: {
-                'aria-label': 'Display barcode for scanner'
-              },
-              listeners: {
-                click(e) {
-                  parent.classList.add('barcode-displaying');
-                }
-              },
-              ripples: true
-            })
-          ]
-        }),
-        createElement('div', {
-          classes: 'barcode-canvas-wrapper',
-          children: [
-            canvas,
-            createElement('button', {
-              classes: 'barcode-remove icon-btn',
-              attributes: {
-                'aria-label': 'Remove barcode'
-              },
-              listeners: {
-                click(e) {
-                  const index = barcodes.indexOf(entry);
-                  if (~index) {
-                    barcodes.splice(index, 1);
-                    save();
-                  }
-                  barcodeWrapper.removeChild(parent);
-                }
-              },
-              ripples: true
-            })
-          ],
-          listeners: {
-            click(e) {
-              parent.classList.remove('barcode-displaying');
-            }
+            barcodeWrapper.removeChild(parent);
           }
         })
-      ]
-    });
+      ])
+    ]);
     return parent;
   }
-  barcodeWrapper.appendChild(createFragment(barcodes.map(createBarcodeEditor)));
+  barcodeWrapper.appendChild(Fragment(barcodes.map(createBarcodeEditor)));
 
   return {
     id: 'barcode',
-    wrapper: createElement('div', {
-      children: [
-        barcodeWrapper,
-        createElement('button', {
-          classes: 'barcode-add button',
-          children: ['add barcode'],
-          attributes: {
-            'aria-label': 'Add barcode'
-          },
-          listeners: {
-            click(e) {
-              const entry = [
-                'Student ' + barcodes.length,
-                '950' + (Math.random() * 10000 >> 0).toString().padStart(5, '0')
-              ];
-              barcodes.push(entry);
-              save();
-              barcodeWrapper.appendChild(createBarcodeEditor(entry));
-            }
-          },
-          ripples: true
-        }),
-        createElement('p', {
-          children: ['When scanning, set the screen brightness to max.']
-        })
-      ]
-    }),
+    wrapper: Elem('div', {}, [
+      barcodeWrapper,
+      Elem('button', {
+        className: 'barcode-add button',
+        'aria-label': 'Add barcode',
+        ripple: true,
+        onclick(e) {
+          const entry = [
+            'Student ' + barcodes.length,
+            '950' + (Math.random() * 10000 >> 0).toString().padStart(5, '0')
+          ];
+          barcodes.push(entry);
+          save();
+          barcodeWrapper.appendChild(createBarcodeEditor(entry));
+        }
+      }, ['add barcode']),
+      Elem('p', {}, ['When scanning, set the screen brightness to max.'])
+    ]),
     name: 'Barcode',
     icon: './images/barcode-icon.svg',
     url: './js/extensions/barcode.js',

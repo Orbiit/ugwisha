@@ -107,95 +107,79 @@ function setSchedule(schedule) {
   empty(scheduleWrapper);
   currentPickerWrapper = currentPickerParent = null;
   if (schedule.alternate) {
-    scheduleWrapper.appendChild(createElement('p', {
-      classes: 'alternate-note',
-      html: 'This is an alternate schedule'
-    }));
+    scheduleWrapper.appendChild(Elem('p', {className: 'alternate-note'}, ['This is an alternate schedule']));
   }
   if (schedule.noSchool) {
-    scheduleWrapper.appendChild(createElement('div', {
-      classes: 'no-school',
-      children: [
-        createElement('span', {
-          html: 'No school!'
-        })
-      ],
-      styles: {
+    scheduleWrapper.appendChild(Elem('div', {
+      className: 'no-school',
+      style: {
         backgroundImage: `url('./images/sheep/${sheepFromDate(schedule.date.getTime())}')`
       }
-    }));
+    }, [Elem('span', {}, ['No school!'])]));
     return;
   }
   const periods = {}; // for updating duplicate periods' names/colours
-  scheduleWrapper.appendChild(createFragment(schedule.map(pd => {
-    const periodName = createElement('input', {
-      classes: 'period-name',
-      attributes: {
-        type: 'text',
-        placeholder: defaultNames[pd.period],
-        value: getPdName(pd.period)
+  scheduleWrapper.appendChild(Fragment(schedule.map(pd => {
+    const periodName = Elem('input', {
+      className: 'period-name',
+      type: 'text',
+      placeholder: defaultNames[pd.period],
+      value: getPdName(pd.period),
+      onchange() {
+        setPdName(pd.period, periodName.value);
+        save();
+        updateStatus();
+        periods[pd.period].inputs.forEach(input => input !== periodName && (input.value = periodName.value));
       },
-      listeners: {
-        change() {
-          setPdName(pd.period, periodName.value);
-          save();
-          updateStatus();
-          periods[pd.period].inputs.forEach(input => input !== periodName && (input.value = periodName.value));
-        },
-        focus() {
-          if (currentPickerParent === wrapper) return;
-          if (currentPickerWrapper) {
-            currentPickerWrapper.parentNode.removeChild(currentPickerWrapper);
-          }
-          currentPickerWrapper = colourPicker(
-            colour => {
-              setPdColour(pd.period, colour);
-              save();
-              updateStatus();
-              periods[pd.period].cards.forEach(p => {
-                if (colour === null) {
-                  p.classList.add('transparent');
-                  p.style.setProperty('--colour', null);
-                } else {
-                  p.classList.remove('transparent');
-                  p.style.setProperty('--colour', '#' + colour);
-                }
-              });
-            },
-            getPdColour(pd.period),
-            true,
-            defaultColours[pd.period] || '000000'
-          );
-          periodName.parentNode.insertBefore(currentPickerWrapper, periodName.nextElementSibling);
-          currentPickerParent = wrapper;
+      onfocus() {
+        if (currentPickerParent === wrapper) return;
+        if (currentPickerWrapper) {
+          currentPickerWrapper.parentNode.removeChild(currentPickerWrapper);
         }
+        currentPickerWrapper = colourPicker(
+          colour => {
+            setPdColour(pd.period, colour);
+            save();
+            updateStatus();
+            periods[pd.period].cards.forEach(p => {
+              if (colour === null) {
+                p.classList.add('transparent');
+                p.style.setProperty('--colour', null);
+              } else {
+                p.classList.remove('transparent');
+                p.style.setProperty('--colour', '#' + colour);
+              }
+            });
+          },
+          getPdColour(pd.period),
+          true,
+          defaultColours[pd.period] || '000000'
+        );
+        periodName.parentNode.insertBefore(currentPickerWrapper, periodName.nextElementSibling);
+        currentPickerParent = wrapper;
       }
     });
     const note = getNote(pd);
-    const wrapper = createElement('div', {
-      classes: [
-        'period',
-        getPdColour(pd.period) === null ? 'transparent' : undefined
-      ],
-      styles: {
-        '--colour': getPdColour(pd.period) === null ? undefined : '#' + getPdColour(pd.period)
-      },
-      children: [
-        periodName,
-        createElement('span', {
-          classes: 'time',
-          html: formatTime(pd.start) + ' &ndash; ' + formatTime(pd.end)
-        }),
-        createElement('span', {
-          classes: 'duration',
-          html: formatDuration(pd.end - pd.start, false) + ' long'
-        }),
-        note ? createElement('span', {
-          classes: 'note',
-          html: note
-        }) : undefined
-      ]
-    });
+    const wrapper = Elem('div', {
+      className: ['period', getPdColour(pd.period) === null ? 'transparent' : null],
+      style: {
+        '--colour': getPdColour(pd.period) && '#' + getPdColour(pd.period)
+      }
+    }, [
+      periodName,
+      Elem('span', {
+        className: 'time',
+        innerHTML: formatTime(pd.start) + ' &ndash; ' + formatTime(pd.end)
+      }),
+      Elem('span', {
+        className: 'duration',
+        innerHTML: formatDuration(pd.end - pd.start, false) + ' long'
+      }),
+      note ? Elem('span', {
+        className: 'note',
+        innerHTML: note
+      }) : null
+    ]);
     if (!periods[pd.period]) periods[pd.period] = {inputs: [], cards: []};
     periods[pd.period].inputs.push(periodName);
     periods[pd.period].cards.push(wrapper);
@@ -221,29 +205,24 @@ function showWeekPreview(schedules, selectedDay) {
     empty(col.content);
     const schedule = schedules[i];
     col.date = schedule.date;
-    col.content.appendChild(createFragment([
-      ...(schedule.noSchool ? [] : schedule.map((pd, i) => createElement('span', {
-        classes: [
+    col.content.appendChild(Fragment([
+      ...(schedule.noSchool ? [] : schedule.map((pd, i) => Elem('span', {
+        className: [
           'week-preview-cell',
           'week-preview-period',
-          getPdColour(pd.period) === null ? 'week-preview-transparent' : undefined
+          getPdColour(pd.period) === null ? 'week-preview-transparent' : null
         ],
-        styles: {
-          backgroundColor: getPdColour(pd.period) === null ? undefined : '#' + getPdColour(pd.period)
-        },
-        attributes: {
-          title: getPdName(pd.period),
-          'aria-label': getPdName(pd.period)
+        title: getPdName(pd.period),
+        'aria-label': getPdName(pd.period),
+        style: {
+          backgroundColor: getPdColour(pd.period) && '#' + getPdColour(pd.period)
         }
       }))),
-      schedule.alternate ? createElement('span', {
-        classes: 'week-preview-cell week-preview-alternate',
-        html: '*',
-        attributes: {
-          title: 'Alternate schedule',
-          'aria-label': 'This is an alternate schedule'
-        }
-      }) : undefined
+      schedule.alternate ? Elem('span', {
+        className: 'week-preview-cell week-preview-alternate',
+        title: 'Alternate schedule',
+        'aria-label': 'This is an alternate schedule'
+      }, ['*']) : null
     ]));
   });
 }
@@ -315,12 +294,7 @@ function getPeriodChipHTML(period) {
   return str;
 }
 
-const faviconCanvas = createElement('canvas', {
-  attributes: {
-    width: FAVICON_SIZE,
-    height: FAVICON_SIZE
-  }
-});
+const faviconCanvas = Elem('canvas', {width: FAVICON_SIZE, height: FAVICON_SIZE});
 const fc = faviconCanvas.getContext('2d');
 
 /**
@@ -426,36 +400,29 @@ ready.push(() => {
   weekPreviewColumns = [];
   for (let i = 0; i < 7; i++) {
     const entry = {};
-    entry.wrapper = createElement('div', {
-      classes: 'week-preview-col',
-      attributes: {
-        tabindex: 0
+    entry.wrapper = Elem('div', {
+      className: 'week-preview-col',
+      tabindex: 0,
+      onclick() {
+        // BUG: current allows user to click outside of school year, oh well
+        viewingDate = entry.date;
+        updateView();
       },
-      children: [
-        createElement('span', {
-          classes: 'week-preview-cell week-preview-day-heading',
-          html: dayInitials[i],
-          attributes: {
-            title: days[i],
-            'aria-label': days[i]
-          }
-        }),
-        entry.content = createElement('div')
-      ],
-      listeners: {
-        click: e => {
-          // BUG: current allows user to click outside of school year, oh well
-          viewingDate = entry.date;
-          updateView();
-        },
-        keydown(e) {
-          if (e.keyCode === 13) this.click();
-        }
+      onkeydown(e) {
+        if (e.keyCode === 13) this.click();
       }
-    });
+    }, [
+      Elem('span', {
+        className: 'week-preview-cell week-preview-day-heading',
+        innerHTML: dayInitials[i],
+        title: days[i],
+        'aria-label': days[i]
+      }),
+      entry.content = Elem('div')
+    ]);
     weekPreviewColumns.push(entry);
   }
-  document.getElementById('week-preview').appendChild(createFragment(weekPreviewColumns.map(({wrapper}) => wrapper)));
+  document.getElementById('week-preview').appendChild(Fragment(weekPreviewColumns.map(({wrapper}) => wrapper)));
 
   let currentTouch = null;
   scheduleWrapper.addEventListener('touchstart', e => {

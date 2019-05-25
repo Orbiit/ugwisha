@@ -134,60 +134,33 @@ function colourPicker(onupdate, currentColour = '00BCD4', allowTransparent = tru
     hueSlider.style.backgroundImage = `linear-gradient(to bottom, ${hues.map(h => rgbToCSS(hsvToRgb({h, s: colour.s, v: colour.v}))).join(',')})`;
     hueSlider.style.setProperty('--val', colour.h / 360 * 100 + '%');
   }
-  const wrapper = createElement('div', {
-    classes: 'colour-picker',
-    children: [
-      hexInput = createElement('input', {
-        classes: 'colour-input select-input',
-        attributes: {
-          type: 'text',
-          placeholder: '#123ABC'
-        },
-        listeners: {
-          change() {
-            const parsedHexColour = parseColour(hexInput.value);
-            if (parsedHexColour) {
-              colour = rgbToHsv(hexToRgb(parsedHexColour));
-              if (allowTransparent && transparent.checked) {
-                transparent.checked = false;
-              }
-              update({type: 'hex-input', hex: parsedHexColour});
-            } else {
-              hexInput.value = '#' + rgbToHex(hsvToRgb(colour));
-            }
+  const wrapper = Elem('div', {className: 'colour-picker'}, [
+    hexInput = Elem('input', {
+      className: 'colour-input select-input',
+      type: 'text',
+      placeholder: '#123ABC',
+      onchange() {
+        const parsedHexColour = parseColour(hexInput.value);
+        if (parsedHexColour) {
+          colour = rgbToHsv(hexToRgb(parsedHexColour));
+          if (allowTransparent && transparent.checked) {
+            transparent.checked = false;
           }
+          update({type: 'hex-input', hex: parsedHexColour});
+        } else {
+          hexInput.value = '#' + rgbToHex(hsvToRgb(colour));
         }
-      }),
-      createElement('div', {
-        classes: 'colour-boxes-wrapper',
-        children: [
-          squareSlider = createElement('div', {
-            classes: 'colour-box'
-          }),
-          hueSlider = createElement('div', {
-            classes: 'colour-slider'
-          })
-        ]
-      }),
-      allowTransparent ? createElement('label', {
-        classes: 'colour-transparent-label',
-        children: [
-          transparent = createElement('input', {
-            classes: 'colour-transparent-checkbox',
-            attributes: {
-              type: 'checkbox'
-            },
-            listeners: {
-              change() {
-                update();
-              }
-            }
-          }),
-          'Transparent?'
-        ]
-      }) : null
-    ]
-  });
+      }
+    }),
+    Elem('div', {className: 'colour-boxes-wrapper'}, [
+      squareSlider = Elem('div', {className: 'colour-box'}),
+      hueSlider = Elem('div', {className: 'colour-slider'})
+    ]),
+    allowTransparent ? Elem('label', {className: 'colour-transparent-label'}, [
+      transparent = Elem('input', {className: 'colour-transparent-checkbox', type: 'checkbox', onchange: update}),
+      'Transparent?'
+    ]) : null
+  ]);
   if (allowTransparent && currentColour === null) transparent.checked = true;
   drag(squareSlider, (x, y) => {
     colour.s = cap(x);

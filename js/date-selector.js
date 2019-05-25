@@ -40,9 +40,7 @@ function createDays() {
     if (tempDate.getUTCDay() === 0) weekNum++;
     if (currentMonth !== month) {
       currentMonth = month;
-      const wrapper = createElement('span', {
-        classes: 'date-selector-month'
-      });
+      const wrapper = Elem('span', {className: 'date-selector-month'});
       fragment.appendChild(wrapper);
       monthData.push({
         month,
@@ -58,17 +56,13 @@ function createDays() {
     if (date <= 5) entry.start = weekNum;
     const outOfBounds = time < FIRST_DAY || time > LAST_DAY;
     const dayID = tempDate.toISOString().slice(0, 10);
-    const day = createElement('span', {
-      classes: [
-        'date-selector-day',
-        outOfBounds ? 'date-selector-out-of-bounds' : null
-      ],
-      children: [date],
+    const day = Elem('span', {
+      className: ['date-selector-day', outOfBounds && 'date-selector-out-of-bounds'],
       data: {
         date: dayID,
         week: weekNum
       }
-    });
+    }, [date]);
     if (!outOfBounds) dayData[dayID] = day;
     entry.wrapper.appendChild(day);
     tempDate.setUTCDate(tempDate.getUTCDate() + 1);
@@ -117,10 +111,8 @@ ready.push(() => {
   }
 
   document.getElementById('date-selector-day-headings')
-    .appendChild(createFragment(dayInitials.map(d => createElement('span', {
-      classes: 'date-selector-day-heading',
-      html: d
-    }))));
+    .appendChild(Fragment(dayInitials.map(d =>
+      Elem('span', {className: 'date-selector-day-heading', innerHTML: d}))));
 
   daysWrapper.addEventListener('wheel', e => {
     if (animatingScroll) window.cancelAnimationFrame(animatingScroll);

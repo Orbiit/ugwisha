@@ -53,11 +53,11 @@ window.UgwishaExtensions = (() => {
   const initialInstalls = Promise.all(installed.map(install));
   function install(url) {
     return new Promise((res, rej) => {
-      const script = document.createElement('script');
-      script.onload = res;
-      script.onerror = rej;
-      script.src = url;
-      document.head.appendChild(script); // is this a good idea?
+      document.head.appendChild(Elem('script', { // is this a good idea?
+        onload: res,
+        onerror: rej,
+        src: url
+      }));
     }).then(() => {
       caches.open(EXTENSIONS_CACHE_NAME).then(cache => cache.add(url));
     });
@@ -81,52 +81,40 @@ window.UgwishaExtensions = (() => {
         throw new Error('No extensions are loaded with this URL: ' + data.url);
       extensions[data.id] = data;
       if (data.id !== 'menu') {
-        const item = createElement('div', {
-          classes: 'extension-item',
-          children: [
-            createElement('div', {
-              classes: 'kind-of-button extension-icon',
-              styles: {
-                backgroundImage: data.icon && `url("${data.icon}")`
-              },
-              attributes: {
-                tabindex: 0
-              },
-              listeners: {
-                click(e) {
-                  if (removing) {
-                    delete extensions[data.id];
-                    const index = installed.indexOf(data.url);
-                    if (~index) {
-                      installed.splice(index, 1);
-                      storage.setItem(INSTALLED_EXTENSIONS_KEY, JSON.stringify(installed));
-                    }
-                    extensionIcons.removeChild(item);
-                    const entry = nativeExtensions.find(entry => entry[1] === data.url);
-                    if (entry) entry[2].disabled = false;
-                    caches.open(EXTENSIONS_CACHE_NAME)
-                      .then(cache => Promise.all([data.url, ...sources].map(url => cache.delete(url))))
-                      .then(() => console.log('Extension cache deleted'));
-                  }
-                  else obj.switch(data.id);
-                },
-                keydown(e) {
-                  if (e.keyCode === 13) this.click();
+        const item = Elem('div', {className: 'extension-item'}, [
+          Elem('div', {
+            className: 'kind-of-button extension-icon',
+            tabindex: 0,
+            ripple: true,
+            style: {
+              backgroundImage: data.icon && `url("${data.icon}")`
+            },
+            onclick(e) {
+              if (removing) {
+                delete extensions[data.id];
+                const index = installed.indexOf(data.url);
+                if (~index) {
+                  installed.splice(index, 1);
+                  storage.setItem(INSTALLED_EXTENSIONS_KEY, JSON.stringify(installed));
                 }
-              },
-              ripples: true
-            }),
-            createElement('div', {
-              classes: 'extension-name',
-              children: [data.name]
-            })
-          ]
-        });
+                extensionIcons.removeChild(item);
+                const entry = nativeExtensions.find(entry => entry[1] === data.url);
+                if (entry) entry[2].disabled = false;
+                caches.open(EXTENSIONS_CACHE_NAME)
+                  .then(cache => Promise.all([data.url, ...sources].map(url => cache.delete(url))))
+                  .then(() => console.log('Extension cache deleted'));
+              }
+              else obj.switch(data.id);
+            },
+            onkeydown(e) {
+              if (e.keyCode === 13) this.click();
+            }
+          }),
+          Elem('div', {className: 'extension-name'}, [data.name])
+        ]);
         extensionIcons.appendChild(item);
         if (data.styles) {
-          document.head.appendChild(createElement('link', {
-            attributes: {rel: 'stylesheet', href: data.styles}
-          }));
+          document.head.appendChild(Elem('link', {rel: 'stylesheet', href: data.styles}));
         }
         const sources = data.sources || [];
         if (data.icon) sources.push(data.icon);
@@ -142,79 +130,56 @@ window.UgwishaExtensions = (() => {
     ['Barcode', './js/extensions/barcode.js'],
     ['Min. Score Calc.', './js/extensions/min-score.js']
   ];
-  const extensionIcons = createElement('div', {classes: 'extension-menu'});
-  const addExtensionOption = createElement('select', {
-    classes: 'select-input extension-list',
-    children: [
-      createElement('option', {
-        attributes: {value: 'CHOOSE', disabled: true},
-        html: 'Add app'
-      }),
-      createElement('option', {
-        attributes: {value: 'FROM_URL'},
-        html: 'From URL'
-      }),
-      ...nativeExtensions.map(entry => entry[2] = createElement('option', {
-        attributes: {value: entry[1], disabled: installed.includes(entry[1])},
-        html: entry[0]
-      }))
-    ],
-    attributes: {value: 'CHOOSE'},
-    listeners: {
-      change(e) {
-        addExtensionBtn.disabled = addExtensionOption.value === 'CHOOSE';
-      }
+  const extensionIcons = Elem('div', {className: 'extension-menu'});
+  const addExtensionOption = Elem('select', {
+    className: 'select-input extension-list',
+    value: 'CHOOSE',
+    onchange(e) {
+      addExtensionBtn.disabled = addExtensionOption.value === 'CHOOSE';
     }
-  });
-  const addExtensionBtn = createElement('button', {
-    classes: 'button extension-add',
-    children: ['Add'],
-    attributes: {disabled: true},
-    listeners: {
-      click(e) {
-        let url = addExtensionOption.value;
-        if (url === 'CHOOSE') return;
-        if (url === 'FROM_URL') url = prompt('Enter app URL:');
-        if (url) addExtension(url);
-        addExtensionOption.value = 'CHOOSE';
-        addExtensionBtn.disabled = true;
-      }
-    },
-    ripples: true
-  });
+  }, [
+    Elem('option', {value: 'CHOOSE', disabled: true}, ['Add app']),
+    Elem('option', {value: 'FROM_URL'}, ['From URL']),
+    ...nativeExtensions.map(entry => entry[2] = Elem('option', {value: entry[1], disabled: installed.includes(entry[1])}, [entry[0]]))
+  ]);
+  const addExtensionBtn = Elem('button', {
+    className: 'button extension-add',
+    disabled: true,
+    ripple: true,
+    onclick(e) {
+      let url = addExtensionOption.value;
+      if (url === 'CHOOSE') return;
+      if (url === 'FROM_URL') url = prompt('Enter app URL:');
+      if (url) addExtension(url);
+      addExtensionOption.value = 'CHOOSE';
+      addExtensionBtn.disabled = true;
+    }
+  }, ['Add']);
   obj.register({
     id: 'menu',
-    wrapper: createElement('div', {
-      children: [
-        extensionIcons,
-        createElement('div', {
-          classes: 'extension-list-wrapper',
-          children: [
-            addExtensionOption,
-            addExtensionBtn
-          ]
-        }),
-        createElement('button', {
-          classes: 'button extension-remove',
-          children: ['Remove apps'],
-          listeners: {
-            click(e) {
-              removing = !removing;
-              if (removing) {
-                extensionIcons.classList.add('extension-remove-mode');
-                this.classList.add('extension-removing');
-                this.childNodes[0].nodeValue = 'Done';
-              } else {
-                extensionIcons.classList.remove('extension-remove-mode');
-                this.classList.remove('extension-removing');
-                this.childNodes[0].nodeValue = 'Remove apps';
-              }
-            }
-          },
-          ripples: true
-        })
-      ]
-    }),
+    wrapper: Elem('div', {}, [
+      extensionIcons,
+      Elem('div', {className: 'extension-list-wrapper'}, [
+        addExtensionOption,
+        addExtensionBtn
+      ]),
+      Elem('button', {
+        className: 'button extension-remove',
+        ripple: true,
+        onclick(e) {
+          removing = !removing;
+          if (removing) {
+            extensionIcons.classList.add('extension-remove-mode');
+            this.classList.add('extension-removing');
+            this.childNodes[0].nodeValue = 'Done';
+          } else {
+            extensionIcons.classList.remove('extension-remove-mode');
+            this.classList.remove('extension-removing');
+            this.childNodes[0].nodeValue = 'Remove apps';
+          }
+        }
+      }, ['Remove apps'])
+    ]),
     name: 'Apps'
   });
   return obj;

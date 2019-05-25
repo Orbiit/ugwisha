@@ -1,62 +1,52 @@
 // Helper functions for dancing with the DOM
 
-function deundefine(obj) {
-  if (Array.isArray(obj)) return obj.filter(i => i !== undefined && i !== null);
+function clean(obj) {
+  if (Array.isArray(obj)) return obj.filter(i => i !== undefined && i !== null && i !== false);
   else {
-    Object.keys(obj).forEach(prop => (obj[prop] === undefined || obj[prop] === null) && delete obj[prop]);
+    Object.keys(obj).forEach(prop => (obj[prop] === undefined || obj[prop] === null || obj[prop] === false) && delete obj[prop]);
     return obj;
   }
 }
-function createElement(tag, data = {}) {
+function Elem(tag, data = {}, children = []) {
   const elem = document.createElement(tag);
-  if (data.classes) {
-    if (typeof data.classes === 'string') elem.className = data.classes;
-    else deundefine(data.classes).forEach(c => elem.classList.add(c));
-  }
-  if (data.children) deundefine(data.children).forEach(c => elem.appendChild(typeof c !== 'object' ? document.createTextNode(c) : c));
-  if (data.attributes) {
-    Object.keys(deundefine(data.attributes)).forEach(attr => {
-      if (elem[attr] !== undefined) elem[attr] = data.attributes[attr];
-      else elem.setAttribute(attr, data.attributes[attr]);
-    });
-  }
-  if (data.dataset) {
-    Object.keys(deundefine(data.dataset)).forEach(attr => {
-      elem.dataset[attr] = data.dataset[attr];
-    });
-  }
-  if (data.data) {
-    Object.keys(deundefine(data.data)).forEach(attr => {
-      elem.dataset[attr] = data.data[attr];
-    });
-  }
-  if (data.listeners) {
-    Object.keys(deundefine(data.listeners)).forEach(ev => {
-      elem.addEventListener(ev, data.listeners[ev]);
-    });
-  }
-  if (data.styles) {
-    Object.keys(deundefine(data.styles)).forEach(prop => {
-      if (prop.slice(0, 2) === '--') {
-        elem.style.setProperty(prop, data.styles[prop]);
-      } else {
-        elem.style[prop] = data.styles[prop];
-      }
-    });
-  }
-  if (data.html) elem.innerHTML = data.html;
-  if (data.ripples) rippleify(elem);
+  Object.keys(clean(data)).forEach(attr => {
+    const value = data[attr];
+    if (attr === 'data') {
+      Object.keys(clean(value)).forEach(attr => {
+        elem.dataset[attr] = value[attr];
+      });
+    } else if (attr === 'style') {
+      Object.keys(clean(value)).forEach(prop => {
+        if (prop.slice(0, 2) === '--') {
+          elem.style.setProperty(prop, value[prop]);
+        } else {
+          elem.style[prop] = value[prop];
+        }
+      });
+    } else if (attr === 'ripple') {
+      rippleify(elem);
+    } else if (attr.slice(0, 2) === 'on') {
+      elem.addEventListener(attr.slice(2), value);
+    } else {
+      const strValue = Array.isArray(value) ? clean(value).join(' ') : value.toString();
+      if (elem[attr] !== undefined) elem[attr] = strValue;
+      else elem.setAttribute(attr, strValue);
+    }
+  });
+  clean(children).forEach(child => {
+    elem.appendChild(typeof child !== 'object' ? document.createTextNode(child) : child);
+  });
   return elem;
 }
-function createFragment(elems) {
-  const frag = document.createDocumentFragment();
-  deundefine(elems).forEach(e => frag.appendChild(e));
-  return frag;
+function Fragment(elems) {
+  const fragment = document.createDocumentFragment();
+  clean(elems).forEach(e => fragment.appendChild(e));
+  return fragment;
 }
 function empty(elem) {
   while (elem.firstChild) elem.removeChild(elem.firstChild);
 }
 
-window.createElement = createElement;
-window.createFragment = createFragment;
+window.Elem = Elem;
+window.Fragment = Fragment;
 window.empty = empty;

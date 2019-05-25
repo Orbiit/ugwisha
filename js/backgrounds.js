@@ -26,7 +26,7 @@ function randomGradient() {
  * transition to
  */
 function setBackground(css) {
-  const transitioner = createElement('div', {classes: 'transition-background'});
+  const transitioner = Elem('div', {className: 'transition-background'});
   transitioner.style.backgroundImage = document.body.style.backgroundImage;
   const stopper = setTimeout(() => { // just in case
     document.body.removeChild(transitioner);

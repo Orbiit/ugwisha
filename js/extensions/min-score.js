@@ -12,75 +12,54 @@ UgwishaExtensions.register((() => {
   }
   const badChars = /[^0-9.]|\.(?=[^.]*\.)/g;
   function createInput(label, defaultValue, id) {
-    const input = createElement('input', {
-      classes: 'basic-input min-score-input',
-      attributes: {
-        value: defaultValue,
-        id: id
-      },
-      listeners: {
-        keypress(e) {
-          let char = String.fromCharCode(e.charCode);
-          if (!'0123456789.'.includes(char)) {
-            e.preventDefault();
-            return false;
-          }
-        },
-        input(e) {
-          if (badChars.test(input.value)) {
-            input.value = +input.value.replace(badChars, '') || 0;
-          }
-          calculate();
-        },
-        change(e) {
-          input.value = +input.value.replace(badChars, '') || 0;
-          calculate();
+    const input = Elem('input', {
+      className: 'basic-input min-score-input',
+      value: defaultValue,
+      id: id,
+      onkeypress(e) {
+        let char = String.fromCharCode(e.charCode);
+        if (!'0123456789.'.includes(char)) {
+          e.preventDefault();
+          return false;
         }
+      },
+      oninput(e) {
+        if (badChars.test(input.value)) {
+          input.value = +input.value.replace(badChars, '') || 0;
+        }
+        calculate();
+      },
+      onchange(e) {
+        input.value = +input.value.replace(badChars, '') || 0;
+        calculate();
       }
     })
     return {
       get value() {
         return +input.value / 100;
       },
-      elem: createElement('p', {
-        classes: 'min-score-input-wrapper-wrapper',
-        children: [
-          createElement('label', {
-            classes: 'min-score-label',
-            children: [label],
-            attributes: {
-              for: id
-            }
-          }),
-          createElement('div', {
-            classes: 'min-score-input-wrapper',
-            children: [
-              input,
-              createElement('span', {
-                classes: 'min-score-percent-sign',
-                children: ['%']
-              })
-            ]
-          })
-        ]
-      })
+      elem: Elem('p', {className: 'min-score-input-wrapper-wrapper'}, [
+        Elem('label', {className: 'min-score-label', for: id}, [label]),
+        Elem('div', {className: 'min-score-input-wrapper'}, [
+          input,
+          Elem('span', {className: 'min-score-percent-sign'}, ['%'])
+        ])
+      ])
     }
   }
   const current = createInput('Current grade:', '95.00', 'min-score-current');
   const worth = createInput('Portion of grade the final is:', '15.00', 'min-score-worth');
   const minimum = createInput('Minimum acceptable grade:', '90.00', 'min-score-minimum');
-  const output = createElement('p');
+  const output = Elem('p');
   calculate();
   return {
     id: 'min-score',
-    wrapper: createElement('div', {
-      children: [
-        current.elem,
-        worth.elem,
-        minimum.elem,
-        output
-      ]
-    }),
+    wrapper: Elem('div', {}, [
+      current.elem,
+      worth.elem,
+      minimum.elem,
+      output
+    ]),
     name: 'Min. Score',
     icon: './images/min-score-icon.svg',
     url: './js/extensions/min-score.js',

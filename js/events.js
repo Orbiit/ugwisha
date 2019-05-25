@@ -70,35 +70,20 @@ async function renderEvents() {
       }
     }
     empty(eventsList);
-    eventsList.appendChild(events[dateName].length ? createFragment(events[dateName].map(event => createElement('div', {
-      classes: 'event',
-      children: [
-        createElement('span', {
-          classes: 'event-name',
-          children: [event.summary]
-        }),
-        createElement('span', {
-          classes: 'event-info',
-          children: [
-            event.start && event.start.dateTime ? createElement('span', {
-              classes: 'event-time',
-              html: formatTime(dateObjToMinutes(new Date(event.start.dateTime))) + ' &ndash; ' + formatTime(dateObjToMinutes(new Date(event.end.dateTime)))
-            }) : undefined,
-            event.location ? createElement('span', {
-              classes: 'event-location',
-              children: [event.location]
-            }) : undefined
-          ]
-        }),
-        event.description ? createElement('span', {
-          classes: 'event-description',
-          html: removeDumbHTML(event.description)
-        }) : undefined
-      ]
-    }))) : createElement('span', {
-      classes: 'events-message',
-      html: 'Nothing happening today'
-    }));
+    eventsList.appendChild(events[dateName].length ? Fragment(events[dateName].map(event => Elem('div', {className: 'event'}, [
+      Elem('span', {className: 'event-name'}, [event.summary]),
+      Elem('span', {className: 'event-info'}, [
+        event.start && event.start.dateTime ? Elem('span', {
+          className: 'event-time',
+          innerHTML: formatTime(dateObjToMinutes(new Date(event.start.dateTime))) + ' &ndash; ' + formatTime(dateObjToMinutes(new Date(event.end.dateTime)))
+        }) : null,
+        event.location ? Elem('span', {className: 'event-location'}, [event.location]) : null
+      ]),
+      event.description ? Elem('span', {
+        className: 'event-description',
+        innerHTML: removeDumbHTML(event.description)
+      }) : null
+    ]))) : Elem('span', {className: 'events-message'}, ['Nothing happening today']));
   }
 }
 
