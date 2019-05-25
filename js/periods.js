@@ -91,12 +91,21 @@ function sheepFromDate(time) {
   return sheepImages[(even ? 0 : 7) + index];
 }
 
+let currentPickerWrapper, currentPickerParent;
+document.addEventListener('click', e => {
+  if (currentPickerWrapper && !currentPickerParent.contains(e.target)) {
+    currentPickerWrapper.parentNode.removeChild(currentPickerWrapper);
+    currentPickerWrapper = currentPickerParent = null;
+  }
+});
+
 /**
  * Renders the given schedule
  * @param {Schedule} schedule The schedule to render
  */
 function setSchedule(schedule) {
   empty(scheduleWrapper);
+  currentPickerWrapper = currentPickerParent = null;
   if (schedule.alternate) {
     scheduleWrapper.appendChild(createElement('p', {
       classes: 'alternate-note',
@@ -118,13 +127,6 @@ function setSchedule(schedule) {
     return;
   }
   const periods = {}; // for updating duplicate periods' names/colours
-  let currentPickerWrapper, currentPickerParent;
-  document.addEventListener('click', e => {
-    if (currentPickerWrapper && !currentPickerParent.contains(e.target)) {
-      currentPickerWrapper.parentNode.removeChild(currentPickerWrapper);
-      currentPickerWrapper = currentPickerParent = null;
-    }
-  });
   scheduleWrapper.appendChild(createFragment(schedule.map(pd => {
     const periodName = createElement('input', {
       classes: 'period-name',
