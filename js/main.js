@@ -18,6 +18,11 @@
 const ready = [];
 const onconnection = [isOnline => window.isOnline = isOnline];
 const onoptionchange = {};
+window.UgwishaEvents = {
+  connection: new Promise(res => onconnection.push(res)),
+  status: [] // when the status is updated
+};
+window.Ugwisha = {};
 
 // avoid crashing if accessing localStorage in private mode results in an
 // error (eg Edge)
@@ -105,7 +110,7 @@ let viewingDate = params.day ? new Date(params.day) : getToday();
  * @return {Date} Today's date
  */
 function getToday() {
-  // return new Date('2019-03-26');
+  // return new Date('2019-05-24');
   return new Date(Date.UTC(...(d => [d.getFullYear(), d.getMonth(), d.getDate()])(new Date())));
 }
 

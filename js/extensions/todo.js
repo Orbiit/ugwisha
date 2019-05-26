@@ -1,6 +1,6 @@
 UgwishaExtensions.register((() => {
   const TODO_KEY = '[ugwisha] extensions.todo';
-  const wrapper = document.createElement('div');
+  const wrapper = Elem('div');
   let list;
   try {
     list = JSON.parse(storage.getItem(TODO_KEY)).map(content => ({content: content}));

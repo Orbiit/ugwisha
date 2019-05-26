@@ -33,6 +33,7 @@ function Elem(tag, data = {}, children = []) {
       else elem.setAttribute(attr, strValue);
     }
   });
+  if (!Array.isArray(children)) children = [children];
   clean(children).forEach(child => {
     elem.appendChild(typeof child !== 'object' ? document.createTextNode(child) : child);
   });

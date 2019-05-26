@@ -26,7 +26,7 @@ function formatTime(minutes, noAMPM = false) {
 /**
  * Formats a duration
  * @param {number} minutes Number of minutes
- * @param {boolean} [short=false] False the word "minutes" should be used
+ * @param {boolean} [short=false] False if the word "minutes" should be used
  * @param {boolean} [reallyShort=false] True if a leading 0 before the colon
  *                                      should be excluded (eg 0:03 -> :03);
  *                                      used in the favicon
@@ -54,6 +54,11 @@ function getPdColour(pd) {
 function setPdColour(pd, newColour) {
   return options['periodColour_' + PERIOD_OPTION_PREFIX + pd] = newColour;
 }
+
+Ugwisha.formatTime = formatTime;
+Ugwisha.formatDuration = formatDuration;
+Ugwisha.getPdName = getPdName;
+Ugwisha.getPdColour = getPdColour;
 
 let scheduleWrapper, weekPreviewColumns;
 
@@ -251,7 +256,7 @@ function timeLeft(schedule, offset = 0) {
   const period = schedule.find(pd => pd.end > minutes);
   const status = { secondCounter: null, nextMinute: toNextMinute };
   if (period) {
-    status.period = period.period;
+    status.period = period;
     if (period.start > minutes) {
       status.type = 'until';
       status.value = period.start - minutes;
@@ -272,7 +277,7 @@ function timeLeft(schedule, offset = 0) {
     }
   } else {
     const lastPeriod = schedule[schedule.length - 1];
-    status.period = lastPeriod.period;
+    status.period = lastPeriod;
     status.type = 'since';
     status.value = minutes - lastPeriod.end;
   }
@@ -325,8 +330,10 @@ let todaySchedule, todayDate;
  */
 function updateStatus(startInterval = false, nextMinute = 0) {
   const now = Date.now();
-  if (startInterval && now < nextMinute) {
-    return setTimeout(() => updateStatus(true, nextMinute), Math.min(nextMinute - now, 1000));
+  if (startInterval) {
+    if (now < nextMinute) {
+      return setTimeout(() => updateStatus(true, nextMinute), Math.min(nextMinute - now, 1000));
+    }
   }
   const today = getToday();
   const todayStr = today.toISOString().slice(0, 10);
@@ -350,28 +357,31 @@ function updateStatus(startInterval = false, nextMinute = 0) {
     } else {
       progressBar.style.opacity = 0;
     }
-    previewMsg.innerHTML = status.type + ' ' + getPeriodChipHTML(status.period);
+    previewMsg.innerHTML = status.type + ' ' + getPeriodChipHTML(status.period.period);
     if (status.type === 'since') {
       previewTime.textContent = formatDuration(status.value, true);
       favicon.setAttribute('href', DEFAULT_FAVICON_URL);
       document.title = APP_NAME;
     } else {
       setFavicon(formatDuration(status.value, true, true));
-      if (status.secondCounter) {
+      if (startInterval && status.secondCounter) {
         function seconds() {
           const {secondsLeft, stop} = status.secondCounter();
           if (!stop) {
             const str = Math.round(secondsLeft * 10) / 10 + '';
             document.title = (previewTime.textContent = str + (str.includes('.') ? '0'.repeat(2 - str.length + str.indexOf('.')) : '.0') + 's')
-              + ' ' + status.type + ' ' + getPdName(status.period) + ' - ' + APP_NAME;
+              + ' ' + status.type + ' ' + getPdName(status.period.period) + ' - ' + APP_NAME;
           }
           window.requestAnimationFrame(startInterval && !stop ? seconds : updateStatus);
         }
         seconds();
       } else {
         document.title = (previewTime.textContent = formatDuration(status.value, true))
-          + ' ' + status.type + ' ' + getPdName(status.period) + ' - ' + APP_NAME;
+          + ' ' + status.type + ' ' + getPdName(status.period.period) + ' - ' + APP_NAME;
       }
+    }
+    if (startInterval) {
+      UgwishaEvents.status.forEach(fn => fn(status, now));
     }
   }
   if (startInterval) setTimeout(() => updateStatus(true, status.nextMinute), Math.min(status.nextMinute - now, 1000));

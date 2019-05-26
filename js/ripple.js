@@ -14,8 +14,7 @@ document.addEventListener('touchend', e => {
 class Ripple {
 
   constructor(parent, x, y, identifier) {
-    const ripple = document.createElement('div');
-    ripple.classList.add('ripple');
+    const ripple = Elem('div', {className: 'ripple'});
     const rect = parent.getBoundingClientRect();
     ripple.style.left = x - rect.left + 'px';
     ripple.style.top = y - rect.top + 'px';
