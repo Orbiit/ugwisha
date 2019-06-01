@@ -9,7 +9,7 @@ UgwishaExtensions.register((() => {
   return {
     id: 'current-second',
     wrapper: Elem('div', {}, [currentSecond]),
-    name: 'Current Second',
+    name: 'Current Sec.',
     icon: './images/current-second-icon.svg',
     url: './js/extensions/current-second.js',
     beforeAdd() {
