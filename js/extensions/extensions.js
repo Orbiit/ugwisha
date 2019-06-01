@@ -130,7 +130,8 @@ window.UgwishaExtensions = (() => {
     ['Barcode', './js/extensions/barcode.js'],
     ['Min. Score Calc.', './js/extensions/min-score.js'],
     ['Discord Webhook', './js/extensions/discord-webhook.js'],
-    ['Push Notifications', './js/extensions/notifications.js']
+    ['Push Notifications', './js/extensions/notifications.js'],
+    ['Current Second', './js/extensions/current-second.js']
   ];
   const extensionIcons = Elem('div', {className: 'extension-menu'});
   const addExtensionOption = Elem('select', {
