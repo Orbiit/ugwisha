@@ -25,7 +25,5 @@
 .event-description {
   font-size: 16px;
   color: rgba(255, 255, 255, 0.6);
-  max-height: 100px;
-  overflow: auto;
   display: block;
 }

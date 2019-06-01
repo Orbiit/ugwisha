@@ -209,9 +209,12 @@ function showWeekPreview(schedules, selectedDay) {
     else col.wrapper.classList.remove('week-preview-today');
     empty(col.content);
     const schedule = schedules[i];
+    if (schedule.alternate) col.wrapper.classList.add('week-preview-is-alternate');
+    else col.wrapper.classList.remove('week-preview-is-alternate');
     col.date = schedule.date;
-    col.content.appendChild(Fragment([
-      ...(schedule.noSchool ? [] : schedule.map((pd, i) => Elem('span', {
+    col.content.appendChild(Fragment(schedule.noSchool
+      ? []
+      : schedule.map((pd, i) => Elem('span', {
         className: [
           'week-preview-cell',
           'week-preview-period',
@@ -222,13 +225,8 @@ function showWeekPreview(schedules, selectedDay) {
         style: {
           backgroundColor: getPdColour(pd.period) && '#' + getPdColour(pd.period)
         }
-      }))),
-      schedule.alternate ? Elem('span', {
-        className: 'week-preview-cell week-preview-alternate',
-        title: 'Alternate schedule',
-        'aria-label': 'This is an alternate schedule'
-      }, ['*']) : null
-    ]));
+      }))
+    ));
   });
 }
 
@@ -422,6 +420,11 @@ ready.push(() => {
         if (e.keyCode === 13) this.click();
       }
     }, [
+      Elem('span', {
+        className: 'week-preview-cell week-preview-alternate',
+        title: 'Alternate schedule',
+        'aria-label': 'This is an alternate schedule'
+      }, ['*']),
       Elem('span', {
         className: 'week-preview-cell week-preview-day-heading',
         innerHTML: dayInitials[i],
