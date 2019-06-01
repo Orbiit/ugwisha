@@ -110,7 +110,6 @@ let viewingDate = params.day ? new Date(params.day) : getToday();
  * @return {Date} Today's date
  */
 function getToday() {
-  // return new Date('2019-05-24');
   return new Date(Date.UTC(...(d => [d.getFullYear(), d.getMonth(), d.getDate()])(new Date())));
 }
 

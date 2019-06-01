@@ -290,8 +290,16 @@ const normalSchedules = [
 ];
 
 /* GET SCHEDULE */
+const FIRST_DAY = Date.UTC(2018, 7, 13);
+const LAST_DAY = Date.UTC(2019, 4, 31);
 let scheduleData = {};
 function getSchedule(dateObj) {
+  if (dateObj.getTime() < FIRST_DAY || dateObj.getTime() > LAST_DAY) {
+    const schedule = [];
+    schedule.noSchool = true;
+    schedule.date = dateObj;
+    return schedule;
+  }
   const dateName = dateObj.toISOString().slice(5, 10);
   let schedule = JSON.parse(JSON.stringify(scheduleData[dateName] || normalSchedules[dateObj.getUTCDay()]));
   if (schedule.length === 0) {
@@ -345,8 +353,7 @@ window.ugwishaOptions = {
   // please set this to your own if you fork Ugwisha, thanks
   GOOGLE_API_KEY: 'AIzaSyDBYs4DdIaTjYx5WDz6nfdEAftXuctZV0o',
 
-  FIRST_DAY: Date.UTC(2018, 7, 13),
-  LAST_DAY: Date.UTC(2019, 4, 31),
+  FIRST_DAY, LAST_DAY,
 
   /* DEFAULTS */
   DEFAULT_NAMES: {
