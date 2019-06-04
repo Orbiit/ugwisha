@@ -1,4 +1,4 @@
-const CACHE_NAME = 'ugwisha-sw-v1559424435720';
+const CACHE_NAME = 'ugwisha-sw-v1559681307139';
 const BACKGROUND_CACHE_NAME = 'ugwisha-backgrounds'; // don't change this
 const EXTENSIONS_CACHE_NAME = 'ugwisha-extensions'; // don't change this either
 const urlsToCache = [
@@ -12,6 +12,9 @@ const urlsToCache = [
   './images/material-keyboard_arrow_right.svg',
   './images/material-keyboard_arrow_up.svg',
   './images/material-apps.svg',
+  './images/material-settings.svg',
+  './images/material-info.svg',
+  './images/material-announcement.svg',
   './images/logo-192.png',
   './images/logo-512.png',
   './images/logo-ios.png',
@@ -32,8 +35,9 @@ const urlsToCache = [
   './images/sheep/standing-sheep-hungry.svg',
   './images/sheep/two-sheep-ice-cream.svg',
   './images/sheep/two-sheep-stack.svg',
-  'https://fonts.googleapis.com/css?family=Roboto+Condensed',
-  'https://fonts.gstatic.com/s/robotocondensed/v16/ieVl2ZhZI2eCN5jzbjEETS9weq8-19K7DQ.woff2'
+  'https://fonts.googleapis.com/css?family=Open+Sans|Roboto+Condensed&display=swap',
+  'https://fonts.gstatic.com/s/robotocondensed/v16/ieVl2ZhZI2eCN5jzbjEETS9weq8-19K7DQ.woff2',
+  'https://fonts.gstatic.com/s/opensans/v16/mem8YaGs126MiZpBA-UFVZ0b.woff2'
 ];
 
 function send(data) {

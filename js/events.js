@@ -184,12 +184,10 @@ function splitEvents({items}) {
   return events;
 }
 
-let eventsList, dateElem, dayElem, altFetchBtn;
+let eventsList, altFetchBtn;
 let fetchedAlts = false; // used by PSA [REFETCH] feature
 ready.push(async () => {
   eventsList = document.getElementById('events');
-  dateElem = document.getElementById('date');
-  dayElem = document.getElementById('weekday');
   altFetchBtn = document.getElementById('fetch-alts');
   altFetchBtn.addEventListener('click', e => {
     fetchedAlts = true;

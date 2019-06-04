@@ -35,22 +35,14 @@
 }
 
 .period-chip {
-  background-color: rgba(0, 0, 0, 0.2);
-  padding: 5px 10px;
-  padding-right: 15px;
-  border-radius: 1em;
   --colour: transparent;
+  background-color: var(--colour);
+  padding: 5px 15px;
+  border-radius: 1em;
   color: rgba(255, 255, 255, 0.9);
 }
-.period-chip::before {
-  content: '';
-  display: inline-block;
-  height: 0.5em;
-  width: 0.5em;
-  background-color: var(--colour);
-  border-radius: 50%;
-  margin: 0.1em;
-  margin-right: 10px;
+.period-chip.dark-text {
+  color: rgba(0, 0, 0, 0.9);
 }
 .period-chip.transparent {
   background-color: transparent;

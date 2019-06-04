@@ -1,7 +1,3 @@
-const monthNames = [
-  'January', 'February', 'March', 'April', 'May', 'June', 'July', 'August',
-  'September', 'October', 'November', 'December'
-];
 const monthData = [];
 const dayData = {};
 
@@ -132,7 +128,7 @@ ready.push(() => {
       }
       selectedMonth = month;
       month.wrapper.classList.add('date-selector-month-selected');
-      monthName.textContent = monthNames[month.month] + ' ' + month.year;
+      monthName.textContent = months[month.month] + ' ' + month.year;
     }
   });
 

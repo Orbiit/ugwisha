@@ -96,6 +96,21 @@ function sheepFromDate(time) {
   return sheepImages[(even ? 0 : 7) + index];
 }
 
+/**
+ * Returns whether black text should be used on a colour for maximum contrast.
+ * Code from https://stackoverflow.com/a/3943023
+ * @param {string} hex The hexadecimal background colour
+ * @return {boolean} Whether black text should be used
+ */
+function useBlackText(hex) {
+  const [r, g, b] = [hex.slice(0, 2), hex.slice(2, 4), hex.slice(4)]
+    .map(c => {
+      c = parseInt(c, 16) / 255;
+      return c <= 0.03928 ? c / 12.92 : Math.pow((c + 0.055) / 1.055, 2.4);
+    });
+  return 0.2126 * r + 0.7152 * g + 0.0722 * b > 0.179;
+}
+
 let currentPickerWrapper, currentPickerParent;
 document.addEventListener('click', e => {
   if (currentPickerWrapper && !currentPickerParent.contains(e.target)) {
@@ -112,7 +127,7 @@ function setSchedule(schedule) {
   empty(scheduleWrapper);
   currentPickerWrapper = currentPickerParent = null;
   if (schedule.alternate) {
-    scheduleWrapper.appendChild(Elem('p', {className: 'alternate-note'}, ['This is an alternate schedule']));
+    scheduleWrapper.appendChild(Elem('p', {className: 'alternate-note'}, ['This is an alternate schedule.']));
   }
   if (schedule.noSchool) {
     scheduleWrapper.appendChild(Elem('div', {
@@ -149,10 +164,13 @@ function setSchedule(schedule) {
             periods[pd.period].cards.forEach(p => {
               if (colour === null) {
                 p.classList.add('transparent');
+                p.classList.remove('dark-text');
                 p.style.setProperty('--colour', null);
               } else {
                 p.classList.remove('transparent');
                 p.style.setProperty('--colour', '#' + colour);
+                if (useBlackText(colour)) p.classList.add('dark-text');
+                else p.classList.remove('dark-text');
               }
             });
           },
@@ -166,24 +184,27 @@ function setSchedule(schedule) {
     });
     const note = getNote(pd);
     const wrapper = Elem('div', {
-      className: ['period', getPdColour(pd.period) === null ? 'transparent' : null],
+      className: [
+        'period',
+        getPdColour(pd.period) === null ? 'transparent'
+          : useBlackText(getPdColour(pd.period)) ? 'dark-text' : null
+      ],
       style: {
         '--colour': getPdColour(pd.period) && '#' + getPdColour(pd.period)
       }
     }, [
       periodName,
-      Elem('span', {
-        className: 'time',
-        innerHTML: formatTime(pd.start) + ' &ndash; ' + formatTime(pd.end)
-      }),
-      Elem('span', {
-        className: 'duration',
-        innerHTML: formatDuration(pd.end - pd.start, false) + ' long'
-      }),
-      note ? Elem('span', {
-        className: 'note',
-        innerHTML: note
-      }) : null
+      Elem('span', {className: 'time-duration'}, [
+        Elem('span', {
+          className: 'time',
+          innerHTML: formatTime(pd.start) + ' &ndash; ' + formatTime(pd.end)
+        }),
+        Elem('span', {className: 'duration'}, [(pd.end - pd.start) + ' min']),
+        note ? Elem('span', {
+          className: 'note',
+          innerHTML: note
+        }) : null
+      ])
     ]);
     if (!periods[pd.period]) periods[pd.period] = {inputs: [], cards: []};
     periods[pd.period].inputs.push(periodName);
@@ -291,6 +312,7 @@ function getPeriodChipHTML(period) {
   const colour = getPdColour(period);
   let str = '<span class="period-chip';
   if (colour === null) str += ' transparent';
+  if (colour !== null && useBlackText(colour)) str += ' dark-text';
   str += '"';
   if (colour !== null) str += ` style="--colour: #${colour};"`;
   str += `>${getPdName(period)}</span>`;
@@ -366,8 +388,8 @@ function updateStatus(startInterval = false, nextMinute = 0) {
         function seconds() {
           const {secondsLeft, stop} = status.secondCounter();
           if (!stop) {
-            const str = Math.round(secondsLeft * 10) / 10 + '';
-            document.title = (previewTime.textContent = str + (str.includes('.') ? '0'.repeat(2 - str.length + str.indexOf('.')) : '.0') + 's')
+            const str = Math.round(secondsLeft * 100) / 100 + '';
+            document.title = (previewTime.textContent = str + (str.includes('.') ? '0'.repeat(3 - str.length + str.indexOf('.')) : '.00') + 's')
               + ' ' + status.type + ' ' + getPdName(status.period.period) + ' - ' + APP_NAME;
           }
           window.requestAnimationFrame(startInterval && !stop ? seconds : updateStatus);

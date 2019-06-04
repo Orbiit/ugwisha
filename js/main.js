@@ -69,9 +69,12 @@ if (window.location.search) {
   });
 }
 
-const months = 'Jan. Feb. Mar. Apr. May Jun. Jul. Aug. Sept. Oct. Nov. Dec.'.split(' ');
+const months = [
+  'January', 'February', 'March', 'April', 'May', 'June', 'July', 'August',
+  'September', 'October', 'November', 'December'
+]
 const days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
-let dateWrapper, backDay, forthDay;
+let dayElem, backDay, forthDay, dateElem;
 
 /**
  * Rerenders the schedule and week preview. Call this directly when the schedule
@@ -98,7 +101,7 @@ function updateView() {
   const viewingTime = viewingDate.getTime();
   backDay.disabled = viewingTime <= FIRST_DAY;
   forthDay.disabled = viewingTime >= LAST_DAY;
-  dateWrapper.href = (params['no-sw'] ? '?no-sw&' : '?') + 'day=' + viewingDate.toISOString().slice(0, 10);
+  dayElem.href = (params['no-sw'] ? '?no-sw&' : '?') + 'day=' + viewingDate.toISOString().slice(0, 10);
   renderEvents();
 }
 
@@ -110,11 +113,13 @@ let viewingDate = params.day ? new Date(params.day) : getToday();
  * @return {Date} Today's date
  */
 function getToday() {
+  // return new Date('2019-05-28'); // TEMP
   return new Date(Date.UTC(...(d => [d.getFullYear(), d.getMonth(), d.getDate()])(new Date())));
 }
 
 document.addEventListener('DOMContentLoaded', e => {
-  dateWrapper = document.getElementById('date-wrapper');
+  dateElem = document.getElementById('select-date');
+  dayElem = document.getElementById('weekday');
   backDay = document.getElementById('back-day');
   forthDay = document.getElementById('forth-day');
 
@@ -154,7 +159,7 @@ document.addEventListener('DOMContentLoaded', e => {
   const psaDialog = document.getElementById('psa');
   const psaContent = document.getElementById('psa-content');
   const psaClose = document.getElementById('psa-close');
-  const psaOpen = document.getElementById('last-psa');
+  const psaOpen = document.getElementById('psa-btn');
   fetch('./psa.html?v=' + Date.now()).then(r => r.text()).then(html => {
     psaContent.innerHTML = html;
     const version = html.slice(6, 9);
@@ -179,11 +184,6 @@ document.addEventListener('DOMContentLoaded', e => {
       }
       psaOpen.focus();
       document.body.style.overflow = null;
-    });
-    psaOpen.addEventListener('click', e => {
-      psaDialog.classList.remove('hidden');
-      psaClose.focus();
-      document.body.style.overflow = 'hidden';
     });
     onconnection.forEach(listener => listener(true));
   }).catch(() => {
@@ -241,14 +241,31 @@ document.addEventListener('DOMContentLoaded', e => {
     smoothScroll(jumpBtn.classList.contains('up') ? 0 : windowHeight - 50);
   });
 
-  // settings wrapper
-  const settingsWrapper = document.getElementById('settings');
-  const toggleSettings = document.getElementById('toggle-settings');
-  const btnText = document.createTextNode('show settings');
-  toggleSettings.appendChild(btnText);
-  toggleSettings.addEventListener('click', e => {
-    settingsWrapper.classList.toggle('hidden');
-    btnText.nodeValue = settingsWrapper.classList.contains('hidden') ? 'show settings' : 'hide settings';
+  // tabs
+  const tabs = document.getElementById('tabs');
+  let currentTab = null, currentTabSection = null;
+  tabs.addEventListener('click', e => {
+    if (e.target.dataset.for) {
+      let oldCurrentTab = currentTab;
+      if (currentTab) {
+        currentTab.classList.remove('selected');
+        currentTabSection.classList.remove('show');
+        currentTab = null;
+        currentTabSection = null;
+      }
+      if (oldCurrentTab !== e.target) {
+        if (e.target.dataset.for === 'psa') {
+          psaDialog.classList.remove('hidden');
+          psaClose.focus();
+          document.body.style.overflow = 'hidden';
+        } else {
+          currentTab = e.target;
+          currentTabSection = document.getElementById(e.target.dataset.for);
+          e.target.classList.add('selected');
+          currentTabSection.classList.add('show');
+        }
+      }
+    }
   });
 
   // checkboxes
@@ -296,8 +313,8 @@ document.addEventListener('DOMContentLoaded', e => {
   if (!options.showEvents) eventsWrapper.style.display = 'none';
 
   // simple date navigation buttons
-  dateWrapper.addEventListener('click', e => {
-    window.history.pushState({}, '', dateWrapper.href);
+  dayElem.addEventListener('click', e => {
+    window.history.pushState({}, '', dayElem.href);
     e.preventDefault();
   });
   backDay.addEventListener('click', e => {

@@ -12,7 +12,7 @@
     <link rel="apple-touch-icon" href="./images/logo-ios.png">
     <link rel="icon" href="./images/logo-192.png" id="favicon">
     <link rel="manifest" href="./manifest.json">
-    <link href="https://fonts.googleapis.com/css?family=Roboto+Condensed&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=Open+Sans%7CRoboto+Condensed&display=swap" rel="stylesheet">
     <!-- BEGIN: styles -->
     <link rel="stylesheet" href="./css/main.css">
     <link rel="stylesheet" href="./css/sidebar.css">
@@ -58,25 +58,20 @@
         <div id="jump-btn-wrapper">
           <button class="icon-btn ripples" id="jump" aria-label="scroll to content"></button>
         </div>
-        <div>
-          <button class="button ripples" id="today">today</button>
-        </div>
         <div class="date-controls">
-          <button class="icon-btn ripples" id="back-day" aria-label="view previous day"></button>
-          <button class="button ripples" id="select-date">select date</button>
+          <button class="date-control-btn icon-btn ripples" id="back-day" aria-label="view previous day"></button>
+          <button class="date-control-btn button ripples" id="select-date" aria-label="select day">select date</button>
           <div id="date-selector" class="hidden">
+            <button class="button ripples" id="today">today</button>
             <div id="date-selector-month-year"></div>
             <div id="date-selector-day-headings"></div>
             <div id="date-selector-days" tabindex="0" aria-label="select date"></div>
             <button class="button ripples" id="cancel-select-date">Close</button>
           </div>
-          <button class="icon-btn ripples" id="forth-day" aria-label="view next day"></button>
+          <button class="date-control-btn icon-btn ripples" id="forth-day" aria-label="view next day"></button>
         </div>
+        <a id="weekday"></a>
       </div>
-      <a id="date-wrapper">
-        <span id="date"></span>
-        <span id="weekday"></span>
-      </a>
       <div id="periods"></div>
       <div id="week-preview"></div>
       <h2 class="extension-title"><span id="extension-icon"></span><span id="extension-name"></span><button class="icon-btn ripples" id="extension-menu" aria-label="go to extension menu"></button></h2>
@@ -85,16 +80,15 @@
         <h2>Events</h2>
         <div id="events" class="events"></div>
       </div>
-      <hr>
-      <div class="center">
-        <button class="button ripples" id="toggle-settings"></button>
+      <div class="tabs" id="tabs">
+        <button class="button ripples" data-for="settings" id="settings-btn"></button>
+        <button class="button ripples" data-for="about" id="about-btn"></button>
+        <button class="button ripples" data-for="psa" id="psa-btn"></button>
       </div>
-      <div id="settings" class="hidden">
+      <div id="settings" class="tab-section">
         <h2>Settings</h2>
         <p class="hidden" id="offline-msg">You're offline, so some features won't work. When you come back online, <a href="#" id="reload" tabindex="-1">reload</a>.</p>
         <p><button class="button ripples" id="fetch-alts">get alternate schedules</button></p>
-        <p><input class="toggle-setting" data-option="showTime" data-default="true" type="checkbox" id="show-time"><label for="show-time">Show period times?</label></p>
-        <p><input class="toggle-setting" data-option="showDuration" data-default="false" type="checkbox" id="show-duration"><label for="show-duration">Show period length?</label></p>
         <p><input class="toggle-setting" data-option="showSELF" data-default="true" type="checkbox" id="show-self"><label for="show-self">Show SELF instead of Flex?</label></p>
         <p><input class="toggle-setting" data-option="showEvents" data-default="true" type="checkbox" id="show-events"><label for="show-events">Show events?</label></p>
         <p><input class="toggle-setting" data-option="metricTime" data-default="false" type="checkbox" id="24-hour"><label for="24-hour">24-hour time?</label></p>
@@ -106,9 +100,10 @@
         <p><button class="button ripples" id="next-back" disabled>next nature background</button></p>
         <p><button class="button ripples" id="set-back">set background URL</button></p>
         <p><button class="button ripples" id="reset-back" disabled>reset background</button></p>
+      </div>
+      <div id="about" class="tab-section">
         <h2>About</h2>
         <p>Ugwisha is a rewrite of <a href="https://orbiit.github.io/gunn-web-app/lite/" rel="noopener noreferrer" target="_blank">Ugwita</a>; it is open-sourced on <a href="https://github.com/Orbiit/ugwisha" rel="noopener noreferrer" target="_blank">Github</a>. You can send suggestions and bug reports as an issue on Github or by email to <a href="mailto:sy24484@pausd.us">sy24484@pausd.us</a>.</p>
-        <p><button class="button ripples" id="last-psa">last announcement</button></p>
         <h2>Credits</h2>
         <p>Font: <a href="https://fonts.google.com/specimen/Roboto+Condensed" rel="noopener noreferrer" target="_blank">Roboto Condensed</a></p>
         <p>Icons: <a href="https://material.io/tools/icons/" rel="noopener noreferrer" target="_blank">material design</a></p>

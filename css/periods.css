@@ -1,19 +1,22 @@
 #periods {
   transition: opacity .2s;
+  touch-action: pan-y pinch-zoom;
 }
 .period {
-  background-color: rgba(0, 0, 0, 0.2);
-  padding: 10px 0;
-  margin: 10px 0;
-  border-top-right-radius: 10px;
-  border-bottom-right-radius: 10px;
   --colour: transparent;
-  border-left: 5px solid var(--colour);
+  background-color: var(--colour);
+  padding: 0;
+  margin: 15px -5px;
+  border-radius: 15px;
   position: relative;
+  color: rgba(255, 255, 255, 0.5);
+}
+.period.dark-text {
+  color: rgba(0, 0, 0, 0.5);
 }
 .period.transparent {
   background-color: transparent;
-  padding: 0;
+  margin: 0 -5px;
 }
 .period .period-name {
   display: block;
@@ -22,43 +25,54 @@
   font: inherit;
   color: rgba(255, 255, 255, 0.8);
   font-size: 24px;
-  width: calc(100% - 10px);
+  width: 100%;
   cursor: pointer;
-  padding: 5px 10px;
+  padding: 15px;
+  padding-bottom: 5px;
   box-sizing: border-box;
-  border-top-right-radius: 5px;
-  border-bottom-right-radius: 5px;
+  border-top-left-radius: 15px;
+  border-top-right-radius: 15px;
+}
+.period.dark-text .period-name {
+  color: rgba(0, 0, 0, 0.8);
 }
 .period.transparent .period-name {
-  border-radius: 5px;
+  border-radius: 20px;
+  padding-top: 5px;
 }
 .period .period-name:hover {
   background-color: rgba(255, 255, 255, 0.05);
+}
+.period.dark-text .period-name:hover {
+  background-color: rgba(0, 0, 0, 0.07);
 }
 .period .period-name:focus {
   outline: none;
   background-color: rgba(255, 255, 255, 0.1);
   cursor: auto;
 }
-.time, .duration {
-  display: none;
-  color: rgba(255, 255, 255, 0.5);
-  font-size: 16px;
-  margin: 0 10px;
+.period.dark-text .period-name:focus {
+  background-color: rgba(0, 0, 0, 0.1);
 }
-.show-time .time {
+.time-duration {
   display: block;
+  font-size: 12px;
+  font-family: 'Open Sans', sans-serif;
+  padding: 15px;
+  padding-top: 0;
 }
-.show-duration .duration {
-  display: block;
+.period.transparent .time-duration {
+  padding-bottom: 5px;
+}
+.duration {
+  float: right;
 }
 .note {
-  position: absolute;
-  font-size: 8px;
-  top: 0;
-  right: 0;
-  margin: 5px;
-  color: rgba(255, 255, 255, 0.3);
+  display: block;
+  font-family: 'Open Sans', sans-serif;
+}
+.period.dark-text .note {
+  color: rgba(0, 0, 0, 0.5);
 }
 
 .no-school {
@@ -77,4 +91,10 @@
   margin-top: 150px;
   font-size: 24px;
   color: rgba(255, 255, 255, 0.8);
+}
+
+.alternate-note {
+  text-align: center;
+  font-family: 'Open Sans', sans-serif;
+  font-size: 12px;
 }
