@@ -45,7 +45,7 @@ window.UgwishaExtensions = (() => {
     });
     initialInstalls.then(() => obj.switch(params['app'] || localStorage.getItem(LAST_EXTENSION_KEY) || 'menu'));
 
-    onconnection.push(online => {
+    window.UgwishaEvents.connection.then(online => {
       if (!online) addExtensionOption.disabled = true;
     });
   }
@@ -125,6 +125,7 @@ window.UgwishaExtensions = (() => {
     }
   };
   const nativeExtensions = [
+    ['Background manager', './js/extensions/backgrounds.js'],
     ['Notes', './js/extensions/notes.js'],
     ['Todo', './js/extensions/todo.js'],
     ['Barcode', './js/extensions/barcode.js'],

@@ -50,6 +50,7 @@ try {
 function save() {
   storage.setItem('[ugwisha] options', JSON.stringify(window.options));
 }
+window.options.save = save;
 
 // URL PARAMETERS
 // no-sw    - destroys service workers and keeps them destroyed
@@ -203,6 +204,9 @@ document.addEventListener('DOMContentLoaded', e => {
     psaDialog.addEventListener('click', e => {
       if (e.target === psaDialog) psaClose.click();
     });
+    psaDialog.addEventListener('keydown', e => {
+      if (e.keyCode === 27) psaClose.click();
+    });
     psaDialog.addEventListener('transitionend', e => {
       if (canHidePSA) psaDialog.classList.add('hidden');
     });
@@ -210,15 +214,12 @@ document.addEventListener('DOMContentLoaded', e => {
   }).catch(() => {
     document.getElementById('offline-msg').classList.remove('hidden');
     const reloadBtn = document.getElementById('reload');
-    reloadBtn.tabindex = 0;
+    reloadBtn.tabIndex = 0;
     reloadBtn.addEventListener('click', e => {
       window.location.reload();
       e.preventDefault();
     });
     psaOpen.disabled = true;
-    if (!options.natureLoaded) {
-      document.getElementById('nature-back').disabled = true;
-    }
     onconnection.forEach(listener => listener(false));
   });
 
@@ -294,14 +295,6 @@ document.addEventListener('DOMContentLoaded', e => {
   // checkboxes
   const eventsWrapper = document.getElementById('events-wrapper');
   const optionChange = {
-    showDuration(yes) {
-      if (yes) document.body.classList.add('show-duration');
-      else document.body.classList.remove('show-duration');
-    },
-    showTime(yes) {
-      if (yes) document.body.classList.add('show-time');
-      else document.body.classList.remove('show-time');
-    },
     metricTime() {
       renderSchedule();
       updateStatus();
@@ -310,10 +303,6 @@ document.addEventListener('DOMContentLoaded', e => {
       renderSchedule();
       todayDate = null;
       updateStatus();
-    },
-    quickTransitions(yes) {
-      if (yes) document.body.classList.add('quick-transitions');
-      else document.body.classList.remove('quick-transitions');
     },
     showEvents(yes) {
       if (yes) renderEvents();
@@ -330,9 +319,6 @@ document.addEventListener('DOMContentLoaded', e => {
       save();
     });
   });
-  if (options.showDuration) document.body.classList.add('show-duration');
-  if (options.showTime) document.body.classList.add('show-time');
-  if (options.quickTransitions) document.body.classList.add('quick-transitions');
   if (!options.showEvents) eventsWrapper.style.display = 'none';
 
   // simple date navigation buttons

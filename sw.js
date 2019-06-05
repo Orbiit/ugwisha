@@ -1,4 +1,4 @@
-const CACHE_NAME = 'ugwisha-sw-v1559701689492';
+const CACHE_NAME = 'ugwisha-sw-v1559775068890';
 const BACKGROUND_CACHE_NAME = 'ugwisha-backgrounds'; // don't change this
 const EXTENSIONS_CACHE_NAME = 'ugwisha-extensions'; // don't change this either
 const urlsToCache = [
@@ -11,6 +11,7 @@ const urlsToCache = [
   './images/material-keyboard_arrow_left.svg',
   './images/material-keyboard_arrow_right.svg',
   './images/material-keyboard_arrow_up.svg',
+  './images/material-keyboard_arrow_down.svg',
   './images/material-apps.svg',
   './images/material-settings.svg',
   './images/material-info.svg',
@@ -54,5 +55,10 @@ self.addEventListener('fetch', e => {
       .then(response => response && cache.add(e.request)));
 });
 self.addEventListener('activate', e => {
-  e.waitUntil(caches.keys().then(names => Promise.all(names.map(cache => CACHE_NAME !== cache && BACKGROUND_CACHE_NAME !== cache && EXTENSIONS_CACHE_NAME !== cache ? caches.delete(cache) : undefined))).then(() => self.clients.claim()));
+  e.waitUntil(caches.keys()
+    .then(names => Promise.all(names
+      .map(cache => CACHE_NAME !== cache && cache.slice(0, 11) === 'ugwisha-sw-'
+        ? caches.delete(cache)
+        : null)))
+    .then(() => self.clients.claim()));
 });

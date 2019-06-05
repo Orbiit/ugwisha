@@ -80,6 +80,7 @@
         <h2>Events</h2>
         <div id="events" class="events"></div>
       </div>
+      <p class="hidden" id="offline-msg">You're offline, so some features won't work. When you come back online, <a href="" id="reload" tabindex="-1">reload</a>.</p>
       <div class="tabs" id="tabs">
         <button class="button ripples" data-for="settings" id="settings-btn"></button>
         <button class="button ripples" data-for="about" id="about-btn"></button>
@@ -87,19 +88,11 @@
       </div>
       <div id="settings" class="tab-section">
         <h2>Settings</h2>
-        <p class="hidden" id="offline-msg">You're offline, so some features won't work. When you come back online, <a href="#" id="reload" tabindex="-1">reload</a>.</p>
         <p><button class="button ripples" id="fetch-alts">get alternate schedules</button></p>
         <p><input class="toggle-setting" data-option="showSELF" data-default="true" type="checkbox" id="show-self"><label for="show-self">Show SELF instead of Flex?</label></p>
         <p><input class="toggle-setting" data-option="showEvents" data-default="true" type="checkbox" id="show-events"><label for="show-events">Show events?</label></p>
         <p><input class="toggle-setting" data-option="metricTime" data-default="false" type="checkbox" id="24-hour"><label for="24-hour">24-hour time?</label></p>
         <p><input class="toggle-setting" data-option="allowSliding" data-default="true" type="checkbox" id="touch-slide"><label for="touch-slide">Swipe between days? (touch only)</label></p>
-        <hr>
-        <p><input class="toggle-setting" data-option="quickTransitions" data-default="false" type="checkbox" id="quick-transitions"><label for="quick-transitions">Quick background transitions?</label></p>
-        <p><input class="toggle-setting" data-option="randomGradients" data-default="true" type="checkbox" id="random-gradients"><label for="random-gradients">Automatically cycle gradient backgrounds?</label></p>
-        <p><input class="toggle-setting" data-option="natureBackground" data-default="false" type="checkbox" id="nature-back"><label for="nature-back">Use nature backgrounds?</label></p>
-        <p><button class="button ripples" id="next-back" disabled>next nature background</button></p>
-        <p><button class="button ripples" id="set-back">set background URL</button></p>
-        <p><button class="button ripples" id="reset-back" disabled>reset background</button></p>
       </div>
       <div id="about" class="tab-section">
         <h2>About</h2>

@@ -1,0 +1,49 @@
+.background-extension .basic-input {
+  flex: 1 0 0;
+  width: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  border-radius: 5px;
+  padding: 5px;
+}
+.background-basic-input-wrapper {
+  display: flex;
+  font-size: 16px;
+  align-items: center;
+  margin-top: 5px;
+}
+.background-basic-input-wrapper span {
+  flex: 1 0 0;
+}
+.add-background-wrapper {
+  display: flex;
+  align-items: stretch;
+  margin-top: 5px;
+}
+.add-background-wrapper button {
+  flex: none;
+  margin-left: 5px;
+}
+.background-remove {
+  flex: none;
+  background-image: url('../../images/material-remove.svg?for=backgrounds');
+  padding: 15px;
+  background-size: 18px;
+  margin-right: 5px;
+}
+.background-entry {
+  display: flex;
+  align-items: center;
+}
+.background-entry span {
+  font-size: 16px;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  white-space: pre;
+}
+.background-error {
+  color: #CC6666;
+  white-space: pre-wrap;
+}
+.background-add-nature {
+  margin-top: 5px;
+}

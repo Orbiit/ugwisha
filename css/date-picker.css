@@ -1,45 +1,3 @@
-.picker {
-  position: absolute;
-  background-color: #333;
-  padding: 10px;
-  border-radius: 10px;
-  z-index: 2;
-  margin-top: 15px;
-  left: 0;
-  right: 0;
-  opacity: 1;
-  transform: translateY(0);
-  animation: appear .2s;
-}
-.picker::before {
-  content: '';
-  position: absolute;
-  left: 0;
-  right: 0;
-  width: 0;
-  margin: 0 auto;
-  bottom: 100%;
-  border-bottom: 10px solid #333;
-  border-left: 10px solid transparent;
-  border-right: 10px solid transparent;
-}
-.picker.disappear {
-  pointer-events: none;
-  opacity: 0;
-  transform: translateY(10px);
-  transition: opacity .2s, transform .2s;
-}
-@keyframes appear {
-  0% {
-    opacity: 0;
-    transform: translateY(10px);
-  }
-  100% {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
 .date-controls {
   position: relative;
 }
@@ -74,6 +32,7 @@
   text-align: left;
   cursor: pointer;
   border-radius: 5px;
+  font-family: 'Open Sans', sans-serif;
 }
 #date-selector-days:focus {
   outline: none;
@@ -90,7 +49,7 @@
 }
 .date-selector-day {
   display: inline-block;
-  font-size: 16px;
+  font-size: 14px;
   line-height: 24px;
   color: rgba(255, 255, 255, 0.8);
   width: 14.2857142%;

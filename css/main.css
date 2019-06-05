@@ -13,6 +13,7 @@ body {
   color: rgba(255, 255, 255, 0.5);
   background-color: #212121;
   word-wrap: break-word;
+  --background-transition-speed: 5s;
 }
 ::selection {
   background-color: rgba(0, 188, 212, 0.4);
@@ -56,12 +57,51 @@ a, button, input, select, #date-selector-days {
   background-position: center;
   background-repeat: no-repeat;
   background-color: #212121;
-  animation: fade-out 5s forwards;
-}
-.quick-transitions .transition-background {
-  animation-duration: .5s;
+  animation: fade-out var(--background-transition-speed) forwards;
 }
 @keyframes fade-out {
   from { opacity: 1; }
   to { opacity: 0; }
+}
+
+.picker {
+  position: absolute;
+  background-color: #333;
+  padding: 10px;
+  border-radius: 10px;
+  z-index: 2;
+  margin-top: 15px;
+  left: 0;
+  right: 0;
+  opacity: 1;
+  transform: translateY(0);
+  animation: appear .2s;
+}
+.picker::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  width: 0;
+  margin: 0 auto;
+  bottom: 100%;
+  border-bottom: 10px solid #333;
+  border-left: 10px solid transparent;
+  border-right: 10px solid transparent;
+}
+.picker.disappear {
+  pointer-events: none;
+  opacity: 0;
+  transform: translateY(10px);
+  transition: opacity .2s, transform .2s;
+}
+@keyframes appear {
+  0% {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
