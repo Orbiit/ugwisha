@@ -49,7 +49,7 @@ window.UgwishaExtensions = (() => {
       if (!online) addExtensionOption.disabled = true;
     });
   }
-  const installed = JSON.parse(storage.getItem(INSTALLED_EXTENSIONS_KEY) || '["./js/extensions/notes.js"]');
+  const installed = JSON.parse(storage.getItem(INSTALLED_EXTENSIONS_KEY) || '["./js/extensions/notes.js","./js/extensions/backgrounds.js"]');
   const initialInstalls = Promise.all(installed.map(install));
   function install(url) {
     return new Promise((res, rej) => {
@@ -73,7 +73,8 @@ window.UgwishaExtensions = (() => {
   }
   let removing = false;
   const obj = {
-    start: start,
+    start,
+    addExtension,
     register(data) {
       if (extensions[data.id])
         throw new Error('Extension with same ID already exists: ' + data.id);

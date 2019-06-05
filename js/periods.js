@@ -43,13 +43,13 @@ function formatDuration(minutes, short = false, reallyShort = false) {
 }
 
 function getPdName(pd) {
-  return options['periodName_' + PERIOD_OPTION_PREFIX + pd];
+  return options['periodName_' + PERIOD_OPTION_PREFIX + pd] || defaultNames[pd];
 }
 function setPdName(pd, newName) {
   return options['periodName_' + PERIOD_OPTION_PREFIX + pd] = newName;
 }
 function getPdColour(pd) {
-  return options['periodColour_' + PERIOD_OPTION_PREFIX + pd];
+  return options['periodColour_' + PERIOD_OPTION_PREFIX + pd] || defaultColours[pd];
 }
 function setPdColour(pd, newColour) {
   return options['periodColour_' + PERIOD_OPTION_PREFIX + pd] = newColour;
@@ -419,15 +419,6 @@ function updateStatus(startInterval = false, nextMinute = 0) {
 
 ready.push(() => {
   scheduleWrapper = document.getElementById('periods');
-
-  Object.keys(defaultNames).forEach(pd => {
-    if (getPdName(pd) === undefined)
-      setPdName(pd, defaultNames[pd]);
-  });
-  Object.keys(defaultColours).forEach(pd => {
-    if (getPdColour(pd) === undefined)
-      setPdColour(pd, defaultColours[pd]);
-  });
 
   previewTime = document.getElementById('preview-time');
   previewMsg = document.getElementById('preview-msg');

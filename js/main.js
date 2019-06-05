@@ -161,7 +161,7 @@ document.addEventListener('DOMContentLoaded', e => {
   const psaContent = document.getElementById('psa-content');
   const psaClose = document.getElementById('psa-close');
   const psaOpen = document.getElementById('psa-btn');
-  const psaVersionRegex = /<!--\s*#(\d+)((?:\|[a-z0-9\-_=\.]*)*)\s*-->/gi;
+  const psaVersionRegex = /<!--\s*#(\d+)((?:\|[a-z0-9\-_=./]*)*)\s*-->/gi;
   let canHidePSA = false;
   fetch('./psa.html?v=' + Date.now()).then(r => r.text()).then(html => {
     psaContent.innerHTML = html; // WARNING: prone to XSS
@@ -170,6 +170,7 @@ document.addEventListener('DOMContentLoaded', e => {
     /**
      * REFETCH - indicate that the alternate schedules should be fetched again
      * HIDE_B4 - will only show the new PSA when the user has updated to the given version
+     * INSTALL_EXTENSION - adds the extension
      */
     paramString.split('|').forEach(str => {
       if (str) {
@@ -196,6 +197,9 @@ document.addEventListener('DOMContentLoaded', e => {
         if (!fetchedAlts && params.REFETCH) {
           fetchedAlts = true;
           fetchEvents().then(renderSchedule);
+        }
+        if (params.INSTALL_EXTENSION) {
+          window.UgwishaExtensions.addExtension(params.INSTALL_EXTENSION);
         }
       }
       psaOpen.focus();
