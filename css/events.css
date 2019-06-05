@@ -3,8 +3,7 @@
   display: block;
   color: rgba(255, 255, 255, 0.4);
   font-size: 14px;
-  border-top: 1px solid rgba(255, 255, 255, 0.1);
-  padding-top: 5px;
+  font-family: 'Open Sans', sans-serif;
 }
 .event {
   padding: 5px 0;

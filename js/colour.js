@@ -134,7 +134,7 @@ function colourPicker(onupdate, currentColour = '00BCD4', allowTransparent = tru
     hueSlider.style.backgroundImage = `linear-gradient(to bottom, ${hues.map(h => rgbToCSS(hsvToRgb({h, s: colour.s, v: colour.v}))).join(',')})`;
     hueSlider.style.setProperty('--val', colour.h / 360 * 100 + '%');
   }
-  const wrapper = Elem('div', {className: 'colour-picker'}, [
+  const wrapper = Elem('div', {className: 'colour-picker picker'}, [
     hexInput = Elem('input', {
       className: 'colour-input select-input',
       type: 'text',

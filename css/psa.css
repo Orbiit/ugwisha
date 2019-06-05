@@ -8,6 +8,7 @@
   height: 100%;
   align-items: center;
   justify-content: center;
+  animation: psa-shadow-appear .2s;
 }
 #psa-wrapper {
   width: 100%;
@@ -19,6 +20,7 @@
   max-height: 80%;
   overflow: auto;
   background-color: rgba(0, 0, 0, 0.3);
+  animation: psa-appear .2s;
 }
 #psa-wrapper > h2 {
   margin-top: 0;
@@ -32,3 +34,28 @@
   line-height: 1.5;
 }
 #psa.hidden { display: none; }
+#psa.disappear {
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity .2s;
+}
+#psa.disappear #psa-wrapper {
+  transform: scale(1.2);
+  transition: transform .2s;
+}
+@keyframes psa-shadow-appear {
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+@keyframes psa-appear {
+  0% {
+    transform: scale(1.2);
+  }
+  100% {
+    transform: scale(1);
+  }
+}

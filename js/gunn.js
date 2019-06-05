@@ -357,14 +357,14 @@ window.ugwishaOptions = {
 
   /* DEFAULTS */
   DEFAULT_NAMES: {
-    A: 'Period A', B: 'Period B', C: 'Period C', D: 'Period D',
-    E: 'Period E', F: 'Period F', G: 'Period G',
+    A: 'A Period', B: 'B Period', C: 'C Period', D: 'D Period',
+    E: 'E Period', F: 'F Period', G: 'G Period',
     b: 'Brunch', l: 'Lunch', f: 'Flex', s: 'SELF'
   },
   DEFAULT_COLOURS: {
-    A: 'f44336', B: '3F51B5', C: 'FFEB3B', D: '795548',
-    E: 'FF9800', F: '9C27B0', G: '4CAF50',
-    b: null, l: null, f: '607D8B', s: '9E9E9E'
+    A: 'de935f', B: '81a2be', C: 'cc6666', D: 'f0c674',
+    E: 'b294bb', F: 'b5bd68', G: '8abeb7',
+    b: null, l: null, f: 'e0e0e0', s: '282a2e'
   },
 
   /* THEME */

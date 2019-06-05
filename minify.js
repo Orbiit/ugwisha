@@ -21,11 +21,12 @@ const options = {
     keep_fnames: false // allows destruction of function names
   },
   output: {
-    preamble: '/* sheep */' // prepends this comment to minified code
+    preamble: '/* Approved by the sheep */' // prepends this comment to minified code
   }
 };
 
 read('src.html').then(async html => {
+  const version = Date.now();
   let jsPromise, cssPromise;
   const newHTML = html
     .replace(/<!-- BEGIN: scripts -->(.|\r?\n)+<!-- END: scripts -->/, match => {
@@ -45,15 +46,15 @@ read('src.html').then(async html => {
     })
     .replace(/\s{2,}|\r?\n/g, '');
   if (!jsPromise) throw new Error("Can't find scripts oof");
-  const jsFiles = (await jsPromise).join('\n\n');
+  const jsFiles = `(() => {${(await jsPromise).join('\n\n')}\nUgwisha.version = ${version};})();`;
   console.log('Minifying...');
   const result = UglifyJS.minify(jsFiles, options);
   console.log('Minification done!');
   if (result.error) throw new Error(result.error);
   await Promise.all([
     write('./index.html', newHTML),
-    write('./ugwisha.js', `(()=>{${result.code}})()\n`),
-    read('./sw.js').then(js => write('./sw.js', js.replace(/(?<=ugwisha-sw-v)\d+/, Date.now()))),
+    write('./ugwisha.js', result.code),
+    read('./sw.js').then(js => write('./sw.js', js.replace(/(?<=ugwisha-sw-v)\d+/, version))),
     cssPromise
   ]);
   console.log('Done.');

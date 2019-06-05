@@ -114,7 +114,12 @@ function useBlackText(hex) {
 let currentPickerWrapper, currentPickerParent;
 document.addEventListener('click', e => {
   if (currentPickerWrapper && !currentPickerParent.contains(e.target)) {
-    currentPickerWrapper.parentNode.removeChild(currentPickerWrapper);
+    const oldWrapper = currentPickerWrapper;
+    tabbablify(oldWrapper, false);
+    oldWrapper.classList.add('disappear');
+    oldWrapper.addEventListener('transitionend', e => {
+      oldWrapper.parentNode.removeChild(oldWrapper);
+    }, {once: true});
     currentPickerWrapper = currentPickerParent = null;
   }
 });
@@ -133,7 +138,7 @@ function setSchedule(schedule) {
     scheduleWrapper.appendChild(Elem('div', {
       className: 'no-school',
       style: {
-        backgroundImage: `url('./images/sheep/${sheepFromDate(schedule.date.getTime())}')`
+        backgroundImage: `url('./images/sheep/${sheepFromDate(getToday().getTime())}')`
       }
     }, [Elem('span', {}, ['No school!'])]));
     return;
@@ -154,7 +159,12 @@ function setSchedule(schedule) {
       onfocus() {
         if (currentPickerParent === wrapper) return;
         if (currentPickerWrapper) {
-          currentPickerWrapper.parentNode.removeChild(currentPickerWrapper);
+          const oldWrapper = currentPickerWrapper;
+          tabbablify(oldWrapper, false);
+          oldWrapper.classList.add('disappear');
+          oldWrapper.addEventListener('transitionend', e => {
+            oldWrapper.parentNode.removeChild(oldWrapper);
+          }, {once: true});
         }
         currentPickerWrapper = colourPicker(
           colour => {

@@ -22,7 +22,7 @@ window.UgwishaEvents = {
   connection: new Promise(res => onconnection.push(res)),
   status: [] // when the status is updated
 };
-window.Ugwisha = {};
+window.Ugwisha = {version: 'dev'};
 
 // avoid crashing if accessing localStorage in private mode results in an
 // error (eg Edge)
@@ -160,10 +160,24 @@ document.addEventListener('DOMContentLoaded', e => {
   const psaContent = document.getElementById('psa-content');
   const psaClose = document.getElementById('psa-close');
   const psaOpen = document.getElementById('psa-btn');
+  const psaVersionRegex = /<!--\s*#(\d+)((?:\|[a-z0-9\-_=\.]*)*)\s*-->/gi;
+  let canHidePSA = false;
   fetch('./psa.html?v=' + Date.now()).then(r => r.text()).then(html => {
-    psaContent.innerHTML = html;
-    const version = html.slice(6, 9);
-    if (options.lastPSA && options.lastPSA !== version) {
+    psaContent.innerHTML = html; // WARNING: prone to XSS
+    const [, version, paramString] = psaVersionRegex.exec(html);
+    const params = {};
+    /**
+     * REFETCH - indicate that the alternate schedules should be fetched again
+     * HIDE_B4 - will only show the new PSA when the user has updated to the given version
+     */
+    paramString.split('|').forEach(str => {
+      if (str) {
+        const [key, value] = str.split('=');
+        params[key] = value || true;
+      }
+    });
+    if (options.lastPSA && options.lastPSA !== version
+        && (!params.HIDE_B4 || +params.HIDE_B4 <= Ugwisha.version || Ugwisha.version === 'dev')) {
       psaDialog.classList.remove('hidden');
       psaClose.focus();
       document.body.style.overflow = 'hidden';
@@ -173,17 +187,24 @@ document.addEventListener('DOMContentLoaded', e => {
       save();
     }
     psaClose.addEventListener('click', e => {
-      psaDialog.classList.add('hidden');
+      canHidePSA = true;
+      psaDialog.classList.add('disappear');
       if (options.lastPSA !== version) {
         options.lastPSA = version;
         save();
-        if (!fetchedAlts && html.includes('[REFETCH]')) {
+        if (!fetchedAlts && params.REFETCH) {
           fetchedAlts = true;
           fetchEvents().then(renderSchedule);
         }
       }
       psaOpen.focus();
       document.body.style.overflow = null;
+    });
+    psaDialog.addEventListener('click', e => {
+      if (e.target === psaDialog) psaClose.click();
+    });
+    psaDialog.addEventListener('transitionend', e => {
+      if (canHidePSA) psaDialog.classList.add('hidden');
     });
     onconnection.forEach(listener => listener(true));
   }).catch(() => {
@@ -255,7 +276,9 @@ document.addEventListener('DOMContentLoaded', e => {
       }
       if (oldCurrentTab !== e.target) {
         if (e.target.dataset.for === 'psa') {
+          canHidePSA = false;
           psaDialog.classList.remove('hidden');
+          psaDialog.classList.remove('disappear');
           psaClose.focus();
           document.body.style.overflow = 'hidden';
         } else {
@@ -328,6 +351,7 @@ document.addEventListener('DOMContentLoaded', e => {
   document.getElementById('today').addEventListener('click', e => {
     viewingDate = getToday();
     updateView();
+    updateViewingDay();
   });
 
   // change sidebar width

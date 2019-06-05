@@ -1,4 +1,4 @@
-.colour-picker, #date-selector {
+.picker {
   position: absolute;
   background-color: #333;
   padding: 10px;
@@ -7,8 +7,11 @@
   margin-top: 15px;
   left: 0;
   right: 0;
+  opacity: 1;
+  transform: translateY(0);
+  animation: appear .2s;
 }
-.colour-picker::before, #date-selector::before {
+.picker::before {
   content: '';
   position: absolute;
   left: 0;
@@ -20,6 +23,22 @@
   border-left: 10px solid transparent;
   border-right: 10px solid transparent;
 }
+.picker.disappear {
+  pointer-events: none;
+  opacity: 0;
+  transform: translateY(10px);
+  transition: opacity .2s, transform .2s;
+}
+@keyframes appear {
+  0% {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
 
 .date-controls {
   position: relative;
@@ -29,6 +48,10 @@
 }
 #cancel-select-date {
   width: 100%;
+  border: none;
+}
+#cancel-select-date:active {
+  box-shadow: none;
 }
 #date-selector-month-year {
   font-size: 24px;

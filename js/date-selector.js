@@ -82,6 +82,19 @@ function updateDays() {
   });
 }
 
+/**
+ * Updates the selected viewing day on the date selector.
+ */
+function updateViewingDay() {
+  if (selectedDay) selectedDay.classList.remove('date-selector-selected');
+  const day = dayData[viewingDate.toISOString().slice(0, 10)];
+  if (day) {
+    day.classList.add('date-selector-selected');
+    selectedDay = day;
+    scrollTo(day, true);
+  }
+}
+
 ready.push(() => {
   dateSelector = document.getElementById('date-selector');
   const daysWrapper = document.getElementById('date-selector-days');
@@ -173,7 +186,8 @@ ready.push(() => {
       }
       e.preventDefault();
     } else if (e.keyCode === 27) { // escape
-      dateSelector.classList.add('hidden');
+      canHide = true;
+      dateSelector.classList.add('disappear');
       selectDateBtn.focus();
     }
   });
@@ -185,26 +199,29 @@ ready.push(() => {
       daysCreated = true;
     }
     updateDays();
+    updateViewingDay();
+    canHide = false;
     dateSelector.classList.remove('hidden');
-    if (selectedDay) selectedDay.classList.remove('date-selector-selected');
-    const day = dayData[viewingDate.toISOString().slice(0, 10)];
-    if (day) {
-      day.classList.add('date-selector-selected');
-      selectedDay = day;
-      scrollTo(day, true);
-    }
+    dateSelector.classList.remove('disappear');
     daysWrapper.focus();
     e.stopPropagation();
   });
 
   document.getElementById('cancel-select-date').addEventListener('click', e => {
-    dateSelector.classList.add('hidden');
+    canHide = true;
+    dateSelector.classList.add('disappear');
     selectDateBtn.focus();
   });
 
   document.addEventListener('click', e => {
     if (!dateSelector.classList.contains('hidden') && !dateSelector.contains(e.target)) {
-      dateSelector.classList.add('hidden');
+      canHide = true;
+      dateSelector.classList.add('disappear');
     }
+  });
+
+  let canHide = false;
+  dateSelector.addEventListener('transitionend', e => {
+    if (canHide) dateSelector.classList.add('hidden');
   });
 });

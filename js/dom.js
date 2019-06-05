@@ -47,6 +47,11 @@ function Fragment(elems) {
 function empty(elem) {
   while (elem.firstChild) elem.removeChild(elem.firstChild);
 }
+function tabbablify(elem, makeTabbable = true) {
+  elem.querySelectorAll('a, input, button, select').forEach(elem => {
+    elem.tabIndex = makeTabbable ? 0 : -1;
+  });
+}
 
 window.Elem = Elem;
 window.Fragment = Fragment;
