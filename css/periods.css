@@ -11,7 +11,7 @@
   position: relative;
   color: rgba(255, 255, 255, 0.5);
 }
-.period.dark-text {
+.dark-text-ok .period.dark-text {
   color: rgba(0, 0, 0, 0.5);
 }
 .period.transparent {
@@ -33,7 +33,7 @@
   border-top-left-radius: 15px;
   border-top-right-radius: 15px;
 }
-.period.dark-text .period-name {
+.dark-text-ok .period.dark-text .period-name {
   color: rgba(0, 0, 0, 0.8);
 }
 .period.transparent .period-name {
@@ -43,7 +43,7 @@
 .period .period-name:hover {
   background-color: rgba(255, 255, 255, 0.05);
 }
-.period.dark-text .period-name:hover {
+.dark-text-ok .period.dark-text .period-name:hover {
   background-color: rgba(0, 0, 0, 0.07);
 }
 .period .period-name:focus {
@@ -51,7 +51,7 @@
   background-color: rgba(255, 255, 255, 0.1);
   cursor: auto;
 }
-.period.dark-text .period-name:focus {
+.dark-text-ok .period.dark-text .period-name:focus {
   background-color: rgba(0, 0, 0, 0.1);
 }
 .time-duration {
@@ -71,7 +71,7 @@
   display: block;
   font-family: 'Open Sans', sans-serif;
 }
-.period.dark-text .note {
+.dark-text-ok .period.dark-text .note {
   color: rgba(0, 0, 0, 0.5);
 }
 

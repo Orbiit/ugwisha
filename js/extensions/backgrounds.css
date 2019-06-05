@@ -1,17 +1,14 @@
-.background-extension .basic-input {
+.background-extension .select-input {
   flex: 1 0 0;
   width: 0;
-  background-color: rgba(0, 0, 0, 0.5);
-  border-radius: 5px;
-  padding: 5px;
 }
-.background-basic-input-wrapper {
+.background-select-input-wrapper {
   display: flex;
   font-size: 16px;
   align-items: center;
   margin-top: 5px;
 }
-.background-basic-input-wrapper span {
+.background-select-input-wrapper span {
   flex: 1 0 0;
 }
 .add-background-wrapper {

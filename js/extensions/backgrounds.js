@@ -43,7 +43,7 @@ UgwishaExtensions.register((() => {
 
   const backgroundEntries = Elem('div', {className: 'background-entries'});
   const newBackgroundInput = Elem('input', {
-    className: 'basic-input',
+    className: 'select-input',
     type: 'text',
     placeholder: 'Image URL',
     onkeydown(e) {
@@ -131,10 +131,10 @@ UgwishaExtensions.register((() => {
   return {
     id: 'backgrounds',
     wrapper: Elem('div', {className: 'background-extension'}, [
-      Elem('label', {className: 'background-basic-input-wrapper'}, [
+      Elem('label', {className: 'background-select-input-wrapper'}, [
         Elem('span', {}, ['Loop speed']),
         Elem('input', {
-          className: 'basic-input',
+          className: 'select-input',
           type: 'number',
           placeholder: '10',
           value: options.backgroundLoop,
@@ -144,10 +144,10 @@ UgwishaExtensions.register((() => {
           }
         })
       ]),
-      Elem('label', {className: 'background-basic-input-wrapper'}, [
+      Elem('label', {className: 'background-select-input-wrapper'}, [
         Elem('span', {}, ['Fade speed']),
         Elem('input', {
-          className: 'basic-input',
+          className: 'select-input',
           type: 'number',
           placeholder: '5',
           value: options.backgroundFade,
