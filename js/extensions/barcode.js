@@ -130,8 +130,8 @@ window.UgwishaExtensions.register((() => {
       Elem('p', {}, ['When scanning, set the screen brightness to max.'])
     ]),
     name: 'Barcode',
-    icon: './images/barcode-icon.svg',
+    icon: './images/extensions/barcode.svg',
     styles: './js/extensions/barcode.css',
-    sources: ['./images/material-delete_outline.svg?for=barcode']
+    sources: ['./images/material/delete_outline.svg?for=barcode']
   };
 })());

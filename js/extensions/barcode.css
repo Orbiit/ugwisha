@@ -26,7 +26,7 @@
   margin-left: 5px;
 }
 .barcode-remove {
-  background-image: url('../../images/material-delete_outline.svg?for=barcode');
+  background-image: url('../../images/material/delete_outline.svg?for=barcode');
 }
 .barcode-canvas {
   flex: auto;

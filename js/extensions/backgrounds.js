@@ -166,8 +166,8 @@ window.UgwishaExtensions.register((() => {
       error
     ]),
     name: 'Backgrounds',
-    icon: './images/backgrounds.svg',
+    icon: './images/extensions/backgrounds.svg',
     styles: './js/extensions/backgrounds.css',
-    sources: ['./images/material-remove.svg?for=backgrounds']
+    sources: ['./images/material/remove.svg?for=backgrounds']
   };
 })());

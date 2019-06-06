@@ -60,7 +60,7 @@ window.UgwishaExtensions.register((() => {
       output
     ]),
     name: 'Min. Score',
-    icon: './images/min-score-icon.svg',
+    icon: './images/extensions/min-score.svg',
     styles: './js/extensions/min-score.css'
   };
 })());

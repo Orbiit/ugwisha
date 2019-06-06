@@ -26,13 +26,13 @@
 #jump {
   display: none;
   position: absolute;
-  background-image: url("../images/material-keyboard_arrow_up.svg");
+  background-image: url("../images/material/keyboard_arrow_up.svg");
   bottom: 25px;
   transform: translateX(-50%);
   transition: bottom .2s;
 }
 #jump.up {
-  background-image: url("../images/material-keyboard_arrow_down.svg");
+  background-image: url("../images/material/keyboard_arrow_down.svg");
   bottom: 15px;
 }
 
@@ -70,12 +70,12 @@
   padding: 0;
 }
 #back-day {
-  background-image: url("../images/material-keyboard_arrow_left.svg");
+  background-image: url("../images/material/keyboard_arrow_left.svg");
   border-top-left-radius: 50px;
   border-bottom-left-radius: 50px;
 }
 #forth-day {
-  background-image: url("../images/material-keyboard_arrow_right.svg");
+  background-image: url("../images/material/keyboard_arrow_right.svg");
   border-top-right-radius: 50px;
   border-bottom-right-radius: 50px;
 }
@@ -118,9 +118,9 @@
 .tabs .button.selected {
   background-color: rgba(255, 255, 255, 0.5);
 }
-#settings-btn {background-image: url('../images/material-settings.svg');}
-#about-btn {background-image: url('../images/material-info.svg');}
-#psa-btn {background-image: url('../images/material-announcement.svg');}
+#settings-btn {background-image: url('../images/material/settings.svg');}
+#about-btn {background-image: url('../images/material/info.svg');}
+#psa-btn {background-image: url('../images/material/announcement.svg');}
 
 .tab-section {
   display: none;

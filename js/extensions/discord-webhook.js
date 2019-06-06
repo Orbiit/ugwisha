@@ -25,7 +25,7 @@ window.UgwishaExtensions.register((() => {
       method: 'POST',
       body: JSON.stringify({
         username: 'Ugwisha',
-        avatar_url: 'https://orbiit.github.io/ugwisha/images/logo-512.png',
+        avatar_url: 'https://orbiit.github.io/ugwisha/images/logo/512.png',
         "embeds": [{color: 0xff5959, title, description}]
       }),
       headers: {'Content-Type': 'application/json'}

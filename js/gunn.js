@@ -369,7 +369,7 @@ window.ugwishaOptions = {
 
   /* THEME */
   THEME_COLOUR: '#ff5959',
-  DEFAULT_FAVICON_URL: './images/logo-192.png',
+  DEFAULT_FAVICON_URL: './images/logo/192.png',
   APP_NAME: 'Ugwisha',
   PERIOD_OPTION_PREFIX: '',
   UPDATER_URL: '/ugwisha-updater.html'

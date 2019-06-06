@@ -39,6 +39,6 @@ window.UgwishaExtensions.register((() => {
       Elem('p', {}, [Elem('label', {}, ['Notify me ', minutesBefore, ' minutes before a period starts/ends.'])])
     ]),
     name: 'Notify',
-    icon: './images/notifications-icon.svg'
+    icon: './images/extensions/notifications.svg'
   };
 })());

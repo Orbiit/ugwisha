@@ -57,5 +57,5 @@ read('src.html').then(async html => {
     read('./sw.js').then(js => write('./sw.js', js.replace(/(?<=ugwisha-sw-v)\d+/, version))),
     cssPromise
   ]);
-  console.log('Done.');
+  console.log('Done; version ' + version);
 });

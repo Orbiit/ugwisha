@@ -104,12 +104,12 @@ try {
     extensions: [
       {
         name: 'Notes',
-        icon: './images/notes-icon.svg',
+        icon: './images/extensions/notes.svg',
         url: './js/extensions/notes.js'
       },
       {
         name: 'Backgrounds',
-        icon: './images/backgrounds.svg',
+        icon: './images/extensions/backgrounds.svg',
         url: './js/extensions/backgrounds.js',
         styles: './js/extensions/backgrounds.css'
       }

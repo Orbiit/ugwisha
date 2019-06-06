@@ -123,8 +123,8 @@ window.UgwishaExtensions.register((() => {
   return {
     wrapper: wrapper,
     name: 'Todo',
-    icon: './images/todo-icon.svg',
+    icon: './images/extensions/todo.svg',
     styles: './js/extensions/todo.css',
-    sources: ['./images/material-add.svg?for=todo', './images/material-remove.svg?for=todo']
+    sources: ['./images/material/add.svg?for=todo', './images/material/remove.svg?for=todo']
   };
 })());

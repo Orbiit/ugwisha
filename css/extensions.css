@@ -16,19 +16,19 @@
   flex: auto;
 }
 #extension-menu, #remove-extensions {
-  background-image: url('../images/material-apps.svg');
+  background-image: url('../images/material/apps.svg');
   position: relative;
   top: -5px;
   margin-bottom: -50px; /* SUCC */
 }
 #extension-menu.add-ext {
-  background-image: url('../images/material-add.svg');
+  background-image: url('../images/material/add.svg');
 }
 #remove-extensions {
-  background-image: url('../images/material-delete_outline.svg');
+  background-image: url('../images/material/delete_outline.svg');
 }
 #remove-extensions.extension-removing {
-  background-image: url('../images/material-check.svg');
+  background-image: url('../images/material/check.svg');
   animation: pulse .5s cubic-bezier(0.5, 0, 0.5, 1) infinite alternate;
 }
 @keyframes pulse {

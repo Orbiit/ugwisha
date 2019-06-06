@@ -22,7 +22,7 @@
 }
 .background-remove {
   flex: none;
-  background-image: url('../../images/material-remove.svg?for=backgrounds');
+  background-image: url('../../images/material/remove.svg?for=backgrounds');
   padding: 15px;
   background-size: 18px;
   margin-right: 5px;

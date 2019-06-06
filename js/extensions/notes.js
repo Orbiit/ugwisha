@@ -19,7 +19,7 @@ window.UgwishaExtensions.register((() => {
   return {
     wrapper: Elem('div', {}, [notes]),
     name: 'Notes',
-    icon: './images/notes-icon.svg',
+    icon: './images/extensions/notes.svg',
     afterAdd() {
       visible = true;
       notes.style.height = notes.scrollHeight + 2 + 'px';

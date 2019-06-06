@@ -9,7 +9,7 @@ window.UgwishaExtensions.register((() => {
   return {
     wrapper: Elem('div', {}, [currentSecond]),
     name: 'Current Sec.',
-    icon: './images/current-second-icon.svg',
+    icon: './images/extensions/current-second.svg',
     beforeAdd() {
       if (!animationFrameID) updateSecond();
     },
