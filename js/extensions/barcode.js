@@ -1,4 +1,4 @@
-UgwishaExtensions.register((() => {
+window.UgwishaExtensions.register((() => {
   // https://en.wikipedia.org/wiki/Code_39
   const sequences = {
     '0': 349, '1': 581, '2': 419, '3': 661, '4': 347, '5': 589,
@@ -111,7 +111,6 @@ UgwishaExtensions.register((() => {
   barcodeWrapper.appendChild(Fragment(barcodes.map(createBarcodeEditor)));
 
   return {
-    id: 'barcode',
     wrapper: Elem('div', {}, [
       barcodeWrapper,
       Elem('button', {
@@ -132,7 +131,6 @@ UgwishaExtensions.register((() => {
     ]),
     name: 'Barcode',
     icon: './images/barcode-icon.svg',
-    url: './js/extensions/barcode.js',
     styles: './js/extensions/barcode.css',
     sources: ['./images/material-delete_outline.svg?for=barcode']
   };

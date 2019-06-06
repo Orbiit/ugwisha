@@ -1,4 +1,4 @@
-UgwishaExtensions.register((() => {
+window.UgwishaExtensions.register((() => {
   let animationFrameID = null;
   const currentSecond = Elem('p', {style: {fontSize: '36px', textAlign: 'center'}});
   function updateSecond() {
@@ -7,11 +7,9 @@ UgwishaExtensions.register((() => {
   }
 
   return {
-    id: 'current-second',
     wrapper: Elem('div', {}, [currentSecond]),
     name: 'Current Sec.',
     icon: './images/current-second-icon.svg',
-    url: './js/extensions/current-second.js',
     beforeAdd() {
       if (!animationFrameID) updateSecond();
     },

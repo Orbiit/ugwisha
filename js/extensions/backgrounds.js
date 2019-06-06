@@ -1,4 +1,4 @@
-UgwishaExtensions.register((() => {
+window.UgwishaExtensions.register((() => {
   /**
    * Cache name for custom background images
    * @type {string}
@@ -129,7 +129,6 @@ UgwishaExtensions.register((() => {
   });
 
   return {
-    id: 'backgrounds',
     wrapper: Elem('div', {className: 'background-extension'}, [
       Elem('label', {className: 'background-select-input-wrapper'}, [
         Elem('span', {}, ['Loop speed']),
@@ -168,7 +167,6 @@ UgwishaExtensions.register((() => {
     ]),
     name: 'Backgrounds',
     icon: './images/backgrounds.svg',
-    url: './js/extensions/backgrounds.js',
     styles: './js/extensions/backgrounds.css',
     sources: ['./images/material-remove.svg?for=backgrounds']
   };

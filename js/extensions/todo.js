@@ -1,4 +1,4 @@
-UgwishaExtensions.register((() => {
+window.UgwishaExtensions.register((() => {
   const TODO_KEY = '[ugwisha] extensions.todo';
   const wrapper = Elem('div');
   let list;
@@ -121,11 +121,9 @@ UgwishaExtensions.register((() => {
   ]));
 
   return {
-    id: 'todo',
     wrapper: wrapper,
     name: 'Todo',
     icon: './images/todo-icon.svg',
-    url: './js/extensions/todo.js',
     styles: './js/extensions/todo.css',
     sources: ['./images/material-add.svg?for=todo', './images/material-remove.svg?for=todo']
   };

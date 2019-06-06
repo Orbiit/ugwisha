@@ -135,7 +135,6 @@ document.addEventListener('DOMContentLoaded', e => {
   // ready functions - it's important to do this first because updateView relies
   // on period.js
   ready.forEach(r => r());
-  UgwishaExtensions.start();
 
   // tab focus
   let tabFocus = false;
@@ -199,7 +198,7 @@ document.addEventListener('DOMContentLoaded', e => {
           fetchEvents().then(renderSchedule);
         }
         if (params.INSTALL_EXTENSION) {
-          window.UgwishaExtensions.addExtension(params.INSTALL_EXTENSION);
+          newExtension(params.INSTALL_EXTENSION);
         }
       }
       psaOpen.focus();

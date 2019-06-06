@@ -1,4 +1,4 @@
-UgwishaExtensions.register((() => {
+window.UgwishaExtensions.register((() => {
   const webhookURL = Elem('input', {
     className: 'select-input',
     type: 'text',
@@ -75,10 +75,8 @@ UgwishaExtensions.register((() => {
   ]);
 
   return {
-    id: 'webhook',
     wrapper,
     name: 'Webhook',
-    icon: './images/discord-logo-white.svg',
-    url: './js/extensions/discord-webhook.js'
+    icon: './images/discord-logo-white.svg'
   };
 })());

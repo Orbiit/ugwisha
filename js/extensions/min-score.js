@@ -1,4 +1,4 @@
-UgwishaExtensions.register((() => {
+window.UgwishaExtensions.register((() => {
   function calculate() {
     const result = Math.round((minimum.value - current.value * (1 - worth.value)) / worth.value * 10000) / 100;
     if (result < 0) {
@@ -53,7 +53,6 @@ UgwishaExtensions.register((() => {
   const output = Elem('p');
   calculate();
   return {
-    id: 'min-score',
     wrapper: Elem('div', {}, [
       current.elem,
       worth.elem,
@@ -62,7 +61,6 @@ UgwishaExtensions.register((() => {
     ]),
     name: 'Min. Score',
     icon: './images/min-score-icon.svg',
-    url: './js/extensions/min-score.js',
     styles: './js/extensions/min-score.css'
   };
 })());

@@ -1,4 +1,4 @@
-UgwishaExtensions.register((() => {
+window.UgwishaExtensions.register((() => {
   const notes = Elem('textarea', {
     'aria-label': 'notes',
     value: storage.getItem('[ugwisha] notes'),
@@ -17,11 +17,9 @@ UgwishaExtensions.register((() => {
   });
 
   return {
-    id: 'notes',
     wrapper: Elem('div', {}, [notes]),
     name: 'Notes',
     icon: './images/notes-icon.svg',
-    url: './js/extensions/notes.js',
     afterAdd() {
       visible = true;
       notes.style.height = notes.scrollHeight + 2 + 'px';

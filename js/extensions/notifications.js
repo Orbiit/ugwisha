@@ -1,4 +1,4 @@
-UgwishaExtensions.register((() => {
+window.UgwishaExtensions.register((() => {
   const minutesBefore = Elem('input', {
     className: 'select-input',
     type: 'number',
@@ -35,12 +35,10 @@ UgwishaExtensions.register((() => {
   }
 
   return {
-    id: 'notifications',
     wrapper: Elem('div', {}, [
       Elem('p', {}, [Elem('label', {}, ['Notify me ', minutesBefore, ' minutes before a period starts/ends.'])])
     ]),
     name: 'Notify',
-    icon: './images/notifications-icon.svg',
-    url: './js/extensions/notifications.js'
+    icon: './images/notifications-icon.svg'
   };
 })());
