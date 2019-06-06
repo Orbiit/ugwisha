@@ -15,7 +15,7 @@
 #extension-name {
   flex: auto;
 }
-#extension-menu {
+#extension-menu, #remove-extensions {
   background-image: url('../images/material-apps.svg');
   position: relative;
   top: -5px;
@@ -23,6 +23,17 @@
 }
 #extension-menu.add-ext {
   background-image: url('../images/material-add.svg');
+}
+#remove-extensions {
+  background-image: url('../images/material-delete_outline.svg');
+}
+#remove-extensions.extension-removing {
+  background-image: url('../images/material-check.svg');
+  animation: pulse .5s cubic-bezier(0.5, 0, 0.5, 1) infinite alternate;
+}
+@keyframes pulse {
+  from { background-color: rgba(255, 89, 89, 0.5); }
+  to   { background-color: rgba(255, 89, 89, 0); }
 }
 .extension-menu {
   margin-right: -12px;
@@ -49,6 +60,7 @@
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+  transition: color .2s;
 }
 .extension-remove-mode .extension-icon {
   border-color: #ff5959;
@@ -57,18 +69,7 @@
 .extension-remove-mode .extension-name {
   color: rgba(255, 89, 89, 0.8);
 }
-.extension-remove {
-  margin-top: 10px;
-}
-.extension-remove.extension-removing {
-  animation: pulse .5s cubic-bezier(0.5, 0, 0.5, 1) infinite alternate;
-  border-color: #ff5959;
-}
-@keyframes pulse {
-  from { background-color: rgba(255, 89, 89, 0.5); }
-  to   { background-color: rgba(255, 89, 89, 0); }
-}
-.extension-remove-mode .extension-icon .ripple, .extension-remove.extension-removing .ripple {
+.extension-remove-mode .extension-icon .ripple, #remove-extensions.extension-removing .ripple {
   background-color: rgba(255, 89, 89, 0.5);
 }
 #extension-list {

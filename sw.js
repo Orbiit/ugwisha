@@ -1,4 +1,4 @@
-const CACHE_NAME = 'ugwisha-sw-v1559785836158';
+const CACHE_NAME = 'ugwisha-sw-v1559789559858';
 const BACKGROUND_CACHE_NAME = 'ugwisha-backgrounds'; // don't change this
 const EXTENSIONS_CACHE_NAME = 'ugwisha-extensions'; // don't change this either
 const urlsToCache = [
@@ -12,6 +12,9 @@ const urlsToCache = [
   './images/material-keyboard_arrow_right.svg',
   './images/material-keyboard_arrow_up.svg',
   './images/material-keyboard_arrow_down.svg',
+  './images/material-add.svg',
+  './images/material-delete_outline.svg',
+  './images/material-check.svg',
   './images/material-apps.svg',
   './images/material-settings.svg',
   './images/material-info.svg',

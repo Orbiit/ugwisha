@@ -64,23 +64,7 @@ function showExtension(data) {
 const extensionIcons = Elem('div', {className: 'extension-menu'});
 const menu = {
   wrapper: Elem('div', {}, [
-    extensionIcons,
-    Elem('button', {
-      className: 'button extension-remove',
-      ripple: true,
-      onclick(e) {
-        removing = !removing;
-        if (removing) {
-          extensionIcons.classList.add('extension-remove-mode');
-          this.classList.add('extension-removing');
-          this.childNodes[0].nodeValue = 'Done';
-        } else {
-          extensionIcons.classList.remove('extension-remove-mode');
-          this.classList.remove('extension-removing');
-          this.childNodes[0].nodeValue = 'Remove apps';
-        }
-      }
-    }, ['Remove apps'])
+    extensionIcons
   ]),
   name: 'Apps',
   meta: {data: {}}
@@ -222,15 +206,23 @@ function launch(ext) {
   wrapper.appendChild(ext.wrapper);
   if (ext.meta.data.afterAdd) ext.meta.data.afterAdd();
   localStorage.setItem(LAST_EXTENSION_KEY, ext.url);
-  if (ext === menu) menuBtn.classList.add('add-ext');
-  else menuBtn.classList.remove('add-ext');
+  if (ext === menu) {
+    menuBtn.classList.add('add-ext');
+    menuBtn.disabled = !window.isOnline;
+  } else {
+    menuBtn.classList.remove('add-ext');
+    menuBtn.disabled = false;
+  }
+  menuBtn.setAttribute('aria-label', ext === menu ? 'add apps' : 'go to app menu')
+  removeBtn.style.display = ext === menu ? null : 'none';
 }
 
-let nameDisplay, iconDisplay, menuBtn, wrapper;
+let nameDisplay, iconDisplay, menuBtn, removeBtn, wrapper;
 ready.push(() => {
   nameDisplay = document.getElementById('extension-name');
   iconDisplay = document.getElementById('extension-icon');
   menuBtn = document.getElementById('extension-menu');
+  removeBtn = document.getElementById('remove-extensions');
   wrapper = document.getElementById('extension-wrapper');
   menuBtn.addEventListener('click', e => {
     if (currentExt === menu) {
@@ -239,6 +231,16 @@ ready.push(() => {
       extList.classList.remove('disappear');
     } else {
       launch(menu);
+    }
+  });
+  removeBtn.addEventListener('click', e => {
+    removing = !removing;
+    if (removing) {
+      extensionIcons.classList.add('extension-remove-mode');
+      removeBtn.classList.add('extension-removing');
+    } else {
+      extensionIcons.classList.remove('extension-remove-mode');
+      removeBtn.classList.remove('extension-removing');
     }
   });
   initialInstalls.then(() => launch(params.app || localStorage.getItem(LAST_EXTENSION_KEY) || menu));
@@ -261,13 +263,13 @@ ready.push(() => {
     }
   });
   document.addEventListener('click', e => {
-    if (e.target === menuBtn) return;
+    if (e.target === menuBtn || extList.contains(e.target) && e.target.tagName !== 'BUTTON') return;
     canHide = true;
     extList.classList.add('disappear');
   });
 
   window.UgwishaEvents.connection.then(online => {
-    if (!online) addExtensionOption.disabled = true;
+    if (currentExt === menu) menuBtn.disabled = !online;
   });
 });
 
