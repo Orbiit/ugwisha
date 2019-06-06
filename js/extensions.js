@@ -62,37 +62,9 @@ function showExtension(data) {
 }
 
 const extensionIcons = Elem('div', {className: 'extension-menu'});
-const addExtensionOption = Elem('select', {
-  className: 'select-input extension-list',
-  value: 'CHOOSE',
-  onchange(e) {
-    addExtensionBtn.disabled = addExtensionOption.value === 'CHOOSE';
-  }
-}, [
-  Elem('option', {value: 'CHOOSE', disabled: true}, ['Add app']),
-  Elem('option', {value: 'FROM_URL'}, ['From URL']),
-  ...nativeExtensions.map(entry => entry[2] = Elem('option', {value: entry[1]}, [entry[0]]))
-]);
-const addExtensionBtn = Elem('button', {
-  className: 'button extension-add',
-  disabled: true,
-  ripple: true,
-  onclick(e) {
-    let url = addExtensionOption.value;
-    if (url === 'CHOOSE') return;
-    if (url === 'FROM_URL') url = prompt('Enter app URL:');
-    if (url) newExtension(url);
-    addExtensionOption.value = 'CHOOSE';
-    addExtensionBtn.disabled = true;
-  }
-}, ['Add']);
 const menu = {
   wrapper: Elem('div', {}, [
     extensionIcons,
-    Elem('div', {className: 'extension-list-wrapper'}, [
-      addExtensionOption,
-      addExtensionBtn
-    ]),
     Elem('button', {
       className: 'button extension-remove',
       ripple: true,
@@ -113,6 +85,16 @@ const menu = {
   name: 'Apps',
   meta: {data: {}}
 };
+nativeExtensions.forEach(entry => {
+  entry[2] = Elem('button', {
+    className: 'button native-ext',
+    ripple: true,
+    onclick() {
+      newExtension(entry[1]);
+      this.disabled = true;
+    }
+  }, [entry[0]]);
+});
 
 function saveLoadedExtensions() {
   storage.setItem(INSTALLED_EXTENSIONS_KEY, JSON.stringify({
@@ -171,7 +153,7 @@ function loadExtension(extension) {
   });
 }
 function newExtension(url) {
-  if (extensions.find(e => e.url === url)) return Promise.reject(new Error('Extension already added'));
+  if (extensions.find(e => e.url === url)) return new Error('Extension already added');
   const newExtension = {url, meta: {loaded: false}};
   loadExtension(newExtension);
   extensions.push(newExtension);
@@ -240,7 +222,8 @@ function launch(ext) {
   wrapper.appendChild(ext.wrapper);
   if (ext.meta.data.afterAdd) ext.meta.data.afterAdd();
   localStorage.setItem(LAST_EXTENSION_KEY, ext.url);
-  menuBtn.disabled = ext === menu;
+  if (ext === menu) menuBtn.classList.add('add-ext');
+  else menuBtn.classList.remove('add-ext');
 }
 
 let nameDisplay, iconDisplay, menuBtn, wrapper;
@@ -250,9 +233,38 @@ ready.push(() => {
   menuBtn = document.getElementById('extension-menu');
   wrapper = document.getElementById('extension-wrapper');
   menuBtn.addEventListener('click', e => {
-    launch(menu);
+    if (currentExt === menu) {
+      canHide = false;
+      extList.classList.remove('hidden');
+      extList.classList.remove('disappear');
+    } else {
+      launch(menu);
+    }
   });
   initialInstalls.then(() => launch(params.app || localStorage.getItem(LAST_EXTENSION_KEY) || menu));
+
+  const extList = document.getElementById('extension-list');
+  let canHide = false;
+  extList.addEventListener('transitionend', e => {
+    if (canHide) extList.classList.add('hidden');
+  });
+  document.getElementById('native-list').appendChild(Fragment(nativeExtensions.map(e => e[2])));
+  const extFromURLInput = document.getElementById('extension-url');
+  extFromURLInput.addEventListener('keydown', e => {
+    if (e.keyCode === 13) extFromURLBtn.click();
+  });
+  const extFromURLBtn = document.getElementById('extension-url-add');
+  extFromURLBtn.addEventListener('click', e => {
+    if (extFromURLInput.value) {
+      newExtension(extFromURLInput.value);
+      extFromURLInput.value = '';
+    }
+  });
+  document.addEventListener('click', e => {
+    if (e.target === menuBtn) return;
+    canHide = true;
+    extList.classList.add('disappear');
+  });
 
   window.UgwishaEvents.connection.then(online => {
     if (!online) addExtensionOption.disabled = true;

@@ -21,6 +21,9 @@
   top: -5px;
   margin-bottom: -50px; /* SUCC */
 }
+#extension-menu.add-ext {
+  background-image: url('../images/material-add.svg');
+}
 .extension-menu {
   margin-right: -12px;
 }
@@ -47,16 +50,6 @@
   overflow: hidden;
   text-overflow: ellipsis;
 }
-.extension-list {
-  margin-right: 10px;
-  vertical-align: middle;
-  flex: auto;
-  width: 0;
-}
-.extension-list-wrapper {
-  margin-top: 5px;
-  display: flex;
-}
 .extension-remove-mode .extension-icon {
   border-color: #ff5959;
   background-color: rgba(255, 89, 89, 0.2);
@@ -77,4 +70,50 @@
 }
 .extension-remove-mode .extension-icon .ripple, .extension-remove.extension-removing .ripple {
   background-color: rgba(255, 89, 89, 0.5);
+}
+#extension-list {
+  left: 5%;
+  margin-top: 0;
+  right: 75px;
+}
+#extension-list::before {
+  top: 25px;
+  bottom: auto;
+  left: 100%;
+  right: auto;
+  height: 0;
+  border-left: 10px solid #333;
+  border-top: 10px solid transparent;
+  border-bottom: 10px solid transparent;
+}
+#native-list {
+  overflow: auto;
+  max-height: 150px;
+}
+.button.native-ext {
+  border: none;
+  border-radius: 0;
+  width: 100%;
+  display: block;
+  text-align: left;
+  padding: 10px;
+}
+.button.native-ext:active {
+  box-shadow: none;
+}
+.from-url-wrapper {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+}
+#extension-url {
+  flex: auto;
+  margin-top: 10px;
+  max-width: 100%;
+  box-sizing: border-box;
+}
+#extension-url-add {
+  flex: none;
+  margin-top: 10px;
+  margin-left: 10px;
 }
