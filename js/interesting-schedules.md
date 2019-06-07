@@ -49,3 +49,17 @@ Staff Collaboration (1:15-3:30)
 # 2019-04-11
 
 Last-minute schedule change not reflected on the website; brunch was moved from before SELF to after.
+
+# 2019-09-06 `Alternate schedule (see below)`
+
+The unexpected newline before `(10:05-10:40)` broke UGWA, who was used to Gunn putting everything in one line.
+
+```
+Period D (8:25-9:50)
+Brunch (9:50-10:05)
+Assembly for 9th/10th graders in Spangenberg Theater 
+(10:05-10:40)11th/12th graders to FlexTimeAssembly for 11th/12th graders in Spangenberg Theater (10:50-11:25)9th/10th graders to FlexTime
+Period E (11:35-12:55)
+Lunch (12:55-1:35)
+Period G (1:35-2:55)
+```
