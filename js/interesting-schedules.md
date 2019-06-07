@@ -6,6 +6,14 @@ Brunch times aren't listed; `ALL STUDENTS ATTEND` instead of "Flextime"; example
 <span>ALL STUDENTS ATTEND, 8:30-12:00 (brunch served, no lunch)</span><br><span>No afternoon classes</span><br><span>Staff Collaboration (1:00-3:45)</span>
 ```
 
+# 2019-01-11 `Alternate Schedule (see below)`
+
+Duplicate periods
+
+```
+<span>Period D (8:25-9:50)</span><br><span>Brunch (9:50-10:05)&nbsp;</span><br><span>SELF for 9th &amp; 10th graders &nbsp;(10:05-11:25)&nbsp;</span><br><span>FlexTime for 11th &amp; 12th graders (10:05-11:25)</span><br><span>Period E (11:35-12:55)</span><br><span>Lunch (12:55-1:35)</span><br><span>Period G (1:35-2:55)</span>
+```
+
 # 2019-03-26 `CAASPP TESTING (see schedule below)`
 
 Duplicate times, `unch`
