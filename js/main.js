@@ -37,6 +37,13 @@ try {
   }
 }
 
+// likewise for caches, which is disabled in cross-origin iframes
+try {
+  window.caches = caches;
+} catch (e) {
+  window.caches = {open: () => Promise.reject()};
+}
+
 try {
   window.options = JSON.parse(storage.getItem('[ugwisha] options'));
   if (typeof window.options !== 'object' || window.options === null) window.options = {};

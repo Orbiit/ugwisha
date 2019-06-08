@@ -207,7 +207,7 @@ function launch(ext) {
   if (ext.meta.data.beforeAdd) ext.meta.data.beforeAdd();
   wrapper.appendChild(ext.wrapper);
   if (ext.meta.data.afterAdd) ext.meta.data.afterAdd();
-  localStorage.setItem(LAST_EXTENSION_KEY, ext.url);
+  storage.setItem(LAST_EXTENSION_KEY, ext.url);
   if (ext === menu) {
     menuBtn.classList.add('add-ext');
     menuBtn.disabled = !window.isOnline;
@@ -245,7 +245,7 @@ ready.push(() => {
       removeBtn.classList.remove('extension-removing');
     }
   });
-  initialInstalls.then(() => launch(params.app || localStorage.getItem(LAST_EXTENSION_KEY) || menu));
+  initialInstalls.then(() => launch(params.app || storage.getItem(LAST_EXTENSION_KEY) || menu));
 
   const extList = document.getElementById('extension-list');
   let canHide = false;
