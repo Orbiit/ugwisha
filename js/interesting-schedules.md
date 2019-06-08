@@ -6,6 +6,14 @@ Brunch times aren't listed; `ALL STUDENTS ATTEND` instead of "Flextime"; example
 <span>ALL STUDENTS ATTEND, 8:30-12:00 (brunch served, no lunch)</span><br><span>No afternoon classes</span><br><span>Staff Collaboration (1:00-3:45)</span>
 ```
 
+# 2019-01-11 `Alternate Schedule (see below)`
+
+Duplicate periods
+
+```
+<span>Period D (8:25-9:50)</span><br><span>Brunch (9:50-10:05)&nbsp;</span><br><span>SELF for 9th &amp; 10th graders &nbsp;(10:05-11:25)&nbsp;</span><br><span>FlexTime for 11th &amp; 12th graders (10:05-11:25)</span><br><span>Period E (11:35-12:55)</span><br><span>Lunch (12:55-1:35)</span><br><span>Period G (1:35-2:55)</span>
+```
+
 # 2019-03-26 `CAASPP TESTING (see schedule below)`
 
 Duplicate times, `unch`
@@ -49,3 +57,17 @@ Staff Collaboration (1:15-3:30)
 # 2019-04-11
 
 Last-minute schedule change not reflected on the website; brunch was moved from before SELF to after.
+
+# 2019-09-06 `Alternate schedule (see below)`
+
+The unexpected newline before `(10:05-10:40)` broke UGWA, who was used to Gunn putting everything in one line.
+
+```
+Period D (8:25-9:50)
+Brunch (9:50-10:05)
+Assembly for 9th/10th graders in Spangenberg Theater 
+(10:05-10:40)11th/12th graders to FlexTimeAssembly for 11th/12th graders in Spangenberg Theater (10:50-11:25)9th/10th graders to FlexTime
+Period E (11:35-12:55)
+Lunch (12:55-1:35)
+Period G (1:35-2:55)
+```
