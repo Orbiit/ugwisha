@@ -20,7 +20,8 @@ const onconnection = [isOnline => window.isOnline = isOnline];
 const onoptionchange = {};
 window.UgwishaEvents = {
   connection: new Promise(res => onconnection.push(res)),
-  status: [] // when the status is updated
+  status: [], // when there's a new minute
+  resize: [] // when sidebar resized
 };
 window.Ugwisha = {version: 'dev'};
 
@@ -355,6 +356,7 @@ document.addEventListener('DOMContentLoaded', e => {
     const pointer = e.type[0] === 'm' ? e : e.changedTouches[0];
     options.sidebarWidth = Math.max(250, Math.min(700, windowWidth - 200, pointer.clientX - 100));
     sidebar.style.setProperty('--custom-width', (options.sidebarWidth || 250) + 'px');
+    UgwishaEvents.resize.forEach(fn => fn(options.sidebarWidth || 250));
     e.preventDefault();
   }
   function pointerEnd(e) {

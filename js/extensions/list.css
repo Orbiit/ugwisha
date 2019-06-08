@@ -1,0 +1,73 @@
+.list-item {
+  padding: 5px 0;
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+  transition: padding-bottom .2s;
+}
+.list-title {
+  font-size: 16px;
+  color: rgba(255, 255, 255, 0.8);
+}
+.list-subtext, .list-detail {
+  font-size: 14px;
+  color: rgba(255, 255, 255, 0.5);
+  max-height: var(--max-height);
+  transition: max-height .2s;
+  overflow: hidden;
+}
+.list-detail {
+  max-height: 0;
+  font-size: 12px;
+  font-family: 'Open Sans', sans-serif;
+}
+.list-close {
+  position: absolute;
+  opacity: 0;
+  bottom: 5px;
+  left: 0;
+  pointer-events: none;
+}
+.list-label {
+  color: rgba(255, 255, 255, 0.7);
+  margin-right: 5px;
+}
+.list-label::after {
+  content: ': ';
+}
+
+.list-expanded {
+  cursor: auto;
+  padding-bottom: 35px;
+}
+.list-expanded .list-subtext {
+  max-height: 0;
+}
+.list-expanded .list-detail {
+  max-height: var(--max-height);
+}
+.list-expanded .list-close {
+  opacity: 1;
+  pointer-events: all;
+}
+
+.list-hidden {
+  position: fixed;
+  top: 100%;
+  left: 0;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.list-search {
+  background-size: 16px;
+  background-position: 5px center;
+  background-repeat: no-repeat;
+  padding-left: 25px;
+  width: 100%;
+  box-sizing: border-box;
+}
+.list-src {
+  font-family: 'Open Sans', sans-serif;
+  font-size: 14px;
+}

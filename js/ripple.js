@@ -48,12 +48,14 @@ class Ripple {
 function rippleify(elem) {
   let tapped = false;
   elem.addEventListener('touchstart', e => {
+    if (elem.classList.contains('no-ripple')) return;
     tapped = true;
     Array.from(e.changedTouches).forEach(touch => {
       new Ripple(elem, touch.clientX, touch.clientY, touch.identifier);
     });
   }, {passive: true});
   elem.addEventListener('mousedown', e => {
+    if (elem.classList.contains('no-ripple')) return;
     if (tapped) tapped = false;
     else new Ripple(elem, e.clientX, e.clientY, 'mouse');
   });

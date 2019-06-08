@@ -26,6 +26,7 @@ Ugwisha currently supports:
   - barcode generator
   - proper date selector
   - proper colour picker
+  - club and staff lists
 - Ugwita features
   - automatically change date when there's a new day
   - linking to dates by URL: `?day=yyyy-mm-dd`
@@ -42,7 +43,6 @@ Perhaps Ugwisha may also support:
 - period descriptions
 - zero, H, and staff periods support
 - weather
-- club and staff lists
 - campus map
 
 ## Etymology of "Ugwisha"

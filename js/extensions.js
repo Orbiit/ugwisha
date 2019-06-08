@@ -10,7 +10,9 @@ const nativeExtensions = [
   ['Minimum Score Calculator', './js/extensions/min-score.js'],
   ['Discord Webhook', './js/extensions/discord-webhook.js'],
   ['Push Notifications', './js/extensions/notifications.js'],
-  ['Current Second', './js/extensions/current-second.js']
+  ['Current Second', './js/extensions/current-second.js'],
+  ['Club list', './js/extensions/list.js?for=club'],
+  ['Staff list', './js/extensions/list.js?for=staff']
 ];
 
 let removing = false;
