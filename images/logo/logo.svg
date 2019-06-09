@@ -1,5 +1,7 @@
 <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="-2 -2 28 28" fill="#fff">
-  <rect x="-2" y="-2" width="28" height="28" fill="#ff5959"/>
+  <circle cx="12" cy="12" r="14" fill="#ff5959"/>
+  <!-- Rectangle was added in 6b114cf8c9fa3c0bed75409d9a1f6be7919fe911 because iOS doesn't support transparency; it can be removed now -->
+  <!-- <rect x="-2" y="-2" width="28" height="28" fill="#ff5959"/> -->
   <path d="M21 12A9 9 0 1 1 12 3" fill="none" stroke-width="2" stroke="#fff" stroke-linecap="square"/>
   <path d="M11 11h7v2h-7zM11 11h2v4h-2z"/>
   <circle cx="12" cy="6" r="1"/>

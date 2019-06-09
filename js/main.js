@@ -405,7 +405,7 @@ if ('serviceWorker' in navigator) {
             if (installingWorker.state === 'installed' && navigator.serviceWorker.controller) {
               console.log('New update! Redirecting you away and back');
               options.natureLoaded = false;
-              window.location.replace(UPDATER_URL);
+              window.location.replace(UPDATER_URL + window.location.search);
             }
           };
         };
