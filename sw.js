@@ -1,4 +1,4 @@
-const CACHE_NAME = 'ugwisha-sw-v1560040981023';
+const CACHE_NAME = 'ugwisha-sw-v1560213933869';
 const BACKGROUND_CACHE_NAME = 'ugwisha-backgrounds'; // don't change this
 const EXTENSIONS_CACHE_NAME = 'ugwisha-extensions'; // don't change this either
 const urlsToCache = [
@@ -37,7 +37,8 @@ const urlsToCache = [
   './images/sheep/two-sheep-ice-cream.svg',
   './images/sheep/two-sheep-stack.svg',
   'https://fonts.googleapis.com/css?family=Open+Sans|Roboto+Condensed&display=swap',
-  'https://fonts.gstatic.com/s/robotocondensed/v16/ieVl2ZhZI2eCN5jzbjEETS9weq8-19K7DQ.woff2',
+  'https://fonts.gstatic.com/s/robotocondensed/v17/ieVl2ZhZI2eCN5jzbjEETS9weq8-19K7DQ.woff2',
+  'https://fonts.gstatic.com/s/robotocondensed/v17/ieVl2ZhZI2eCN5jzbjEETS9weq8-19G7DRs5.woff2',
   'https://fonts.gstatic.com/s/opensans/v16/mem8YaGs126MiZpBA-UFVZ0b.woff2'
 ];
 
