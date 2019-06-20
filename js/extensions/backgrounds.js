@@ -36,7 +36,11 @@ window.UgwishaExtensions.register((() => {
           }
         }
       }),
-      Elem('span', {}, [url])
+      Elem('a', {
+        rel: 'noopener noreferrer',
+        target: '_blank',
+        href: url
+      }, [url])
     ]);
     return wrapper;
   }

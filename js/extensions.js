@@ -14,12 +14,13 @@ const nativeExtensions = [
   ['Club list', './js/extensions/list.js?for=club'],
   ['Staff list', './js/extensions/list.js?for=staff']
 ];
+const loadExtensions = !params['no-apps'];
 
 let removing = false;
 function showExtension(data) {
   const box = Elem('div', {
     className: 'kind-of-button extension-icon',
-    tabindex: 0,
+    tabindex: loadExtensions ? 0 : -1,
     ripple: true,
     style: {
       backgroundImage: data.icon && `url("${encodeURI(data.icon)}")`
@@ -54,7 +55,7 @@ function showExtension(data) {
   const wrapper = Elem('div', {className: 'extension-item not-loaded'}, [box, name]);
   data.meta.button = wrapper;
   extensionIcons.appendChild(wrapper);
-  if (data.styles) {
+  if (data.styles && loadExtensions) {
     document.head.appendChild(data.meta.styles = Elem('link', {
       rel: 'stylesheet',
       href: data.styles
@@ -130,6 +131,7 @@ extensions.forEach(extension => {
 const initialInstalls = Promise.all(extensions.map(e => e.meta.scriptLoad));
 function loadExtension(extension) {
   extension.meta.scriptLoad = new Promise((res, rej) => {
+    if (!loadExtensions) return;
     // is this a good idea?
     document.head.appendChild(extension.meta.script = Elem('script', {
       onload: res,
@@ -245,7 +247,11 @@ ready.push(() => {
       removeBtn.classList.remove('extension-removing');
     }
   });
-  initialInstalls.then(() => launch(params.app || storage.getItem(LAST_EXTENSION_KEY) || menu));
+  if (loadExtensions) {
+    initialInstalls.then(() => launch(params.app || storage.getItem(LAST_EXTENSION_KEY) || menu));
+  } else {
+    launch(menu);
+  }
 
   const extList = document.getElementById('extension-list');
   let canHide = false;

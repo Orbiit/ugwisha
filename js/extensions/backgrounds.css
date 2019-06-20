@@ -31,7 +31,7 @@
   display: flex;
   align-items: center;
 }
-.background-entry span {
+.background-entry a {
   font-size: 16px;
   text-overflow: ellipsis;
   overflow: hidden;

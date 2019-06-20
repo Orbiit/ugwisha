@@ -66,6 +66,8 @@ window.options.save = save;
 // get-alts - fetches alternate schedules
 // then     - URL to redirect to after fetching alternate schedules
 // day      - date to view (yyyy-mm-dd)
+// app      - switches to the app if loaded
+// no-apps  - prevents all apps from loading, just in case
 const params = {};
 if (window.location.search) {
   window.location.search.slice(1).split('&').forEach(entry => {
