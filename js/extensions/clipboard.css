@@ -1,0 +1,39 @@
+.add-clipboard-wrapper {
+  display: flex;
+  align-items: stretch;
+  margin-top: 5px;
+}
+.add-clipboard-wrapper button {
+  flex: none;
+  margin-left: 5px;
+}
+.clipboard-add {
+  flex: auto;
+  width: 0;
+}
+.clipboard-remove {
+  flex: none;
+  background-image: url('../../images/material/remove.svg?for=clipboard');
+  padding: 15px;
+  background-size: 18px;
+  margin-right: 5px;
+}
+.clipboard-entry {
+  display: flex;
+  align-items: center;
+  margin: 5px 0;
+}
+.clipboard-copier {
+  flex: auto;
+  text-align: left;
+  text-transform: none;
+  padding: 5px;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  white-space: pre;
+  font-size: 16px;
+}
+/* Ugwisha makes textareas height 0, which prevents copying by ClipboardJS, which uses textareas */
+.clipboard-entries textarea {
+  height: auto;
+}

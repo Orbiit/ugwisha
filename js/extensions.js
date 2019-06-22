@@ -12,7 +12,8 @@ const nativeExtensions = [
   ['Push Notifications', './js/extensions/notifications.js'],
   ['Current Second', './js/extensions/current-second.js'],
   ['Club list', './js/extensions/list.js?for=club'],
-  ['Staff list', './js/extensions/list.js?for=staff']
+  ['Staff list', './js/extensions/list.js?for=staff'],
+  ['Quick copy', './js/extensions/clipboard.js']
 ];
 const loadExtensions = !params['no-apps'];
 
