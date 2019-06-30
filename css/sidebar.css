@@ -132,6 +132,9 @@
 .tab-section h2:first-child {
   margin-top: 0;
 }
+#reset {
+  float: right;
+}
 #about p {
   font-family: 'Open Sans', sans-serif;
   font-size: 14px;

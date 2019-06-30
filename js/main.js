@@ -386,6 +386,20 @@ document.addEventListener('DOMContentLoaded', e => {
     e.preventDefault();
   }, {passive: false});
   sidebar.style.setProperty('--custom-width', (options.sidebarWidth || 250) + 'px');
+
+  // reset options
+  const resetConfirmationText = 'Are you sure you want to reset all your settings?\n\n'
+    + 'This includes custom period names and colours and background settings.';
+  const optionsToKeep = ['lastPSA'];
+  document.getElementById('reset').addEventListener('click', e => {
+    if (confirm(resetConfirmationText)) {
+      const newOptions = {};
+      optionsToKeep.forEach(k => newOptions[k] = window.options[k]);
+      window.options = newOptions;
+      save();
+      window.location.reload();
+    }
+  });
 }, {once: true});
 
 if ('serviceWorker' in navigator) {
