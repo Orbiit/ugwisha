@@ -157,11 +157,15 @@ function colourPicker(onupdate, currentColour = '00BCD4', allowTransparent = tru
       hueSlider = Elem('div', {className: 'colour-slider'})
     ]),
     allowTransparent ? Elem('label', {className: 'colour-transparent-label'}, [
-      transparent = Elem('input', {className: 'colour-transparent-checkbox', type: 'checkbox', onchange: update}),
+      transparent = Elem('input', {
+        className: 'colour-transparent-checkbox',
+        type: 'checkbox',
+        checked: currentColour === null,
+        onchange: update
+      }),
       'Transparent?'
     ]) : null
   ]);
-  if (allowTransparent && currentColour === null) transparent.checked = true;
   drag(squareSlider, (x, y) => {
     colour.s = cap(x);
     colour.v = 1 - cap(y);
