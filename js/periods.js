@@ -434,6 +434,7 @@ ready.push(() => {
     entry.wrapper = Elem('div', {
       className: 'week-preview-col',
       tabindex: 0,
+      ripple: true,
       onclick() {
         // BUG: current allows user to click outside of school year, oh well
         viewingDate = entry.date;

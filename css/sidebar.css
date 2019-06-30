@@ -57,7 +57,7 @@
   margin-bottom: 5px;
 }
 .date-controls .date-control-btn {
-  background-color: rgba(0, 0, 0, 0.3);
+  background-color: rgba(0, 0, 0, 0.5);
   border: none;
   height: 40px;
   border-radius: 0;
@@ -85,7 +85,7 @@
 }
 
 .tabs {
-  background-color: rgba(0, 0, 0, 0.3);
+  background-color: rgba(0, 0, 0, 0.5);
   border-radius: 50px;
   height: 40px;
   display: flex;
@@ -116,7 +116,7 @@
   box-shadow: none;
 }
 .tabs .button.selected {
-  background-color: rgba(255, 255, 255, 0.5);
+  background-color: rgba(255, 255, 255, 0.3);
 }
 #settings-btn {background-image: url('../images/material/settings.svg');}
 #about-btn {background-image: url('../images/material/info.svg');}

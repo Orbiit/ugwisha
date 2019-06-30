@@ -6,6 +6,8 @@
   padding: 0 2px;
   cursor: pointer;
   border-radius: 5px;
+  position: relative;
+  overflow: hidden;
 }
 .week-preview-col:focus {
   outline: none;
@@ -14,7 +16,7 @@
   box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.2);
 }
 .week-preview-today {
-  background-color: rgba(255, 255, 255, 0.1);
+  background-color: rgba(255, 255, 255, 0.2);
 }
 .week-preview-day-heading, .week-preview-alternate, .date-selector-day-heading {
   font-size: 12px;
