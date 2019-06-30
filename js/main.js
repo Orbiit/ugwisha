@@ -3,6 +3,7 @@
  * @typedef {Period[]} Schedule
  * @property {boolean} noSchool True if there's no school
  * @property {boolean} alternate True if it should be marked as an alternate schedule
+ * @property {boolean} summer True if the date is outside the school year
  * @property {Date} date The date of the schedule
  */
 

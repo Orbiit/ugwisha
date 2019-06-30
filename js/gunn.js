@@ -297,6 +297,7 @@ function getSchedule(dateObj) {
   if (dateObj.getTime() < FIRST_DAY || dateObj.getTime() > LAST_DAY) {
     const schedule = [];
     schedule.noSchool = true;
+    schedule.summer = true;
     schedule.date = dateObj;
     return schedule;
   }

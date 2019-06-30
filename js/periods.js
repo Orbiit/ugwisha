@@ -140,7 +140,7 @@ function setSchedule(schedule) {
       style: {
         backgroundImage: `url('./images/sheep/${sheepFromDate(getToday().getTime())}')`
       }
-    }, [Elem('span', {}, ['No school!'])]));
+    }, [Elem('span', {}, [schedule.summer ? 'Enjoy your summer!' : 'No school!'])]));
     return;
   }
   const periods = {}; // for updating duplicate periods' names/colours
