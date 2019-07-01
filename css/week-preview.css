@@ -1,13 +1,14 @@
 #week-preview {
   display: flex;
+  justify-content: center;
 }
 .week-preview-col {
-  flex: 1 0 0;
-  padding: 0 2px;
+  padding: 10px 2px;
   cursor: pointer;
-  border-radius: 5px;
+  border-radius: 20px;
   position: relative;
   overflow: hidden;
+  width: 30px;
 }
 .week-preview-col:focus {
   outline: none;
@@ -34,9 +35,12 @@
   background-color: rgba(0, 0, 0, 0.1);
 }
 .week-preview-alternate {
-  visibility: hidden;
-  height: 6px;
+  display: none;
+  position: absolute;
+  top: 0;
+  width: 100%;
+  left: 0;
 }
 .week-preview-is-alternate .week-preview-alternate {
-  visibility: visible;
+  display: block;
 }
