@@ -228,7 +228,7 @@ function setSchedule(schedule) {
  * Letters representing days of the week used in the week preview.
  * @type {string[]}
  */
-const dayInitials = ['S', 'M', 'T', 'W', '&Theta;', 'F', 'S'];
+const dayInitials = ['S', 'M', 'T', 'W', 'Θ', 'F', 'S'];
 
 /**
  * Renders the week preview
@@ -452,10 +452,9 @@ ready.push(() => {
       }, ['*']),
       Elem('span', {
         className: 'week-preview-cell week-preview-day-heading',
-        innerHTML: dayInitials[i],
         title: days[i],
         'aria-label': days[i]
-      }),
+      }, [dayInitials[i]]),
       entry.content = Elem('div')
     ]);
     weekPreviewColumns.push(entry);

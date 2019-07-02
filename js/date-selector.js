@@ -1,161 +1,88 @@
-const monthData = [];
-const dayData = {};
-
 /**
- * The visual height of a week in pixels
- * @type {number}
+ * CSS class name for day elements in the date selector.
+ * @type {string}
  */
-const WEEK_HEIGHT = 24;
+const DAY_ELEM_CLASSNAME = 'date-selector-day';
 
-/**
- * The visual height of the calendar window in pixels
- * @type {number}
- */
-const CALENDAR_HEIGHT = 6 * WEEK_HEIGHT;
+const MIN_MONTH = (d => d.getUTCFullYear() * 12 + d.getUTCMonth())(new Date(FIRST_DAY));
+const MAX_MONTH = (d => d.getUTCFullYear() * 12 + d.getUTCMonth())(new Date(LAST_DAY));
 
-let monthName, dateSelector;
-let selectedMonth, selectedDay;
+const dayElems = document.createDocumentFragment();
+const dayData = [];
+for (let week = 0; week < 6; week++) {
+  const weekWrapper = Elem('div', {className: 'date-selector-week'});
+  for (let day = 0; day < 7; day++) {
+    const dayElem = Elem('div');
+    dayData.push(dayElem);
+    weekWrapper.appendChild(dayElem);
+  }
+  dayElems.appendChild(weekWrapper);
+}
 
-/**
- * Creates the day elements for each day in the school year.
- * @return {DocumentFragment} A fragment containing all the elements to be
- *                            appended to the date selector.
- */
-function createDays() {
-  const fragment = document.createDocumentFragment();
-  const firstDay = new Date(FIRST_DAY);
+let dateMap; // maps day element to Date
+let viewingMonth;
+function renderMonth(month = viewingDate.getUTCFullYear() * 12 + viewingDate.getUTCMonth()) {
+  viewingMonth = month;
+  dateMap = new Map();
+  const today = getToday().getTime();
+  const selected = viewingDate.getTime();
   const tempDate = new Date(Date.UTC(
-    firstDay.getUTCFullYear(),
-    firstDay.getUTCMonth(),
-    firstDay.getUTCDate() - firstDay.getUTCDay()
+    Math.floor(month / 12),
+    month % 12,
+    1
   ));
-  let currentMonth;
-  let weekNum = -1;
-  while (tempDate.getTime() <= LAST_DAY) {
-    const month = tempDate.getUTCMonth();
-    if (tempDate.getUTCDay() === 0) weekNum++;
-    if (currentMonth !== month) {
-      currentMonth = month;
-      const wrapper = Elem('span', {className: 'date-selector-month'});
-      fragment.appendChild(wrapper);
-      monthData.push({
-        month,
-        year: tempDate.getUTCFullYear(),
-        wrapper,
-        start: weekNum
-      });
-    }
-    const entry = monthData[monthData.length - 1];
+  let day = tempDate.getUTCDay();
+
+  monthName.textContent = months[month % 12] + ' ' + Math.floor(month / 12);
+  prevMonth.disabled = month <= MIN_MONTH;
+  nextMonth.disabled = month >= MAX_MONTH;
+
+  // clear first few days
+  for (let d = 0; d < day; d++) {
+    dayData[d].className = DAY_ELEM_CLASSNAME + ' date-selector-out-of-bounds';
+  }
+
+  do {
+    const dayElem = dayData[day];
+    const schedule = getSchedule(tempDate);
     const time = tempDate.getTime();
-    const date = tempDate.getUTCDate();
-    // so that if there's only a single day in the first week, it doesn't claim the entire week
-    if (date <= 5) entry.start = weekNum;
-    const outOfBounds = time < FIRST_DAY || time > LAST_DAY;
-    const dayID = tempDate.toISOString().slice(0, 10);
-    const day = Elem('span', {
-      className: ['date-selector-day', outOfBounds && 'date-selector-out-of-bounds'],
-      data: {
-        date: dayID,
-        week: weekNum
-      }
-    }, [date]);
-    if (!outOfBounds) dayData[dayID] = day;
-    entry.wrapper.appendChild(day);
+    dateMap.set(dayElem, new Date(tempDate));
+    dayElem.textContent = tempDate.getUTCDate();
+
+    dayElem.className = DAY_ELEM_CLASSNAME;
+    if (schedule.noSchool) dayElem.classList.add('date-selector-no-school');
+    if (schedule.alternate) dayElem.classList.add('date-selector-alternate');
+    if (time === today) dayElem.classList.add('date-selector-today');
+    if (time === selected) dayElem.classList.add('date-selector-selected');
+
     tempDate.setUTCDate(tempDate.getUTCDate() + 1);
-  }
-  return fragment;
-}
+    day++;
+  } while (tempDate.getUTCDate() !== 1);
 
-/**
- * Gets the schedules again and updates the classes of each day element
- * accordingly.
- */
-function updateDays() {
-  const todayID = getToday().toISOString().slice(0, 10);
-  Object.keys(dayData).forEach(dayID => {
-    const day = dayData[dayID];
-    const dateObj = new Date(dayID);
-    const schedule = getSchedule(dateObj);
-    day.classList[schedule.noSchool ? 'add' : 'remove']('date-selector-no-school');
-    day.classList[schedule.alternate ? 'add' : 'remove']('date-selector-alternate');
-    day.classList[dayID === todayID ? 'add' : 'remove']('date-selector-today');
-  });
-}
-
-/**
- * Updates the selected viewing day on the date selector.
- */
-function updateViewingDay() {
-  if (selectedDay) selectedDay.classList.remove('date-selector-selected');
-  const day = dayData[viewingDate.toISOString().slice(0, 10)];
-  if (day) {
-    day.classList.add('date-selector-selected');
-    selectedDay = day;
-    scrollTo(day, true);
+  for (let d = day; d < dayData.length; d++) {
+    dayData[d].className = DAY_ELEM_CLASSNAME + ' date-selector-out-of-bounds';
   }
 }
 
+let monthName, prevMonth, nextMonth;
 ready.push(() => {
-  dateSelector = document.getElementById('date-selector');
+  const dateSelector = document.getElementById('date-selector');
   const daysWrapper = document.getElementById('date-selector-days');
+  const selectDateBtn = document.getElementById('select-date');
   monthName = document.getElementById('date-selector-month-year');
-
-  let daysCreated = false;
-  let animatingScroll = false;
-
-  function scrollTo(day, immediate = false) {
-    if (animatingScroll) window.cancelAnimationFrame(animatingScroll);
-    const scrollDest = Math.max(
-      Math.min(
-        (+day.dataset.week + 0.5) * WEEK_HEIGHT - CALENDAR_HEIGHT / 2,
-        daysWrapper.scrollHeight - CALENDAR_HEIGHT
-      ),
-      0
-    );
-    if (immediate) daysWrapper.scrollTop = scrollDest;
-    (function animate() {
-      daysWrapper.scrollTop += (scrollDest - daysWrapper.scrollTop) / 5;
-      animatingScroll = window.requestAnimationFrame(animate);
-    })();
-  }
+  prevMonth = document.getElementById('prev-month');
+  nextMonth = document.getElementById('next-month');
+  daysWrapper.appendChild(dayElems);
 
   document.getElementById('date-selector-day-headings')
     .appendChild(Fragment(dayInitials.map(d =>
-      Elem('span', {className: 'date-selector-day-heading', innerHTML: d}))));
-
-  daysWrapper.addEventListener('wheel', e => {
-    if (animatingScroll) window.cancelAnimationFrame(animatingScroll);
-  });
-
-  daysWrapper.addEventListener('touchstart', e => {
-    if (animatingScroll) window.cancelAnimationFrame(animatingScroll);
-  });
-
-  daysWrapper.addEventListener('scroll', e => {
-    const scrollPos = (daysWrapper.scrollTop + CALENDAR_HEIGHT / 2) / WEEK_HEIGHT;
-    const index = monthData.findIndex(month => month.start >= scrollPos);
-    const month = monthData[(~index ? index : monthData.length) - 1];
-    if (month && month !== selectedMonth) {
-      if (selectedMonth) {
-        selectedMonth.wrapper.classList.remove('date-selector-month-selected');
-      }
-      selectedMonth = month;
-      month.wrapper.classList.add('date-selector-month-selected');
-      monthName.textContent = months[month.month] + ' ' + month.year;
-    }
-  });
+      Elem('span', {className: 'date-selector-day-heading'}, [d]))));
 
   daysWrapper.addEventListener('click', e => {
-    if (
-      e.target.classList.contains('date-selector-day')
-      && !e.target.classList.contains('date-selector-out-of-bounds')
-    ) {
-      viewingDate = new Date(e.target.dataset.date);
+    const date = dateMap.get(e.target);
+    if (date) {
+      viewingDate = date;
       updateView();
-      if (selectedDay) selectedDay.classList.remove('date-selector-selected');
-      e.target.classList.add('date-selector-selected');
-      selectedDay = e.target;
-      scrollTo(e.target);
     }
   });
 
@@ -176,13 +103,6 @@ ready.push(() => {
       if (newDate.getTime() >= FIRST_DAY && newDate.getTime() <= LAST_DAY) {
         viewingDate = newDate;
         updateView();
-        const day = dayData[newDate.toISOString().slice(0, 10)];
-        if (day) {
-          if (selectedDay) selectedDay.classList.remove('date-selector-selected');
-          day.classList.add('date-selector-selected');
-          selectedDay = day;
-          scrollTo(day);
-        }
       }
       e.preventDefault();
     } else if (e.keyCode === 27) { // escape
@@ -192,14 +112,15 @@ ready.push(() => {
     }
   });
 
-  const selectDateBtn = document.getElementById('select-date');
+  prevMonth.addEventListener('click', e => {
+    renderMonth(viewingMonth - 1);
+  });
+
+  nextMonth.addEventListener('click', e => {
+    renderMonth(viewingMonth + 1);
+  });
+
   selectDateBtn.addEventListener('click', e => {
-    if (!daysCreated) {
-      daysWrapper.appendChild(createDays());
-      daysCreated = true;
-    }
-    updateDays();
-    updateViewingDay();
     canHide = false;
     dateSelector.classList.remove('hidden');
     dateSelector.classList.remove('disappear');

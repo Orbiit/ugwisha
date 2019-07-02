@@ -115,6 +115,7 @@ function updateView() {
   forthDay.disabled = viewingTime >= LAST_DAY;
   dayElem.href = (params['no-sw'] ? '?no-sw&' : '?') + 'day=' + viewingDate.toISOString().slice(0, 10);
   renderEvents();
+  renderMonth();
 }
 
 let viewingDate = params.day ? new Date(params.day) : getToday();
@@ -356,7 +357,6 @@ document.addEventListener('DOMContentLoaded', e => {
   document.getElementById('today').addEventListener('click', e => {
     viewingDate = getToday();
     updateView();
-    updateViewingDay();
   });
 
   // change sidebar width

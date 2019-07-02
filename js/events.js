@@ -205,6 +205,7 @@ ready.push(async () => {
     todayDate = null;
   }
   prepareScheduleData(storage.getItem(SCHEDULE_DATA_KEY));
+  await Promise.resolve();
   updateView();
   updateStatus(true, 0);
 });

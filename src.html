@@ -62,11 +62,17 @@
           <button class="date-control-btn icon-btn ripples" id="back-day" aria-label="view previous day"></button>
           <button class="date-control-btn button ripples" id="select-date" aria-label="select day">select date</button>
           <div id="date-selector" class="hidden picker">
-            <button class="button ripples" id="today">today</button>
-            <div id="date-selector-month-year"></div>
+            <div class="date-selector-month-wrapper">
+              <button class="icon-btn ripples month-arrow" id="prev-month" aria-label="previous month"></button>
+              <div id="date-selector-month-year"></div>
+              <button class="icon-btn ripples month-arrow" id="next-month" aria-label="next month"></button>
+            </div>
             <div id="date-selector-day-headings"></div>
             <div id="date-selector-days" tabindex="0" aria-label="select date"></div>
-            <button class="button ripples" id="cancel-select-date">Close</button>
+            <div class="date-selector-btn-wrapper">
+              <button class="button ripples" id="today">today</button>
+              <button class="button ripples" id="cancel-select-date">Close</button>
+            </div>
           </div>
           <button class="date-control-btn icon-btn ripples" id="forth-day" aria-label="view next day"></button>
         </div>
