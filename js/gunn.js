@@ -290,8 +290,8 @@ const normalSchedules = [
 ];
 
 /* GET SCHEDULE */
-const FIRST_DAY = Date.UTC(2018, 7, 13);
-const LAST_DAY = Date.UTC(2019, 4, 31);
+const FIRST_DAY = Date.UTC(2019, 7, 13);
+const LAST_DAY = Date.UTC(2020, 5, 4);
 let scheduleData = {};
 function getSchedule(dateObj) {
   if (dateObj.getTime() < FIRST_DAY || dateObj.getTime() > LAST_DAY) {
@@ -344,7 +344,7 @@ window.ugwishaOptions = {
     scheduleData = decodeStoredAlternates(storedSchedules);
   },
 
-  SCHEDULE_DATA_KEY: '[ugwisha] alternates-2', // change when new school year
+  SCHEDULE_DATA_KEY: '[ugwisha] alternates-2019-20', // change when new school year
 
   /* FETCHING */
   SCHEDULES_CALENDAR_ID: 'u5mgb2vlddfj70d7frf3r015h0@group.calendar.google.com',
