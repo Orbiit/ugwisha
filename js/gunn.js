@@ -344,7 +344,7 @@ window.ugwishaOptions = {
     scheduleData = decodeStoredAlternates(storedSchedules);
   },
 
-  SCHEDULE_DATA_KEY: '[ugwisha] alternates-2019-20', // change when new school year
+  SCHEDULE_DATA_KEY: '[ugwisha] alternates-2', // change when new school year
 
   /* FETCHING */
   SCHEDULES_CALENDAR_ID: 'u5mgb2vlddfj70d7frf3r015h0@group.calendar.google.com',
