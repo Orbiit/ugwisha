@@ -1,62 +1,75 @@
+.list-wrapper {
+  position: relative;
+}
 .list-item {
+  display: none;
   padding: 5px 0;
   cursor: pointer;
-  position: relative;
+  position: absolute;
+  width: 100%;
   overflow: hidden;
-  transition: padding-bottom .2s;
+  top: calc(var(--item-height) * var(--pos));
+}
+.list-visible {
+  display: block;
+}
+.list-title, .list-subtext {
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  line-height: 1.5;
 }
 .list-title {
   font-size: 16px;
   color: rgba(255, 255, 255, 0.8);
 }
-.list-subtext, .list-detail {
+.list-subtext {
   font-size: 14px;
   color: rgba(255, 255, 255, 0.5);
-  max-height: var(--max-height);
-  transition: max-height .2s;
-  overflow: hidden;
 }
-.list-detail {
-  max-height: 0;
-  font-size: 12px;
+
+.list-details {
+  position: absolute;
+  top: calc(var(--item-height) * var(--pos));
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  background-color: rgba(0, 0, 0, 0.8);
+  padding: 15px;
+  margin: -16px;
+  border-radius: 10px;
+  width: 100%;
+  animation: appear .2s;
+}
+.list-details.disappear {
+  pointer-events: none;
+  opacity: 0;
+  transform: translateY(10px);
+  transition: opacity .2s, transform .2s;
+}
+.list-detail-title {
+  font-size: 16px;
+  color: rgba(255, 255, 255, 0.8);
   font-family: 'Open Sans', sans-serif;
 }
+.list-detail {
+  font-size: 12px;
+  font-family: 'Open Sans', sans-serif;
+  line-height: 1.5;
+  color: rgba(255, 255, 255, 0.7);
+  margin-top: 5px;
+}
 .list-close {
-  position: absolute;
-  opacity: 0;
-  bottom: 5px;
-  left: 0;
-  pointer-events: none;
+  margin-top: 10px;
 }
 .list-label {
-  color: rgba(255, 255, 255, 0.7);
+  color: rgba(255, 255, 255, 0.85);
   margin-right: 5px;
 }
 .list-label::after {
   content: ': ';
 }
 
-.list-expanded {
-  cursor: auto;
-  padding-bottom: 35px;
-}
-.list-expanded .list-subtext {
-  max-height: 0;
-}
-.list-expanded .list-detail {
-  max-height: var(--max-height);
-}
-.list-expanded .list-close {
-  opacity: 1;
-  pointer-events: all;
-}
-
 .list-hidden {
-  position: fixed;
-  top: 100%;
-  left: 0;
-  opacity: 0;
-  pointer-events: none;
+  display: none;
 }
 
 .list-search {

@@ -51,7 +51,7 @@ function showExtension(data) {
     }
   });
   data.meta.icon = box;
-  const name = Elem('div', {className: 'extension-name'}, [data.name || '']);
+  const name = Elem('div', {className: 'extension-name', title: data.name || ''}, [data.name || '']);
   data.meta.name = name;
   const wrapper = Elem('div', {className: 'extension-item not-loaded'}, [box, name]);
   data.meta.button = wrapper;
@@ -163,6 +163,7 @@ function register(data, script = document.currentScript) {
   extension.wrapper = data.wrapper;
   if (extension.meta.shown) {
     extension.meta.name.textContent = data.name;
+    extension.meta.name.title = data.name;
     extension.meta.icon.style.backgroundImage = `url("${encodeURI(data.icon)}")`;
     if (data.styles) {
       if (extension.meta.styles) {
