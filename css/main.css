@@ -6,12 +6,8 @@ body {
   margin: 0;
   font-family: 'Roboto Condensed', sans-serif;
   font-size: 0;
-  background-size: cover;
-  background-position: center;
-  background-repeat: no-repeat;
-  background-attachment: fixed;
   color: rgba(255, 255, 255, 0.5);
-  background-color: #212121;
+  background-color: black;
   word-wrap: break-word;
   --background-transition-speed: 5s;
 }
@@ -45,18 +41,20 @@ a, button, input, select, #date-selector-days {
   background-color: rgba(255, 255, 255, 0.2);
 }
 
-.transition-background {
+.background {
   position: fixed;
   top: 0;
   left: 0;
-  width: 100%;
-  height: 100%;
+  bottom: 0;
+  right: 0;
   z-index: -1;
   pointer-events: none;
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
-  background-color: #212121;
+  background-color: black;
+}
+.transition-background {
   animation: fade-out var(--background-transition-speed) forwards;
 }
 @keyframes fade-out {

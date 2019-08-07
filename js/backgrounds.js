@@ -18,6 +18,8 @@ function randomGradient() {
   return `linear-gradient(${Math.random() * 360}deg, rgb(${colour1.join(',')}), rgb(${colour2.join(',')}))`;
 }
 
+let backgroundElem;
+
 /**
  * Transitions between two backgrounds with a fade animation
  * @param {string} css The CSS background-image value of the background to
@@ -25,8 +27,8 @@ function randomGradient() {
  */
 function setBackground(css) {
   if (!document.body) return;
-  const transitioner = Elem('div', {className: 'transition-background'});
-  transitioner.style.backgroundImage = document.body.style.backgroundImage;
+  const transitioner = Elem('div', {className: 'background transition-background'});
+  transitioner.style.backgroundImage = backgroundElem.style.backgroundImage;
   const stopper = setTimeout(() => { // just in case
     document.body.removeChild(transitioner);
   }, options.backgroundFade * 1000);
@@ -34,8 +36,8 @@ function setBackground(css) {
     document.body.removeChild(transitioner);
     clearTimeout(stopper);
   });
-  document.body.insertBefore(transitioner, document.body.firstChild);
-  document.body.style.backgroundImage = css;
+  document.body.insertBefore(transitioner, backgroundElem.nextSibling);
+  backgroundElem.style.backgroundImage = css;
 }
 
 let randomGradientTimer = null;
@@ -43,11 +45,7 @@ if (!options.backgroundLoop) options.backgroundLoop = options.quickTransitions ?
 if (!options.backgroundFade) options.backgroundFade = options.quickTransitions ? 0.5 : 5;
 function startRandomGradients() {
   if (randomGradientTimer) clearInterval(randomGradientTimer);
-  if (options.randomGradients) {
-    randomGradientTimer = setTimeout(startRandomGradients, options.backgroundLoop * 1000);
-  } else {
-    randomGradientTimer = null;
-  }
+  randomGradientTimer = setTimeout(startRandomGradients, options.backgroundLoop * 1000);
   setBackground(randomGradient());
 }
 
@@ -69,6 +67,14 @@ window.Ugwisha.relinquishBackgroundControl = fn => {
 };
 
 ready.push(() => {
+  backgroundElem = Elem('div', {
+    className: 'background',
+    style: {
+      backgroundImage: 'linear-gradient(black, black)'
+    }
+  });
+  document.body.insertBefore(backgroundElem, document.body.firstChild);
+
   document.body.style.setProperty('--background-transition-speed', options.backgroundFade + 's');
   if (!backgroundExternallyControlled) startRandomGradients();
 });
