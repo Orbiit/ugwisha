@@ -14,7 +14,7 @@ const getPeriodLetterRegex = /\b[A-G]\b/;
 const selfGradeRegex = /(1?[9012])th|(freshmen|sophomore|junior|senior)/gi;
 const periodSelfGradeRegex = /self for (.+?) grader|self for (freshmen|sophomore|junior|senior)/gi;
 const gradeToInt = {'9': 1, '10': 2, '11': 4, '12': 8, freshmen: 1, sophomore: 2, junior: 4, senior: 8};
-const defaultSelf = 0b11;
+const defaultSelf = 0b111;
 
 function parseAlternate(summary, description) {
   if (/schedule|extended|lunch/i.test(summary)) {
@@ -344,7 +344,7 @@ window.ugwishaOptions = {
     scheduleData = decodeStoredAlternates(storedSchedules);
   },
 
-  SCHEDULE_DATA_KEY: '[ugwisha] alternates-2', // change when new school year
+  SCHEDULE_DATA_KEY: '[ugwisha] alternates-2019-20', // change when new school year
 
   /* FETCHING */
   SCHEDULES_CALENDAR_ID: 'u5mgb2vlddfj70d7frf3r015h0@group.calendar.google.com',
