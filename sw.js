@@ -1,6 +1,5 @@
 const CACHE_NAME = 'ugwisha-sw-v1563855120070';
-const BACKGROUND_CACHE_NAME = 'ugwisha-backgrounds'; // don't change this
-const EXTENSIONS_CACHE_NAME = 'ugwisha-extensions'; // don't change this either
+const EXTENSIONS_CACHE_NAME = 'ugwisha-extensions'; // don't change this
 const urlsToCache = [
   './',
   './manifest.json',
@@ -56,10 +55,5 @@ self.addEventListener('fetch', e => {
       .then(response => response && cache.add(e.request)));
 });
 self.addEventListener('activate', e => {
-  e.waitUntil(caches.keys()
-    .then(names => Promise.all(names
-      .map(cache => CACHE_NAME !== cache && cache.slice(0, 11) === 'ugwisha-sw-'
-        ? caches.delete(cache)
-        : null)))
-    .then(() => self.clients.claim()));
+  e.waitUntil(self.clients.claim());
 });
