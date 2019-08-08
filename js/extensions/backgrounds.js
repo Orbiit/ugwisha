@@ -32,7 +32,14 @@ window.UgwishaExtensions.register((() => {
           const index = backgrounds.indexOf(url);
           if (~index) {
             backgrounds.splice(index, 1);
-            if (backgrounds.length === 0) haltBackgroundCycle();
+            if (backgrounds.length === 0) {
+              haltBackgroundCycle();
+            } else if (index <= currentBackground) {
+              currentBackground--;
+              if (index === currentBackground + 1) {
+                startBackgroundCycle();
+              }
+            }
           }
         }
       }),
@@ -70,7 +77,8 @@ window.UgwishaExtensions.register((() => {
           cacheBackground(url).then(() => {
             backgroundEntries.appendChild(createBackgroundEntry(url));
             backgrounds.push(url);
-            if (backgrounds.length === 1) startBackgroundCycle();
+            currentBackground = backgrounds.length - 2;
+            startBackgroundCycle();
             newBackgroundBtn.disabled = false;
             newBackgroundInput.value = '';
           }).catch(() => {
@@ -106,23 +114,38 @@ window.UgwishaExtensions.register((() => {
 
   let timeoutID = null, currentBackground = null, setBackground = null;
   function startBackgroundCycle() {
+    // stop other scheduled cycle
+    clearTimeout(timeoutID);
+
+    // gain control over background (if possible)
     if (!setBackground) {
       setBackground = window.Ugwisha.requestBackgroundControl();
       if (!setBackground) return;
     }
+
+    // why check if the background cycle is necessary AFTER gaining control?
+    // this is to update the gradient cycle when the loop setting is changed
+    if (backgrounds.length === 0) {
+      haltBackgroundCycle();
+      return;
+    }
+
+    // cycle to next background (if there is one)
     let lastBackground = currentBackground;
     if (currentBackground === null) {
       currentBackground = 0;
-    } else if (backgrounds.length > 1 || currentBackground >= backgrounds.length) {
+    } else {
       currentBackground = (currentBackground + 1) % backgrounds.length;
     }
     if (lastBackground !== currentBackground) {
       setBackground(`url("${encodeURI(backgrounds[currentBackground])}")`);
     }
+
+    // schedule the cycle
     timeoutID = setTimeout(startBackgroundCycle, options.backgroundLoop * 1000);
   }
   function haltBackgroundCycle() {
-    if (!timeoutID) return;
+    if (!setBackground) return;
     clearTimeout(timeoutID);
     window.Ugwisha.relinquishBackgroundControl(setBackground);
     timeoutID = currentBackground = setBackground = null;
@@ -141,9 +164,11 @@ window.UgwishaExtensions.register((() => {
           type: 'number',
           placeholder: '10',
           value: options.backgroundLoop,
+          min: 0,
           onchange() {
-            this.value = options.backgroundLoop = Math.max(+this.value || 0, 0);
+            this.value = options.backgroundLoop = Math.max(+this.value || 0.2, 0.2);
             options.save();
+            startBackgroundCycle();
           }
         })
       ]),
@@ -154,6 +179,7 @@ window.UgwishaExtensions.register((() => {
           type: 'number',
           placeholder: '5',
           value: options.backgroundFade,
+          min: 0,
           onchange() {
             this.value = options.backgroundFade = Math.max(+this.value || 0, 0);
             document.body.style.setProperty('--background-transition-speed', options.backgroundFade + 's');

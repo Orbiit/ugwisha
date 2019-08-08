@@ -1,4 +1,4 @@
-const CACHE_NAME = 'ugwisha-sw-v1565220949512';
+const CACHE_NAME = 'ugwisha-sw-v1565304262621';
 const EXTENSIONS_CACHE_NAME = 'ugwisha-extensions'; // don't change this
 const urlsToCache = [
   './',
@@ -40,6 +40,7 @@ const urlsToCache = [
   'https://fonts.gstatic.com/s/robotocondensed/v17/ieVl2ZhZI2eCN5jzbjEETS9weq8-19G7DRs5.woff2',
   'https://fonts.gstatic.com/s/opensans/v16/mem8YaGs126MiZpBA-UFVZ0b.woff2'
 ];
+const isOnGithubPages = /https?:\/\/.+\.github\.io/;
 
 function send(data) {
   self.clients.matchAll().then(clients => clients.forEach(c => c.postMessage(data)));
@@ -49,8 +50,13 @@ self.addEventListener('install', e => {
   e.waitUntil(caches.open(CACHE_NAME).then(cache => cache.addAll(urlsToCache)).then(() => self.skipWaiting()));
 });
 self.addEventListener('fetch', e => {
-  e.respondWith(caches.match(e.request, {ignoreSearch: true}).then(response => response || fetch(e.request)));
-  caches.open(EXTENSIONS_CACHE_NAME) // update cache if it's in the extension cache
+  if (event.request.method !== 'GET') return;
+  e.respondWith(caches
+    .match(e.request, {ignoreSearch: isOnGithubPages.test(e.request.url)})
+    .then(response => response || fetch(e.request)));
+
+  // update cache if it's in the extension cache
+  caches.open(EXTENSIONS_CACHE_NAME)
     .then(cache => cache.match(e.request)
       .then(response => response && cache.add(e.request)));
 });
