@@ -55,5 +55,11 @@ self.addEventListener('fetch', e => {
       .then(response => response && cache.add(e.request)));
 });
 self.addEventListener('activate', e => {
-  e.waitUntil(self.clients.claim());
+  e.waitUntil(caches.keys()
+    // remove old Ugwisha caches
+    .then(names => Promise.all(names
+      .map(cache => CACHE_NAME !== cache && cache.slice(0, 11) === 'ugwisha-sw-'
+        ? caches.delete(cache)
+        : null)))
+    .then(() => self.clients.claim()));
 });
