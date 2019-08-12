@@ -10,11 +10,15 @@
 .button {
   vertical-align: middle;
   background: none;
+  margin: 0; /* Safari has default 2px margin for some reason */
   -webkit-appearance: none;
   font: inherit;
   font-size: 14px;
   padding: 5px 15px;
   text-transform: uppercase;
+  /* safari doesn't support overflow: hidden; with border-radius
+   * https://gist.github.com/ayamflow/b602ab436ac9f05660d9c15190f4fd7b */
+  -webkit-mask-image: -webkit-radial-gradient(white, black);
 }
 .kind-of-button:focus, .button:focus, .icon-btn:focus {
   outline: none;
