@@ -1,4 +1,4 @@
-const CACHE_NAME = 'ugwisha-sw-v1565304262621';
+const CACHE_NAME = 'ugwisha-sw-v1565754106218';
 const EXTENSIONS_CACHE_NAME = 'ugwisha-extensions'; // don't change this
 const urlsToCache = [
   './',
@@ -50,7 +50,7 @@ self.addEventListener('install', e => {
   e.waitUntil(caches.open(CACHE_NAME).then(cache => cache.addAll(urlsToCache)).then(() => self.skipWaiting()));
 });
 self.addEventListener('fetch', e => {
-  if (event.request.method !== 'GET') return;
+  if (e.request.method !== 'GET') return;
   e.respondWith(caches
     .match(e.request, {ignoreSearch: isOnGithubPages.test(e.request.url)})
     .then(response => response || fetch(e.request)));

@@ -11,10 +11,25 @@ const noNbspRegex = /&nbsp;/g;
 const timeGetterRegex = /\(?(1?[0-9]):([0-9]{2}) *(?:-|–) *(1?[0-9]):([0-9]{2}) *(pm)?\)?/;
 const newLineRegex = /\r?\n/g;
 const getPeriodLetterRegex = /\b[A-G]\b/;
-const selfGradeRegex = /(1?[9012])th|(freshmen|sophomore|junior|senior)/gi;
-const periodSelfGradeRegex = /self for (.+?) grader|self for (freshmen|sophomore|junior|senior)/gi;
-const gradeToInt = {'9': 1, '10': 2, '11': 4, '12': 8, freshmen: 1, sophomore: 2, junior: 4, senior: 8};
+const selfGradeRegex = /(1?[9012](?:\s*-\s*1?[9012])?)(?:th)?|(freshmen|sophomore|junior|senior|all)/gi;
+const periodSelfGradeRegex = /self for (.+?) grade|self for (freshmen|sophomore|junior|senior|all)/gi;
+const gradeToInt = {'9': 1, '10': 2, '11': 4, '12': 8, freshmen: 1, sophomore: 2, junior: 4, senior: 8, all: 15};
 const defaultSelf = 0b111;
+
+function getSELFGrades(text) {
+  let grades = 0;
+  text.replace(selfGradeRegex, (match, grade) => {
+    if (grade && grade.includes('-')) {
+      const [start, finish] = grade.split('-').map(Number);
+      for (let i = start; i <= finish; i++) {
+        grades += gradeToInt[i];
+      }
+    } else {
+      grades += gradeToInt[grade || match] || 0;
+    }
+  });
+  return grades;
+}
 
 function parseAlternate(summary, description) {
   if (/schedule|extended|lunch/i.test(summary)) {
@@ -90,9 +105,7 @@ function parseAlternate(summary, description) {
         periodSelfGradeRegex.lastIndex = 0;
         const selfSlice = periodSelfGradeRegex.exec(pd.raw);
         if (selfSlice) {
-          let grades = 0;
-          (selfSlice[1] || selfSlice[2]).replace(selfGradeRegex, (match, grade) => grades += gradeToInt[grade || match] || 0);
-          pd.selfGrades = grades || defaultSelf;
+          pd.selfGrades = getSELFGrades(selfSlice[1] || selfSlice[2]) || defaultSelf;
         } else {
           pd.selfGrades = defaultSelf;
         }
@@ -131,9 +144,8 @@ function parseEvents(events, dateObj) {
   let self, alternate, overrideSELF = false;
   // duplicate events happen infrequently; they're not a concern
   events.forEach(({summary = '', description}) => {
-    if (summary.includes('SELF') && summary.includes('graders')) {
-      let grades = 0;
-      summary.replace(selfGradeRegex, (_, grade) => grades += gradeToInt[grade]);
+    if (summary.includes('SELF') && summary.includes('grade')) {
+      const grades = getSELFGrades(summary);
       if (grades > 0) {
         self = grades || defaultSelf;
         return;
