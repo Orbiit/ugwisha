@@ -71,3 +71,7 @@ Period E (11:35-12:55)
 Lunch (12:55-1:35)
 Period G (1:35-2:55)
 ```
+
+# 2019-08-20
+
+5 minutes of flex was moved to D period to explain how flex works, apparently; this was not reflected on the website.
