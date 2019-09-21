@@ -249,10 +249,10 @@ ready.push(() => {
       removeBtn.classList.remove('extension-removing');
     }
   });
-  if (loadExtensions) {
-    initialInstalls.then(() => launch(params.app || storage.getItem(LAST_EXTENSION_KEY) || menu));
-  } else {
-    launch(menu);
+  const previousApp = params.app || storage.getItem(LAST_EXTENSION_KEY);
+  launch(menu);
+  if (loadExtensions && previousApp) {
+    initialInstalls.then(() => launch(previousApp));
   }
 
   const extList = document.getElementById('extension-list');

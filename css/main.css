@@ -74,6 +74,7 @@ a, button, input, select, #date-selector-days {
   opacity: 1;
   transform: translateY(0);
   animation: appear .2s;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
 }
 .picker::before {
   content: '';

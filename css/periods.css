@@ -7,7 +7,7 @@
   background-color: var(--colour);
   padding: 0;
   margin: 15px -5px;
-  border-radius: 15px;
+  border-radius: 5px;
   position: relative;
   color: rgba(255, 255, 255, 0.5);
 }
@@ -27,11 +27,11 @@
   font-size: 24px;
   width: 100%;
   cursor: pointer;
-  padding: 15px;
+  padding: 10px 12px;
   padding-bottom: 5px;
   box-sizing: border-box;
-  border-top-left-radius: 15px;
-  border-top-right-radius: 15px;
+  border-top-left-radius: 5px;
+  border-top-right-radius: 5px;
 }
 .dark-text-ok .period.dark-text .period-name {
   color: rgba(0, 0, 0, 0.8);
@@ -58,7 +58,7 @@
   display: block;
   font-size: 12px;
   font-family: 'Open Sans', sans-serif;
-  padding: 15px;
+  padding: 10px 12px;
   padding-top: 0;
 }
 .period.transparent .time-duration {
