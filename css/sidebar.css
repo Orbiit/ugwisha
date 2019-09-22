@@ -10,6 +10,10 @@
   width: var(--custom-width);
   --custom-width: 250px;
 }
+.blur-back .content {
+  -webkit-backdrop-filter: blur(10px);
+  backdrop-filter: blur(10px);
+}
 #drag-handle {
   position: absolute;
   top: 0;

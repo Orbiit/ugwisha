@@ -10,6 +10,10 @@
   justify-content: center;
   animation: psa-shadow-appear .2s;
 }
+.blur-back #psa {
+  -webkit-backdrop-filter: blur(10px);
+  backdrop-filter: blur(10px);
+}
 #psa-wrapper {
   width: 100%;
   max-width: 500px;

@@ -326,6 +326,10 @@ document.addEventListener('DOMContentLoaded', e => {
     dynamicContrast(yes) {
       if (yes) document.body.classList.add('dark-text-ok');
       else document.body.classList.remove('dark-text-ok');
+    },
+    blurBack(yes) {
+      if (yes) document.body.classList.add('blur-back');
+      else document.body.classList.remove('blur-back');
     }
   };
   checkboxes.forEach(toggle => {
@@ -340,6 +344,7 @@ document.addEventListener('DOMContentLoaded', e => {
   });
   if (!options.showEvents) eventsWrapper.style.display = 'none';
   if (options.dynamicContrast) document.body.classList.add('dark-text-ok');
+  if (options.blurBack) document.body.classList.add('blur-back');
 
   // simple date navigation buttons
   dayElem.addEventListener('click', e => {
