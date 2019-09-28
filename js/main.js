@@ -270,12 +270,12 @@ document.addEventListener('DOMContentLoaded', e => {
     smoothScrolling = false;
   }, {passive: true});
   document.addEventListener('scroll', e => {
-    if (window.scrollY > windowHeight / 3) jumpBtn.classList.add('up');
-    else jumpBtn.classList.remove('up');
+    if (window.scrollY > windowHeight / 3) document.body.classList.add('mobile-content-open');
+    else document.body.classList.remove('mobile-content-open');
   });
   jumpBtn.addEventListener('click', e => {
     if (smoothScrolling) window.cancelAnimationFrame(smoothScrolling);
-    smoothScroll(jumpBtn.classList.contains('up') ? 0 : windowHeight - 50);
+    smoothScroll(document.body.classList.contains('mobile-content-open') ? 0 : windowHeight - 50);
   });
 
   // tabs

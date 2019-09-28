@@ -27,7 +27,7 @@ body {
 .hidden {
   display: none;
 }
-a, button, input, select, #date-selector-days {
+a, button, input, select, #date-selector-days, .week-preview-col, .kind-of-button {
   -webkit-tap-highlight-color: transparent;
 }
 .ripple {

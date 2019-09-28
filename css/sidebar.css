@@ -35,7 +35,7 @@
   transform: translateX(-50%);
   transition: bottom .2s;
 }
-#jump.up {
+.mobile-content-open #jump {
   background-image: url("../images/material/keyboard_arrow_down.svg");
   bottom: 15px;
 }
@@ -158,6 +158,11 @@
     border-top-right-radius: 50px;
     height: auto;
     overflow: auto;
+    transition: border-radius .5s;
+  }
+
+  .mobile-content-open .content {
+    border-radius: 0;
   }
 
   #drag-handle {
