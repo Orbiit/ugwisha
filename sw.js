@@ -1,4 +1,4 @@
-const CACHE_NAME = 'ugwisha-sw-v1569632764332';
+const CACHE_NAME = 'ugwisha-sw-v1570578614811';
 const EXTENSIONS_CACHE_NAME = 'ugwisha-extensions'; // don't change this
 const urlsToCache = [
   './',

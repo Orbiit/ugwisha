@@ -322,16 +322,6 @@ function getSchedule(dateObj) {
       if (pd.period === 's') pd.period = 'f';
     });
   }
-  // split double flex
-  for (let i = 0; i < schedule.length; i++) {
-    const pd = schedule[i];
-    if (pd.period === 'f' && pd.end - pd.start === DOUBLE_FLEX_LENGTH) {
-      const flexLength = (DOUBLE_FLEX_LENGTH - PASSING_PERIOD_LENGTH) / 2;
-      schedule.splice(i + 1, 0, {period: pd.period, start: pd.end - flexLength, end: pd.end});
-      pd.end = pd.start + flexLength;
-      i++;
-    }
-  }
   if (scheduleData[dateName]) {
     schedule.alternate = true;
   }
