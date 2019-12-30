@@ -212,6 +212,7 @@ window.UgwishaExtensions.register((() => {
   const syncID = Elem('input', {
     className: 'select-input todo-use-sync-id',
     placeholder: 'Existing sync ID',
+    value: token,
     onkeydown(e) {
       if (e.key === 'Enter') useSyncID.click();
     }
