@@ -14,3 +14,31 @@
   color: rgba(255, 255, 255, 0.8);
   flex: auto;
 }
+
+.todo-synching .todo-add-sync {
+  display: none;
+}
+.todo-use-sync {
+  display: flex;
+  margin-top: 5px;
+}
+.todo-use-sync-id {
+  flex: auto;
+  width: 0;
+  margin-right: 5px;
+}
+.todo-use-sync-btn {
+  flex: none;
+}
+.todo-stop-sync {
+  display: none;
+}
+.todo-synching .todo-stop-sync {
+  display: block;
+}
+.todo-sync-id {
+  color: white;
+}
+.todo-reload-btn {
+  margin-right: 5px;
+}
