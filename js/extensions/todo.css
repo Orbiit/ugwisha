@@ -36,9 +36,15 @@
 .todo-synching .todo-stop-sync {
   display: block;
 }
+.todo-stop-sync button {
+  margin-top: 5px;
+}
 .todo-sync-id {
   color: white;
 }
 .todo-reload-btn {
   margin-right: 5px;
+}
+.todo-error {
+  color: #ff5959;
 }

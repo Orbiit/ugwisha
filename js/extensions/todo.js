@@ -2,9 +2,14 @@ window.UgwishaExtensions.register((() => {
   function randomId() {
     return Math.random().toString(36).slice(2);
   }
+  function wait(time) {
+    return new Promise(res => setTimeout(res, time));
+  }
 
   const TODO_KEY = '[ugwisha] extensions.todo';
   const JSONSTORE_TOKEN = '[ugwisha] extensions.todo.token';
+  const CHANGE_QUEUE = '[ugwisha] extensions.todo.changeQueue';
+  const THROTTLE_DELAY = 1000;
   let token = storage.getItem(JSONSTORE_TOKEN);
   const wrapper = Elem('div');
   let list;
@@ -12,17 +17,36 @@ window.UgwishaExtensions.register((() => {
     const save = JSON.parse(storage.getItem(TODO_KEY));
     switch (save.v || null) {
       case null:
-        save.list = save.map(content => [randomId(), content]);
+        save.list = save.map(content => [randomId(), content, Date.now()]);
     }
-    list = save.list.map(([id, content]) => ({id, content}));
+    list = save.list.map(([id, content, lastEdited]) => ({id, content, lastEdited}));
   } catch (e) {
     list = [];
+  }
+  let changeQueue = null;
+  let syncReady = null;
+  if (token) {
+    try {
+      changeQueue = JSON.parse(storage.getItem(CHANGE_QUEUE));
+      if (!Array.isArray(changeQueue)) throw new Error('')
+    } catch (e) {
+      changeQueue = [];
+    }
+    syncReady = Promise.resolve();
   }
   function save() {
     storage.setItem(TODO_KEY, JSON.stringify({
       v: 1,
-      list: list.map(({id, content}) => [id, content])
+      list: list.map(({id, content, lastEdited}) => [id, content, lastEdited])
     }));
+    if (changeQueue && visible) {
+      storage.setItem(CHANGE_QUEUE, JSON.stringify(changeQueue));
+      if (syncReady && changeQueue.length) {
+        syncReady.then(() => reportError(sync()));
+        // All changes that are added later to `changeQueue` will still be synched!
+        syncReady = null;
+      }
+    }
   }
   function createTodoItem(entry) {
     const removeBtn = Elem('button', {
@@ -33,6 +57,9 @@ window.UgwishaExtensions.register((() => {
         const index = list.indexOf(entry);
         if (~index) {
           list.splice(index, 1);
+          if (changeQueue) {
+            changeQueue.push({id: entry.id, change: null, time: Date.now()});
+          }
           save();
         }
         wrapper.removeChild(parent);
@@ -44,6 +71,14 @@ window.UgwishaExtensions.register((() => {
       type: 'text',
       onchange(e) {
         entry.content = input.value;
+        entry.lastEdited = Date.now();
+        if (changeQueue) {
+          changeQueue.push({
+            id: entry.id,
+            change: entry.content,
+            time: entry.lastEdited
+          });
+        }
         save();
       },
       onkeydown(e) {
@@ -73,10 +108,19 @@ window.UgwishaExtensions.register((() => {
           } else if (e.keyCode === 13 && input.value) {
             const newEntry = {
               id: randomId(),
-              content: input.value.slice(0, input.selectionStart)
+              content: input.value.slice(0, input.selectionStart),
+              lastEdited: Date.now()
             };
             list.splice(index, 0, newEntry);
             wrapper.insertBefore(createTodoItem(newEntry), parent);
+            if (changeQueue) {
+              changeQueue.push({
+                id: newEntry.id,
+                change: newEntry.content,
+                before: entry.id,
+                time: newEntry.lastEdited
+              });
+            }
             entry.content = input.value = input.value.slice(input.selectionStart);
             input.selectionStart = input.selectionEnd = 0;
             save();
@@ -111,9 +155,21 @@ window.UgwishaExtensions.register((() => {
     ripple: true,
     onclick(e) {
       if (addInput.value) {
-        const newEntry = {id: randomId(), content: addInput.value};
+        const newEntry = {
+          id: randomId(),
+          content: addInput.value,
+          lastEdited: Date.now()
+        };
         list.push(newEntry);
         wrapper.insertBefore(createTodoItem(newEntry), addWrapper);
+        if (changeQueue) {
+          changeQueue.push({
+            id: newEntry.id,
+            change: newEntry.content,
+            before: null,
+            time: newEntry.lastEdited
+          });
+        }
         addInput.value = '';
         save();
       }
@@ -147,14 +203,9 @@ window.UgwishaExtensions.register((() => {
       reportError(fetch('https://www.jsonstore.io/get-token')
         .then(r => r.ok ? r.json() : Promise.reject(new Error(r.status)))
         .then(({token}) => token ? startUsingToken(token) : Promise.reject('Problem getting sync ID'))
-        .then(() => {
+        .finally(() => {
           useSyncID.disabled = false;
           createSyncID.disabled = false;
-        })
-        .catch(err => {
-          useSyncID.disabled = false;
-          createSyncID.disabled = false;
-          return Promise.reject(err);
         }));
     }
   }, ['Create new']);
@@ -172,7 +223,7 @@ window.UgwishaExtensions.register((() => {
       useSyncID.disabled = true;
       createSyncID.disabled = true;
       reportError(startUsingToken(syncID.value)
-        .then(() => {
+        .finally(() => {
           useSyncID.disabled = false;
           createSyncID.disabled = false;
         }));
@@ -186,42 +237,63 @@ window.UgwishaExtensions.register((() => {
       reportError(refresh());
     }
   }, ['Refresh']);
-  const errorMessage = Elem('p', {className: 'error'});
+  const status = Elem('p', {className: 'todo-status'});
   function reportError(prom) {
     prom
-      .then(() => {
-        errorMessage.textContent = '';
-      })
       .catch(err => {
-        console.error(err);
-        errorMessage.textContent = err;
+        console.error('UNSIGHTLY TODO WUCKY!', err);
+        status.classList.add('todo-error');
+        status.textContent = err;
       });
   }
   function refresh() {
+    status.classList.remove('todo-error');
+    status.textContent = 'Fetching...';
     refreshBtn.disabled = true;
     return fetch(`https://www.jsonstore.io/${token}/`)
       .then(r => r.ok ? r.json() : Promise.reject(new Error(r.status)))
       .then(({result, ok, error}) => {
         if (!ok) return Promise.reject(error);
         clearTodoItems();
-        for (const [id, content] of entries) {
-          const entry = {id, content};
+        for (const [id, content, lastEdited] of result) {
+          const entry = {id, content, lastEdited};
           wrapper.insertBefore(createTodoItem(entry), addWrapper);
           list.push(entry);
         }
-        // save();
-        refreshBtn.disabled = false;
+        save();
+        status.textContent = 'Fetched.';
       })
-      .catch(err => {
+      .finally(() => {
         refreshBtn.disabled = false;
-        return Promise.reject(err);
       });
   }
-  function sync(changes) {
-    return fetch(`https://www.jsonstore.io/${token}/`)
+  function sync() {
+    status.classList.remove('todo-error');
+    status.textContent = 'Synching...';
+    const prom = fetch(`https://www.jsonstore.io/${token}/`)
       .then(r => r.ok ? r.json() : Promise.reject(new Error(r.status)))
+      .catch(err => {
+        syncReady = wait(THROTTLE_DELAY);
+        // The changes weren't able to sync and need to resync!
+        save();
+        return Promise.reject(err);
+      })
       .then(({result, ok, error}) => {
-        if (!ok) return Promise.reject(error);
+        // Changes that need to be synched after this point should call `sync`
+        // once `syncReady` is resolved
+        syncReady = prom.catch(() => {}).then(() => wait(THROTTLE_DELAY));
+
+        if (!ok) {
+          // The changes weren't able to sync and need to resync!
+          save();
+          return Promise.reject(error);
+        }
+
+        if (!result) result = []; // It'll be null when it first starts
+
+        const changes = changeQueue;
+        changeQueue = [];
+        storage.setItem(CHANGE_QUEUE, JSON.stringify(changeQueue));
         let changed = false;
         for (const {id, change, before, time} of changes) {
           const index = result.findIndex(entry => entry[0] === id);
@@ -234,6 +306,7 @@ window.UgwishaExtensions.register((() => {
               } else {
                 // Update item
                 result[index][1] = change;
+                result[index][2] = time;
               }
             }
           } else if (change !== null) {
@@ -249,6 +322,7 @@ window.UgwishaExtensions.register((() => {
           }
         }
         if (changed) {
+          status.textContent = 'Saving...';
           return fetch(`https://www.jsonstore.io/${token}/`, {
             headers: {
               'Content-type': 'application/json'
@@ -259,25 +333,35 @@ window.UgwishaExtensions.register((() => {
             .then(r => r.ok ? r.json() : Promise.reject(new Error(r.status)))
             .then(({ok, error}) => {
               if (!ok) return Promise.reject(error);
+              status.textContent = 'Saved.';
+            })
+            .catch(err => {
+              changeQueue.push(...changes);
+              // These changes couldn't save and need to resync!
+              save();
+              return Promise.reject(err);
             });
+        } else {
+          status.textContent = 'Synched.';
         }
       });
+    return prom;
   }
   function startUsingToken(newToken) {
     token = newToken;
     tokenSpan.textContent = token;
     storage.setItem(JSONSTORE_TOKEN, token);
     wrapper.classList.add('todo-synching');
-    const changes = [];
+    changeQueue = [];
     for (let i = 0; i < list.length; i++) {
-      changes.push({
+      changeQueue.push({
         id: list[i].id,
         change: list[i].content,
         before: list[i + 1] ? list[i + 1].id : null,
-        time: list[i].time // TODO: Save time property in entries (in localStorage)
+        time: list[i].lastEdited
       });
     }
-    return sync(changes).then(() => refresh());
+    return sync().then(() => refresh());
   }
   if (token) {
     wrapper.classList.add('todo-synching');
@@ -306,13 +390,18 @@ window.UgwishaExtensions.register((() => {
             wrapper.classList.remove('todo-synching');
             token = null;
             storage.removeItem(JSONSTORE_TOKEN);
+            storage.removeItem(CHANGE_QUEUE);
+            changeQueue = null;
+            syncReady = null;
+            status.textContent = '';
           }
         }, ['Stop synching'])
       ])
     ]),
-    errorMessage
+    status
   ]));
 
+  let visible = false;
   return {
     wrapper: wrapper,
     name: 'Todo',
@@ -320,9 +409,18 @@ window.UgwishaExtensions.register((() => {
     styles: './js/extensions/todo.css',
     sources: ['./images/material/add.svg?for=todo', './images/material/remove.svg?for=todo'],
     beforeAdd() {
+      visible = true;
       if (token) {
-        refresh();
+        if (syncReady && changeQueue.length) {
+          reportError(sync().then(() => refresh()));
+          syncReady = null;
+        } else {
+          reportError(refresh());
+        }
       }
+    },
+    afterRemove() {
+      visible = false;
     }
   };
 })());
