@@ -65,7 +65,7 @@ The unexpected newline before `(10:05-10:40)` broke UGWA, who was used to Gunn p
 ```
 Period D (8:25-9:50)
 Brunch (9:50-10:05)
-Assembly for 9th/10th graders in Spangenberg Theater 
+Assembly for 9th/10th graders in Spangenberg Theater
 (10:05-10:40)11th/12th graders to FlexTimeAssembly for 11th/12th graders in Spangenberg Theater (10:50-11:25)9th/10th graders to FlexTime
 Period E (11:35-12:55)
 Lunch (12:55-1:35)
@@ -75,3 +75,51 @@ Period G (1:35-2:55)
 # 2019-08-20
 
 5 minutes of flex was moved to D period to explain how flex works, apparently; this was not reflected on the website.
+
+# Mon 2020-03-16 to Thu 2020-03-19 (CAASPP week) `ALTERNATE SCHEDULE`
+
+UGWA had issues with the last lines not being in its own paragraph. Since UGWA only treated `<p>` as newline characters but not `</p>`, the last line was considered merged with the previous line.
+
+## Monday
+
+```html
+<p>Period B (8:25-9:20)</p><p>Brunch (9:20-9:40)</p><p>CAST for seniors/SELF for others (9:40-11:40)</p><p>Lunch (11:40-12:20)</p><p>CAST for sophomores/Flextime for others (12:20-2:20)</p>Period A (2:35-3:25)&nbsp; &nbsp;&nbsp;
+```
+
+UGWA had taken the first time range, but since it checks for letter periods first, "Period A" was detected first in the merged last line, so flex was classified as A period.
+
+## Tuesday
+
+```html
+<p>Period C (8:25-9:20)</p><p>Brunch (9:20-9:40)</p><p>CAASPP #1 (9:40-11:40)</p><p>Period D (11:55-12:45)</p><p>Lunch (12:45-1:25)</p><p>Period F (1:25-2:15)&nbsp;&nbsp;</p><p>WASC Focus Groups (2:25-3:25)&nbsp;&nbsp;<br></p>
+```
+
+Ugwisha was unable to parse the non-periods (CAASPP and WASC Focus Groups). Instead, brunch was extended to ten minutes before D period, resulting in a 145 minute brunch.
+
+## Wednesday
+
+```html
+<p>Period E (8:25-9:20)</p><p>Brunch (9:20-9:40)</p><p>CAASPP #2 (9:40-11:40)</p><p>Lunch (11:40-12:20)</p><p>CAASPP #3 (12:20-2:20)</p>Period G (2:35-3:25)&nbsp; &nbsp;&nbsp;
+```
+
+Like Monday, Period G took over CAASPP 3.
+
+Ugwisha also excluded CAASPP 2, so brunch filled up the space up to ten minutes before lunch, resulting in a 130 minute brunch followed by a passing period for lunch.
+
+## Thursday
+
+```html
+<p>Period B (8:25-9:35)</p><p>Brunch (9:35-9:55)</p><p>CAASPP #4 (9:55-11:55)</p><p>Extended lunch &amp; BBQ(11:55-12:50)</p><p>Period A (12:50-2:00)</p>Period F (2:10-3:15)&nbsp; &nbsp;&nbsp;
+```
+
+Period F was not parsed because "Period A" was detected first.
+
+Ugwisha also excluded CAASPP 4, which resulted in a brunch situation similar to what it did for Wednesday.
+
+## Friday
+
+```html
+<p>Period C (8:25-9:35)</p><p>Brunch (9:35-9:50)</p><p>Period D (9:50-10:55)</p><p>Period E (11:05-12:10)</p><p>Lunch (12:10-12:50)</p>Period G (12:50-1:55)&nbsp; &nbsp;&nbsp;
+```
+
+Like Monday and Wednesday, Period G took over lunch.
