@@ -123,3 +123,17 @@ Ugwisha also excluded CAASPP 4, which resulted in a brunch situation similar to 
 ```
 
 Like Monday and Wednesday, Period G took over lunch.
+
+# 2020-03-31 `Alternate Schedule (see below)`
+
+`PeriodE` and `PeriodG` do not have spaces in them, which confuses both UGWA and Ugwisha.
+
+```html
+<p>Period D (8:25-9:50) </p><p>Brunch (9:50-10:05) </p><p>Elections Assembly, 9-11 grades; Flex for 12th grade&nbsp; (10:05-11:25) </p><p>PeriodE (11:35-12:55) </p><p>Lunch (12:55-1:35) </p>PeriodG (1:35-2:55)&nbsp; &nbsp;&nbsp;
+```
+
+There's also a separate special SELF event:
+
+> SELF/Elections Assembly for 9-11th grades; Flex for 12th grade
+
+Either this or the alternate schedule makes Ugwisha think that there is SELF for seniors.
