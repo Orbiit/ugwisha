@@ -89,10 +89,10 @@
   text-shadow: 0 0 3px white;
 }
 .date-selector-alternate {
-  color: rgba(253, 227, 227, 0.8);
+  color: rgba(255, 157, 157, 0.8);
 }
 .date-selector-alternate.date-selector-no-school {
-  color: rgba(253, 227, 227, 0.4);
+  color: rgba(255, 157, 157, 0.4);
 }
 .date-selector-alternate.date-selector-today {
   color: rgb(253, 227, 227);

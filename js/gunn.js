@@ -5,7 +5,7 @@ const EARLIEST_AM_HOUR = 6;
 const PASSING_PERIOD_LENGTH = 10;
 const DOUBLE_FLEX_LENGTH = 80; // longer flex might not be double - see 2018-10-10
 
-const HTMLnewlineRegex = /<(p|div|br).*?>|\),? *(?=[A-Z0-9])/g;
+const HTMLnewlineRegex = /<\/?(p|div|br).*?>|\),? *(?=[A-Z0-9])/g;
 const noHTMLRegex = /<.*?>/g;
 const noNbspRegex = /&nbsp;/g;
 const timeGetterRegex = /\(?(1?[0-9]):([0-9]{2}) *(?:-|–) *(1?[0-9]):([0-9]{2}) *(pm)?\)?/;
@@ -129,7 +129,8 @@ function identifyPeriod(name) {
   else if (~name.indexOf('FLEX')
       || ~name.indexOf('ASSEMBL') // assembly, assemblies
       || ~name.indexOf('ATTEND') // HACK to detect PSAT day (2018-10-10)
-      || ~name.indexOf('TUTORIAL'))
+      || ~name.indexOf('TUTORIAL')
+      || ~name.indexOf('CAASPP')) // CAASPP week (2020-03-17 ish)
     return 'f';
   else if (~name.indexOf('BRUNCH') || ~name.indexOf('BREAK')) return 'b';
   // 'UNCH' intentional - misspelling on 2019-03-26
