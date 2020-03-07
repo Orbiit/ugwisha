@@ -116,6 +116,8 @@ Period F was not parsed because "Period A" was detected first.
 
 Ugwisha also excluded CAASPP 4, which resulted in a brunch situation similar to what it did for Wednesday.
 
+There's also a `SELF for 9-11th grades` event for that day. I'm not sure if it's intended or not (the time of the event does not line up with the alternate schedule), but if not, that's another thing to watch for.
+
 ## Friday
 
 ```html
@@ -137,3 +139,29 @@ There's also a separate special SELF event:
 > SELF/Elections Assembly for 9-11th grades; Flex for 12th grade
 
 Either this or the alternate schedule makes Ugwisha think that there is SELF for seniors.
+
+# 2020-03-11 `CLASH OF THE TITANS (extended lunch schedule below)`
+
+```html
+Period D (8:25-9:50)
+Brunch (9:50-10:05)
+FlexTime (10:05-11:00)
+Period E (11:10-12:30)
+Clash of the Titans extended lunch (12:30-1:35)
+Period G (1:35-2:55)
+Staff Meeting, CAASPP training for all (3:05-3:45)
+```
+
+The schedule itself isn't very problematic. However, the event was posted to a different calendar (`a0id1212epbc9eel40c4mggfkg@group.calendar.google.com`) which UGWA and Ugwisha are not able to detect.
+
+I'm not sure what the best solution is here. Perhaps,
+
+- Wait for the school to move the event to the correct calendar. However, they might not notice.
+
+- Have a special case for this one day; however, hacky solutions are not good practice.
+
+- Fetch from both calendars. However, the second calendar is unlikely to have many alternate schedules, so it'd be a waste of fetching.
+
+  - There could be a somewhat special case by having a query for only this schedule and adding more as needed.
+  
+  - Alternately, perhaps only the events per day could fetch from both calendars; this also helps list the other school events that aren't put in the first calendar. However, this doubles the requests. Also, I don't think this'd work well for the Node package.
