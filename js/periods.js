@@ -3,7 +3,7 @@
  * @type {number}
  * @const
  */
-const FAVICON_SIZE = 32;
+const FAVICON_SIZE = 32
 
 /**
  * Formats a time string according to user preferences
@@ -12,14 +12,14 @@ const FAVICON_SIZE = 32;
  *                                 of if the user is using 12-hour
  * @return {string} The time string
  */
-function formatTime(minutes, noAMPM = false) {
-  const hour = Math.floor(minutes / 60);
-  const min = ('0' + minutes % 60).slice(-2);
-  let time = options.metricTime ? `${hour}:${min}` : `${(hour + 11) % 12 + 1}:${min}`;
+function formatTime (minutes, noAMPM = false) {
+  const hour = Math.floor(minutes / 60)
+  const min = ('0' + minutes % 60).slice(-2)
+  const time = options.metricTime ? `${hour}:${min}` : `${(hour + 11) % 12 + 1}:${min}`
   if (options.metricTime || noAMPM) {
-    return time;
+    return time
   } else {
-    return `${time} ${hour < 12 ? 'a' : 'p'}m`;
+    return `${time} ${hour < 12 ? 'a' : 'p'}m`
   }
 }
 
@@ -32,36 +32,36 @@ function formatTime(minutes, noAMPM = false) {
  *                                      used in the favicon
  * @return {string} The duration string
  */
-function formatDuration(minutes, short = false, reallyShort = false) {
-  if (!short) return minutes + ' minute' + (minutes === 1 ? '' : 's');
+function formatDuration (minutes, short = false, reallyShort = false) {
+  if (!short) return minutes + ' minute' + (minutes === 1 ? '' : 's')
   // const hours = Math.floor(minutes / 60);
   // const mins = minutes % 60;
   // return (hours > 0 ? hours + ' hour' + (hours === 1 ? '' : 's') : '')
   //   + (hours > 0 && mins !== 0 ? ' and ' : '')
   //   + (mins !== 0 ? mins + ' minute' + (mins === 1 ? '' : 's') : '');
-  return (reallyShort && minutes < 60 ? '' : Math.floor(minutes / 60)) + ':' + ('0' + minutes % 60).slice(-2);
+  return (reallyShort && minutes < 60 ? '' : Math.floor(minutes / 60)) + ':' + ('0' + minutes % 60).slice(-2)
 }
 
-function getPdName(pd) {
-  return options['periodName_' + PERIOD_OPTION_PREFIX + pd] || defaultNames[pd] || pd;
+function getPdName (pd) {
+  return options['periodName_' + PERIOD_OPTION_PREFIX + pd] || defaultNames[pd] || pd
 }
-function setPdName(pd, newName) {
-  return options['periodName_' + PERIOD_OPTION_PREFIX + pd] = newName;
+function setPdName (pd, newName) {
+  return options['periodName_' + PERIOD_OPTION_PREFIX + pd] = newName
 }
-function getPdColour(pd) {
-  const colour = options['periodColour_' + PERIOD_OPTION_PREFIX + pd];
-  return colour === undefined ? defaultColours[pd] || '000000' : colour;
+function getPdColour (pd) {
+  const colour = options['periodColour_' + PERIOD_OPTION_PREFIX + pd]
+  return colour === undefined ? defaultColours[pd] || '000000' : colour
 }
-function setPdColour(pd, newColour) {
-  return options['periodColour_' + PERIOD_OPTION_PREFIX + pd] = newColour;
+function setPdColour (pd, newColour) {
+  return options['periodColour_' + PERIOD_OPTION_PREFIX + pd] = newColour
 }
 
-Ugwisha.formatTime = formatTime;
-Ugwisha.formatDuration = formatDuration;
-Ugwisha.getPdName = getPdName;
-Ugwisha.getPdColour = getPdColour;
+Ugwisha.formatTime = formatTime
+Ugwisha.formatDuration = formatDuration
+Ugwisha.getPdName = getPdName
+Ugwisha.getPdColour = getPdColour
 
-let scheduleWrapper, weekPreviewColumns;
+let scheduleWrapper, weekPreviewColumns
 
 const sheepImages = [ // 14 sheep
   'left-sheep-curious.svg',
@@ -78,23 +78,22 @@ const sheepImages = [ // 14 sheep
   'standing-sheep-hungry.svg',
   'two-sheep-ice-cream.svg',
   'two-sheep-stack.svg'
-];
-
+]
 
 /**
  * Consistently selects a sheep based on a date for the day for no school days
  * @param {number} time The time of a Date object
  * @return {string} The URL of the sheep image to use
  */
-function sheepFromDate(time) {
+function sheepFromDate (time) {
   // alternate between two sets of sheep so the same sheep never appears twice
   // in a row
-  const even = time / 86400000 % 2 === 0;
+  const even = time / 86400000 % 2 === 0
   // not using modulo so it's not a cycle of sheep, though it might still end up
   // being one; using base 7 because there are 2 sets of a total of 14 sheep
   // character 9 seems to be somewhat more random than the others
-  const index = +time.toString(7)[9];
-  return sheepImages[(even ? 0 : 7) + index];
+  const index = +time.toString(7)[9]
+  return sheepImages[(even ? 0 : 7) + index]
 }
 
 /**
@@ -103,37 +102,37 @@ function sheepFromDate(time) {
  * @param {string} hex The hexadecimal background colour
  * @return {boolean} Whether black text should be used
  */
-function useBlackText(hex) {
+function useBlackText (hex) {
   const [r, g, b] = [hex.slice(0, 2), hex.slice(2, 4), hex.slice(4)]
     .map(c => {
-      c = parseInt(c, 16) / 255;
-      return c <= 0.03928 ? c / 12.92 : Math.pow((c + 0.055) / 1.055, 2.4);
-    });
-  return 0.2126 * r + 0.7152 * g + 0.0722 * b > 0.179;
+      c = parseInt(c, 16) / 255
+      return c <= 0.03928 ? c / 12.92 : Math.pow((c + 0.055) / 1.055, 2.4)
+    })
+  return 0.2126 * r + 0.7152 * g + 0.0722 * b > 0.179
 }
 
-let currentPickerWrapper, currentPickerParent;
+let currentPickerWrapper, currentPickerParent
 document.addEventListener('click', e => {
   if (currentPickerWrapper && !currentPickerParent.contains(e.target)) {
-    const oldWrapper = currentPickerWrapper;
-    tabbablify(oldWrapper, false);
-    oldWrapper.classList.add('disappear');
+    const oldWrapper = currentPickerWrapper
+    tabbablify(oldWrapper, false)
+    oldWrapper.classList.add('disappear')
     oldWrapper.addEventListener('transitionend', e => {
-      oldWrapper.parentNode.removeChild(oldWrapper);
-    }, {once: true});
-    currentPickerWrapper = currentPickerParent = null;
+      oldWrapper.parentNode.removeChild(oldWrapper)
+    }, { once: true })
+    currentPickerWrapper = currentPickerParent = null
   }
-});
+})
 
 /**
  * Renders the given schedule
  * @param {Schedule} schedule The schedule to render
  */
-function setSchedule(schedule) {
-  empty(scheduleWrapper);
-  currentPickerWrapper = currentPickerParent = null;
+function setSchedule (schedule) {
+  empty(scheduleWrapper)
+  currentPickerWrapper = currentPickerParent = null
   if (schedule.alternate) {
-    scheduleWrapper.appendChild(Elem('p', {className: 'alternate-note'}, ['This is an alternate schedule.']));
+    scheduleWrapper.appendChild(Elem('p', { className: 'alternate-note' }, ['This is an alternate schedule.']))
   }
   if (schedule.noSchool) {
     scheduleWrapper.appendChild(Elem('div', {
@@ -141,59 +140,59 @@ function setSchedule(schedule) {
       style: {
         backgroundImage: `url('./images/sheep/${sheepFromDate(getToday().getTime())}')`
       }
-    }, [Elem('span', {}, [schedule.summer ? 'Enjoy your summer!' : 'No school!'])]));
-    return;
+    }, [Elem('span', {}, [schedule.summer ? 'Enjoy your summer!' : 'No school!'])]))
+    return
   }
-  const periods = {}; // for updating duplicate periods' names/colours
+  const periods = {} // for updating duplicate periods' names/colours
   scheduleWrapper.appendChild(Fragment(schedule.map(pd => {
     const periodName = Elem('input', {
       className: 'period-name',
       type: 'text',
       placeholder: defaultNames[pd.period],
       value: getPdName(pd.period),
-      onchange() {
-        setPdName(pd.period, periodName.value);
-        save();
-        updateStatus();
-        periods[pd.period].inputs.forEach(input => input !== periodName && (input.value = periodName.value));
+      onchange () {
+        setPdName(pd.period, periodName.value)
+        save()
+        updateStatus()
+        periods[pd.period].inputs.forEach(input => input !== periodName && (input.value = periodName.value))
       },
-      onfocus() {
-        if (currentPickerParent === wrapper) return;
+      onfocus () {
+        if (currentPickerParent === wrapper) return
         if (currentPickerWrapper) {
-          const oldWrapper = currentPickerWrapper;
-          tabbablify(oldWrapper, false);
-          oldWrapper.classList.add('disappear');
+          const oldWrapper = currentPickerWrapper
+          tabbablify(oldWrapper, false)
+          oldWrapper.classList.add('disappear')
           oldWrapper.addEventListener('transitionend', e => {
-            oldWrapper.parentNode.removeChild(oldWrapper);
-          }, {once: true});
+            oldWrapper.parentNode.removeChild(oldWrapper)
+          }, { once: true })
         }
         currentPickerWrapper = colourPicker(
           colour => {
-            setPdColour(pd.period, colour);
-            save();
-            updateStatus();
+            setPdColour(pd.period, colour)
+            save()
+            updateStatus()
             periods[pd.period].cards.forEach(p => {
               if (colour === null) {
-                p.classList.add('transparent');
-                p.classList.remove('dark-text');
-                p.style.setProperty('--colour', null);
+                p.classList.add('transparent')
+                p.classList.remove('dark-text')
+                p.style.setProperty('--colour', null)
               } else {
-                p.classList.remove('transparent');
-                p.style.setProperty('--colour', '#' + colour);
-                if (useBlackText(colour)) p.classList.add('dark-text');
-                else p.classList.remove('dark-text');
+                p.classList.remove('transparent')
+                p.style.setProperty('--colour', '#' + colour)
+                if (useBlackText(colour)) p.classList.add('dark-text')
+                else p.classList.remove('dark-text')
               }
-            });
+            })
           },
           getPdColour(pd.period),
           true,
           defaultColours[pd.period] || '000000'
-        );
-        periodName.parentNode.insertBefore(currentPickerWrapper, periodName.nextElementSibling);
-        currentPickerParent = wrapper;
+        )
+        periodName.parentNode.insertBefore(currentPickerWrapper, periodName.nextElementSibling)
+        currentPickerParent = wrapper
       }
-    });
-    const note = getNote(pd);
+    })
+    const note = getNote(pd)
     const wrapper = Elem('div', {
       className: [
         'period',
@@ -205,45 +204,45 @@ function setSchedule(schedule) {
       }
     }, [
       periodName,
-      Elem('span', {className: 'time-duration'}, [
+      Elem('span', { className: 'time-duration' }, [
         Elem('span', {
           className: 'time',
           innerHTML: formatTime(pd.start) + ' &ndash; ' + formatTime(pd.end)
         }),
-        Elem('span', {className: 'duration'}, [(pd.end - pd.start) + ' min']),
+        Elem('span', { className: 'duration' }, [(pd.end - pd.start) + ' min']),
         note ? Elem('span', {
           className: 'note',
           innerHTML: note
         }) : null
       ])
-    ]);
-    if (!periods[pd.period]) periods[pd.period] = {inputs: [], cards: []};
-    periods[pd.period].inputs.push(periodName);
-    periods[pd.period].cards.push(wrapper);
-    return wrapper;
-  })));
+    ])
+    if (!periods[pd.period]) periods[pd.period] = { inputs: [], cards: [] }
+    periods[pd.period].inputs.push(periodName)
+    periods[pd.period].cards.push(wrapper)
+    return wrapper
+  })))
 }
 
 /**
  * Letters representing days of the week used in the week preview.
  * @type {string[]}
  */
-const dayInitials = ['S', 'M', 'T', 'W', 'Θ', 'F', 'S'];
+const dayInitials = ['S', 'M', 'T', 'W', 'Θ', 'F', 'S']
 
 /**
  * Renders the week preview
  * @param {Schedule[]} schedules Schedules of each day of the week
  * @param {number} selectedDay Index of the day being previewed
  */
-function showWeekPreview(schedules, selectedDay) {
+function showWeekPreview (schedules, selectedDay) {
   weekPreviewColumns.forEach((col, i) => {
-    if (selectedDay === i) col.wrapper.classList.add('week-preview-today');
-    else col.wrapper.classList.remove('week-preview-today');
-    empty(col.content);
-    const schedule = schedules[i];
-    if (schedule.alternate) col.wrapper.classList.add('week-preview-is-alternate');
-    else col.wrapper.classList.remove('week-preview-is-alternate');
-    col.date = schedule.date;
+    if (selectedDay === i) col.wrapper.classList.add('week-preview-today')
+    else col.wrapper.classList.remove('week-preview-today')
+    empty(col.content)
+    const schedule = schedules[i]
+    if (schedule.alternate) col.wrapper.classList.add('week-preview-is-alternate')
+    else col.wrapper.classList.remove('week-preview-is-alternate')
+    col.date = schedule.date
     col.content.appendChild(Fragment(schedule.noSchool
       ? []
       : schedule.map((pd, i) => Elem('span', {
@@ -258,8 +257,8 @@ function showWeekPreview(schedules, selectedDay) {
           backgroundColor: getPdColour(pd.period) && '#' + getPdColour(pd.period)
         }
       }))
-    ));
-  });
+    ))
+  })
 }
 
 /**
@@ -267,7 +266,7 @@ function showWeekPreview(schedules, selectedDay) {
  * 420)
  * @type {number}
  */
-const timezone = new Date().getTimezoneOffset();
+const timezone = new Date().getTimezoneOffset()
 
 /**
  * Calculates the current time left
@@ -276,42 +275,42 @@ const timezone = new Date().getTimezoneOffset();
  *                            (for testing)
  * @return {Object} Some info to be used by updateStatus
  */
-function timeLeft(schedule, offset = 0) {
-  const now = Date.now() + offset;
-  const minutes = Math.floor((now / 60000 - timezone) % 1440);
-  const toNextMinute = now + 60000 - now % 60000;
+function timeLeft (schedule, offset = 0) {
+  const now = Date.now() + offset
+  const minutes = Math.floor((now / 60000 - timezone) % 1440)
+  const toNextMinute = now + 60000 - now % 60000
   if (schedule.noSchool) {
-    return { type: 'time', value: minutes, nextMinute: toNextMinute };
+    return { type: 'time', value: minutes, nextMinute: toNextMinute }
   }
-  const period = schedule.find(pd => pd.end > minutes);
-  const status = { secondCounter: null, nextMinute: toNextMinute };
+  const period = schedule.find(pd => pd.end > minutes)
+  const status = { secondCounter: null, nextMinute: toNextMinute }
   if (period) {
-    status.period = period;
+    status.period = period
     if (period.start > minutes) {
-      status.type = 'until';
-      status.value = period.start - minutes;
+      status.type = 'until'
+      status.value = period.start - minutes
     } else {
-      status.type = 'left in';
-      status.value = period.end - minutes;
-      status.progress = (minutes - period.start) / (period.end - period.start);
+      status.type = 'left in'
+      status.value = period.end - minutes
+      status.progress = (minutes - period.start) / (period.end - period.start)
     }
     // console.log(status.value);
     if (status.value <= 1) {
       status.secondCounter = () => {
-        const now = Date.now() + offset;
+        const now = Date.now() + offset
         return {
           secondsLeft: 60 - now / 1000 % 60,
           stop: Math.floor((now / 60000 - timezone) % 1440) >= (period.start > minutes ? period.start : period.end)
-        };
-      };
+        }
+      }
     }
   } else {
-    const lastPeriod = schedule[schedule.length - 1];
-    status.period = lastPeriod;
-    status.type = 'since';
-    status.value = minutes - lastPeriod.end;
+    const lastPeriod = schedule[schedule.length - 1]
+    status.period = lastPeriod
+    status.type = 'since'
+    status.value = minutes - lastPeriod.end
   }
-  return status;
+  return status
 }
 
 /**
@@ -319,39 +318,39 @@ function timeLeft(schedule, offset = 0) {
  * @param {string} period The ID of the period
  * @return {string} The HTML
  */
-function getPeriodChipHTML(period) {
-  const colour = getPdColour(period);
-  let str = '<span class="period-chip';
-  if (colour === null) str += ' transparent';
-  if (colour !== null && useBlackText(colour)) str += ' dark-text';
-  str += '"';
-  if (colour !== null) str += ` style="--colour: #${colour};"`;
-  str += `>${getPdName(period)}</span>`;
-  return str;
+function getPeriodChipHTML (period) {
+  const colour = getPdColour(period)
+  let str = '<span class="period-chip'
+  if (colour === null) str += ' transparent'
+  if (colour !== null && useBlackText(colour)) str += ' dark-text'
+  str += '"'
+  if (colour !== null) str += ` style="--colour: #${colour};"`
+  str += `>${getPdName(period)}</span>`
+  return str
 }
 
-const faviconCanvas = Elem('canvas', {width: FAVICON_SIZE, height: FAVICON_SIZE});
-const fc = faviconCanvas.getContext('2d');
+const faviconCanvas = Elem('canvas', { width: FAVICON_SIZE, height: FAVICON_SIZE })
+const fc = faviconCanvas.getContext('2d')
 
 /**
  * Sets the favicon
  * @param {string} text Content of the favicon (shorter is better)
  */
-function setFavicon(text) {
-  fc.clearRect(0, 0, FAVICON_SIZE, FAVICON_SIZE);
-  fc.font = `100px 'Roboto Condensed', sans-serif`;
-  const {width} = fc.measureText(text);
-  const fontSize = FAVICON_SIZE / (width / 100);
-  fc.fillStyle = THEME_COLOUR;
-  fc.fillRect(0, (FAVICON_SIZE - fontSize * 1.2) / 2, FAVICON_SIZE, fontSize);
-  fc.font = `${fontSize}px 'Roboto Condensed', sans-serif`;
-  fc.fillStyle = 'white';
-  fc.fillText(text, FAVICON_SIZE / 2, FAVICON_SIZE / 2);
-  favicon.setAttribute('href', faviconCanvas.toDataURL());
+function setFavicon (text) {
+  fc.clearRect(0, 0, FAVICON_SIZE, FAVICON_SIZE)
+  fc.font = '100px \'Roboto Condensed\', sans-serif'
+  const { width } = fc.measureText(text)
+  const fontSize = FAVICON_SIZE / (width / 100)
+  fc.fillStyle = THEME_COLOUR
+  fc.fillRect(0, (FAVICON_SIZE - fontSize * 1.2) / 2, FAVICON_SIZE, fontSize)
+  fc.font = `${fontSize}px 'Roboto Condensed', sans-serif`
+  fc.fillStyle = 'white'
+  fc.fillText(text, FAVICON_SIZE / 2, FAVICON_SIZE / 2)
+  favicon.setAttribute('href', faviconCanvas.toDataURL())
 }
 
-let previewTime, previewMsg, progressBar, favicon;
-let todaySchedule, todayDate;
+let previewTime, previewMsg, progressBar, favicon
+let todaySchedule, todayDate
 
 /**
  * Renders the preview. Call this when the schedule may have changed.
@@ -359,90 +358,90 @@ let todaySchedule, todayDate;
  * @param {number} [nextMinute=0] The time when the minute changes and the
  *                                preview would need rerendering
  */
-function updateStatus(startInterval = false, nextMinute = 0) {
-  const now = Date.now();
+function updateStatus (startInterval = false, nextMinute = 0) {
+  const now = Date.now()
   if (startInterval) {
     if (now < nextMinute) {
-      return setTimeout(() => updateStatus(true, nextMinute), Math.min(nextMinute - now, 1000));
+      return setTimeout(() => updateStatus(true, nextMinute), Math.min(nextMinute - now, 1000))
     }
   }
-  const today = getToday();
-  const todayStr = today.toISOString().slice(0, 10);
+  const today = getToday()
+  const todayStr = today.toISOString().slice(0, 10)
   if (todayDate !== todayStr) {
-    todayDate = todayStr;
-    todaySchedule = getSchedule(today);
+    todayDate = todayStr
+    todaySchedule = getSchedule(today)
     if (todaySchedule.noSchool) {
-      progressBar.style.opacity = 0;
-      favicon.setAttribute('href', DEFAULT_FAVICON_URL);
-      document.title = APP_NAME;
+      progressBar.style.opacity = 0
+      favicon.setAttribute('href', DEFAULT_FAVICON_URL)
+      document.title = APP_NAME
     }
   }
-  const status = timeLeft(todaySchedule);
+  const status = timeLeft(todaySchedule)
   if (todaySchedule.noSchool) {
-    previewTime.textContent = formatTime(status.value, true);
-    previewMsg.textContent = '';
+    previewTime.textContent = formatTime(status.value, true)
+    previewMsg.textContent = ''
   } else {
     if (status.type === 'left in') {
-      progressBar.style.opacity = 1;
-      progressBar.style.setProperty('--progress', status.progress * 100 + '%');
+      progressBar.style.opacity = 1
+      progressBar.style.setProperty('--progress', status.progress * 100 + '%')
     } else {
-      progressBar.style.opacity = 0;
+      progressBar.style.opacity = 0
     }
-    previewMsg.innerHTML = status.type + ' ' + getPeriodChipHTML(status.period.period);
+    previewMsg.innerHTML = status.type + ' ' + getPeriodChipHTML(status.period.period)
     if (status.type === 'since') {
-      previewTime.textContent = formatDuration(status.value, true);
-      favicon.setAttribute('href', DEFAULT_FAVICON_URL);
-      document.title = APP_NAME;
+      previewTime.textContent = formatDuration(status.value, true)
+      favicon.setAttribute('href', DEFAULT_FAVICON_URL)
+      document.title = APP_NAME
     } else {
-      setFavicon(formatDuration(status.value, true, true));
+      setFavicon(formatDuration(status.value, true, true))
       if (startInterval && status.secondCounter) {
-        function seconds() {
-          const {secondsLeft, stop} = status.secondCounter();
+        function seconds () {
+          const { secondsLeft, stop } = status.secondCounter()
           if (!stop) {
-            const str = Math.round(secondsLeft * 100) / 100 + '';
-            document.title = (previewTime.textContent = str + (str.includes('.') ? '0'.repeat(3 - str.length + str.indexOf('.')) : '.00') + 's')
-              + ' ' + status.type + ' ' + getPdName(status.period.period) + ' - ' + APP_NAME;
+            const str = Math.round(secondsLeft * 100) / 100 + ''
+            document.title = (previewTime.textContent = str + (str.includes('.') ? '0'.repeat(3 - str.length + str.indexOf('.')) : '.00') + 's') +
+              ' ' + status.type + ' ' + getPdName(status.period.period) + ' - ' + APP_NAME
           }
-          window.requestAnimationFrame(startInterval && !stop ? seconds : updateStatus);
+          window.requestAnimationFrame(startInterval && !stop ? seconds : updateStatus)
         }
-        seconds();
+        seconds()
       } else {
-        document.title = (previewTime.textContent = formatDuration(status.value, true))
-          + ' ' + status.type + ' ' + getPdName(status.period.period) + ' - ' + APP_NAME;
+        document.title = (previewTime.textContent = formatDuration(status.value, true)) +
+          ' ' + status.type + ' ' + getPdName(status.period.period) + ' - ' + APP_NAME
       }
     }
     if (startInterval) {
-      UgwishaEvents.status.forEach(fn => fn(status, now));
+      UgwishaEvents.status.forEach(fn => fn(status, now))
     }
   }
-  if (startInterval) setTimeout(() => updateStatus(true, status.nextMinute), Math.min(status.nextMinute - now, 1000));
+  if (startInterval) setTimeout(() => updateStatus(true, status.nextMinute), Math.min(status.nextMinute - now, 1000))
 }
 
 ready.push(() => {
-  scheduleWrapper = document.getElementById('periods');
+  scheduleWrapper = document.getElementById('periods')
 
-  previewTime = document.getElementById('preview-time');
-  previewMsg = document.getElementById('preview-msg');
-  progressBar = document.getElementById('progress');
+  previewTime = document.getElementById('preview-time')
+  previewMsg = document.getElementById('preview-msg')
+  progressBar = document.getElementById('progress')
 
-  favicon = document.getElementById('favicon');
-  fc.textAlign = 'center';
-  fc.textBaseline = 'middle';
+  favicon = document.getElementById('favicon')
+  fc.textAlign = 'center'
+  fc.textBaseline = 'middle'
 
-  weekPreviewColumns = [];
+  weekPreviewColumns = []
   for (let i = 0; i < 7; i++) {
-    const entry = {};
+    const entry = {}
     entry.wrapper = Elem('div', {
       className: 'week-preview-col',
       tabindex: 0,
       ripple: true,
-      onclick() {
+      onclick () {
         // BUG: current allows user to click outside of school year, oh well
-        viewingDate = entry.date;
-        updateView();
+        viewingDate = entry.date
+        updateView()
       },
-      onkeydown(e) {
-        if (e.keyCode === 13) this.click();
+      onkeydown (e) {
+        if (e.keyCode === 13) this.click()
       }
     }, [
       Elem('span', {
@@ -456,44 +455,44 @@ ready.push(() => {
         'aria-label': days[i]
       }, [dayInitials[i]]),
       entry.content = Elem('div')
-    ]);
-    weekPreviewColumns.push(entry);
+    ])
+    weekPreviewColumns.push(entry)
   }
-  document.getElementById('week-preview').appendChild(Fragment(weekPreviewColumns.map(({wrapper}) => wrapper)));
+  document.getElementById('week-preview').appendChild(Fragment(weekPreviewColumns.map(({ wrapper }) => wrapper)))
 
-  let currentTouch = null;
+  let currentTouch = null
   scheduleWrapper.addEventListener('touchstart', e => {
     if (!currentTouch && options.allowSliding) {
-      const touch = e.changedTouches[0];
-      currentTouch = {id: touch.identifier, startX: touch.clientX, slide: false};
+      const touch = e.changedTouches[0]
+      currentTouch = { id: touch.identifier, startX: touch.clientX, slide: false }
     }
-  });
+  })
   scheduleWrapper.addEventListener('touchmove', e => {
     if (currentTouch) {
-      const touch = Array.from(e.touches).find(t => t.identifier === currentTouch.id);
+      const touch = Array.from(e.touches).find(t => t.identifier === currentTouch.id)
       if (touch) {
-        const changeX = touch.clientX - currentTouch.startX;
+        const changeX = touch.clientX - currentTouch.startX
         if (!currentTouch.slide) {
-          if (Math.abs(changeX) > 30) currentTouch.slide = true;
+          if (Math.abs(changeX) > 30) currentTouch.slide = true
         }
         if (currentTouch.slide) {
-          scheduleWrapper.style.transform = `translateX(${changeX / 5}px)`;
-          scheduleWrapper.style.opacity = Math.abs(changeX) > 60 ? 0.5 : null;
+          scheduleWrapper.style.transform = `translateX(${changeX / 5}px)`
+          scheduleWrapper.style.opacity = Math.abs(changeX) > 60 ? 0.5 : null
         }
       }
     }
-  });
+  })
   scheduleWrapper.addEventListener('touchend', e => {
     if (currentTouch) {
-      const touch = Array.from(e.changedTouches).find(t => t.identifier === currentTouch.id);
+      const touch = Array.from(e.changedTouches).find(t => t.identifier === currentTouch.id)
       if (touch) {
-        const changeX = touch.clientX - currentTouch.startX;
-        if (changeX > 60) backDay.click();
-        else if (changeX < -60) forthDay.click();
+        const changeX = touch.clientX - currentTouch.startX
+        if (changeX > 60) backDay.click()
+        else if (changeX < -60) forthDay.click()
       }
-      scheduleWrapper.style.transform = null;
-      scheduleWrapper.style.opacity = null;
-      currentTouch = null;
+      scheduleWrapper.style.transform = null
+      scheduleWrapper.style.opacity = null
+      currentTouch = null
     }
-  });
-});
+  })
+})

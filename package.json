@@ -1,8 +1,18 @@
 {
   "scripts": {
-    "build": "node minify.js"
+    "build": "node minify.js",
+    "test": "standard --verbose | snazzy"
   },
   "dependencies": {
     "uglify-es": "^3.3.9"
+  },
+  "devDependencies": {
+    "snazzy": "^8.0.0",
+    "standard": "^14.3.1"
+  },
+  "standard": {
+    "ignore": [
+      "/ugwisha.js"
+    ]
   }
 }

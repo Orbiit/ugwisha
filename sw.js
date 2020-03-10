@@ -1,5 +1,7 @@
-const CACHE_NAME = 'ugwisha-sw-v1582690440548';
-const EXTENSIONS_CACHE_NAME = 'ugwisha-extensions'; // don't change this
+/* eslint-env serviceworker */
+
+const CACHE_NAME = 'ugwisha-sw-v1582690440548'
+const EXTENSIONS_CACHE_NAME = 'ugwisha-extensions' // don't change this
 const urlsToCache = [
   './',
   './manifest.json',
@@ -39,27 +41,23 @@ const urlsToCache = [
   'https://fonts.gstatic.com/s/robotocondensed/v18/ieVl2ZhZI2eCN5jzbjEETS9weq8-19K7DQ.woff2',
   'https://fonts.gstatic.com/s/robotocondensed/v18/ieVl2ZhZI2eCN5jzbjEETS9weq8-19G7DRs5.woff2',
   'https://fonts.gstatic.com/s/opensans/v17/mem8YaGs126MiZpBA-UFVZ0b.woff2'
-];
-const isOnGithubPages = /https?:\/\/.+\.github\.io/;
-
-function send(data) {
-  self.clients.matchAll().then(clients => clients.forEach(c => c.postMessage(data)));
-}
+]
+const isOnGithubPages = /https?:\/\/.+\.github\.io/
 
 self.addEventListener('install', e => {
-  e.waitUntil(caches.open(CACHE_NAME).then(cache => cache.addAll(urlsToCache)).then(() => self.skipWaiting()));
-});
+  e.waitUntil(caches.open(CACHE_NAME).then(cache => cache.addAll(urlsToCache)).then(() => self.skipWaiting()))
+})
 self.addEventListener('fetch', e => {
-  if (e.request.method !== 'GET') return;
+  if (e.request.method !== 'GET') return
   e.respondWith(caches
-    .match(e.request, {ignoreSearch: isOnGithubPages.test(e.request.url)})
-    .then(response => response || fetch(e.request)));
+    .match(e.request, { ignoreSearch: isOnGithubPages.test(e.request.url) })
+    .then(response => response || fetch(e.request)))
 
   // update cache if it's in the extension cache
   caches.open(EXTENSIONS_CACHE_NAME)
     .then(cache => cache.match(e.request)
-      .then(response => response && cache.add(e.request)));
-});
+      .then(response => response && cache.add(e.request)))
+})
 self.addEventListener('activate', e => {
   e.waitUntil(caches.keys()
     // remove old Ugwisha caches
@@ -67,5 +65,5 @@ self.addEventListener('activate', e => {
       .map(cache => CACHE_NAME !== cache && cache.slice(0, 11) === 'ugwisha-sw-'
         ? caches.delete(cache)
         : null)))
-    .then(() => self.clients.claim()));
-});
+    .then(() => self.clients.claim()))
+})

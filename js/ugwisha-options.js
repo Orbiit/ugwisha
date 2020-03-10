@@ -136,4 +136,4 @@ const {
    * @type {string}
    */
   UPDATER_URL
-} = window.ugwishaOptions;
+} = window.ugwishaOptions

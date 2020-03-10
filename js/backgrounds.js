@@ -3,8 +3,8 @@
  * @param {number} int The upper bound (excluded)
  * @return {number} The random integer
  */
-function randomInt(int) {
-  return Math.floor(Math.random() * int);
+function randomInt (int) {
+  return Math.floor(Math.random() * int)
 }
 
 /**
@@ -12,59 +12,59 @@ function randomInt(int) {
  * random angle
  * @return {string} CSS linear-gradient of the gradient
  */
-function randomGradient() {
-  const colour1 = [randomInt(256), randomInt(256), randomInt(256)];
-  const colour2 = [randomInt(256), randomInt(256), randomInt(256)];
-  return `linear-gradient(${Math.random() * 360}deg, rgb(${colour1.join(',')}), rgb(${colour2.join(',')}))`;
+function randomGradient () {
+  const colour1 = [randomInt(256), randomInt(256), randomInt(256)]
+  const colour2 = [randomInt(256), randomInt(256), randomInt(256)]
+  return `linear-gradient(${Math.random() * 360}deg, rgb(${colour1.join(',')}), rgb(${colour2.join(',')}))`
 }
 
-let backgroundElem;
+let backgroundElem
 
 /**
  * Transitions between two backgrounds with a fade animation
  * @param {string} css The CSS background-image value of the background to
  *                     transition to
  */
-function setBackground(css) {
-  if (!document.body) return;
-  const transitioner = Elem('div', {className: 'background transition-background'});
-  transitioner.style.backgroundImage = backgroundElem.style.backgroundImage;
+function setBackground (css) {
+  if (!document.body) return
+  const transitioner = Elem('div', { className: 'background transition-background' })
+  transitioner.style.backgroundImage = backgroundElem.style.backgroundImage
   const stopper = setTimeout(() => { // just in case
-    document.body.removeChild(transitioner);
-  }, options.backgroundFade * 1000);
+    document.body.removeChild(transitioner)
+  }, options.backgroundFade * 1000)
   transitioner.addEventListener('animationend', e => {
-    document.body.removeChild(transitioner);
-    clearTimeout(stopper);
-  });
-  document.body.insertBefore(transitioner, backgroundElem.nextSibling);
-  backgroundElem.style.backgroundImage = css;
+    document.body.removeChild(transitioner)
+    clearTimeout(stopper)
+  })
+  document.body.insertBefore(transitioner, backgroundElem.nextSibling)
+  backgroundElem.style.backgroundImage = css
 }
 
-let randomGradientTimer = null;
-if (!options.backgroundLoop) options.backgroundLoop = options.quickTransitions ? 5 : 10;
-if (!options.backgroundFade) options.backgroundFade = options.quickTransitions ? 0.5 : 5;
-function startRandomGradients() {
-  if (randomGradientTimer) clearInterval(randomGradientTimer);
-  randomGradientTimer = setTimeout(startRandomGradients, options.backgroundLoop * 1000);
-  setBackground(randomGradient());
+let randomGradientTimer = null
+if (!options.backgroundLoop) options.backgroundLoop = options.quickTransitions ? 5 : 10
+if (!options.backgroundFade) options.backgroundFade = options.quickTransitions ? 0.5 : 5
+function startRandomGradients () {
+  if (randomGradientTimer) clearInterval(randomGradientTimer)
+  randomGradientTimer = setTimeout(startRandomGradients, options.backgroundLoop * 1000)
+  setBackground(randomGradient())
 }
 
-let backgroundExternallyControlled = false;
+let backgroundExternallyControlled = false
 window.Ugwisha.requestBackgroundControl = () => {
   if (backgroundExternallyControlled) {
-    return null;
+    return null
   } else {
-    backgroundExternallyControlled = true;
-    clearTimeout(randomGradientTimer);
-    randomGradientTimer = true;
-    return setBackground;
+    backgroundExternallyControlled = true
+    clearTimeout(randomGradientTimer)
+    randomGradientTimer = true
+    return setBackground
   }
-};
+}
 window.Ugwisha.relinquishBackgroundControl = fn => {
-  if (fn !== setBackground) throw new Error('Fake');
-  backgroundExternallyControlled = false;
-  startRandomGradients();
-};
+  if (fn !== setBackground) throw new Error('Fake')
+  backgroundExternallyControlled = false
+  startRandomGradients()
+}
 
 ready.push(() => {
   backgroundElem = Elem('div', {
@@ -72,9 +72,9 @@ ready.push(() => {
     style: {
       backgroundImage: 'linear-gradient(black, black)'
     }
-  });
-  document.body.insertBefore(backgroundElem, document.body.firstChild);
+  })
+  document.body.insertBefore(backgroundElem, document.body.firstChild)
 
-  document.body.style.setProperty('--background-transition-speed', options.backgroundFade + 's');
-  if (!backgroundExternallyControlled) startRandomGradients();
-});
+  document.body.style.setProperty('--background-transition-speed', options.backgroundFade + 's')
+  if (!backgroundExternallyControlled) startRandomGradients()
+})
