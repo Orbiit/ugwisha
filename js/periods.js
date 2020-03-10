@@ -43,14 +43,14 @@ function formatDuration(minutes, short = false, reallyShort = false) {
 }
 
 function getPdName(pd) {
-  return options['periodName_' + PERIOD_OPTION_PREFIX + pd] || defaultNames[pd];
+  return options['periodName_' + PERIOD_OPTION_PREFIX + pd] || defaultNames[pd] || pd;
 }
 function setPdName(pd, newName) {
   return options['periodName_' + PERIOD_OPTION_PREFIX + pd] = newName;
 }
 function getPdColour(pd) {
   const colour = options['periodColour_' + PERIOD_OPTION_PREFIX + pd];
-  return colour === undefined ? defaultColours[pd] : colour;
+  return colour === undefined ? defaultColours[pd] || '000000' : colour;
 }
 function setPdColour(pd, newColour) {
   return options['periodColour_' + PERIOD_OPTION_PREFIX + pd] = newColour;

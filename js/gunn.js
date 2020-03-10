@@ -10,7 +10,8 @@ const noHTMLRegex = /<.*?>/g;
 const noNbspRegex = /&nbsp;/g;
 const timeGetterRegex = /\(?(1?[0-9]):([0-9]{2}) *(?:-|–) *(1?[0-9]):([0-9]{2}) *(pm)?\)?/;
 const newLineRegex = /\r?\n/g;
-const getPeriodLetterRegex = /\b[A-G]\b/;
+// Detect PeriodE etc (2020-03-31)
+const getPeriodLetterRegex = /(?:\b|PERIOD)([A-G])\b/;
 const selfGradeRegex = /(1?[9012](?:\s*-\s*1?[9012])?)(?:th)?|(freshmen|sophomore|junior|senior|all)/gi;
 const periodSelfGradeRegex = /self for (.+?) grade|self for (freshmen|sophomore|junior|senior|all)/gi;
 const gradeToInt = {'9': 1, '10': 2, '11': 4, '12': 8, freshmen: 1, sophomore: 2, junior: 4, senior: 8, all: 15};
@@ -123,9 +124,13 @@ function identifyPeriod(name) {
   name = name.toUpperCase();
   if (~name.indexOf('PERIOD')) {
     let letter = getPeriodLetterRegex.exec(name);
-    if (letter) return letter[0];
+    if (letter) return letter[1];
   }
   if (~name.indexOf('SELF')) return 's';
+  // Ignore staff classes (for now); should be before flex so that
+  // "Staff Meeting, CAASPP training for all" (2020-03-11) isn't interpreted
+  // as flex
+  else if (~name.indexOf('STAFF') || ~name.indexOf('MEETING')) return;
   else if (~name.indexOf('FLEX')
       || ~name.indexOf('ASSEMBL') // assembly, assemblies
       || ~name.indexOf('ATTEND') // HACK to detect PSAT day (2018-10-10)
@@ -135,7 +140,7 @@ function identifyPeriod(name) {
   else if (~name.indexOf('BRUNCH') || ~name.indexOf('BREAK')) return 'b';
   // 'UNCH' intentional - misspelling on 2019-03-26
   else if (~name.indexOf('UNCH') || ~name.indexOf('TURKEY')) return 'l';
-  else return;
+  else return name;
 }
 
 function parseEvents(events, dateObj) {
@@ -251,8 +256,11 @@ function encodeStoredAlternates(schedules) {
     if (schedMonths[month]) schedMonths[month] += '!';
     else schedMonths[month] = month;
     schedMonths[month] += date;
-    schedMonths[month] += schedules[day].map(({period, start, end, selfGrades}) => (period === 's' ? String.fromCharCode((selfGrades || defaultSelf) + selfCharOffset) : period)
-        + start.toString(12).padStart(3, '0') + end.toString(12).padStart(3, '0')).join('');
+    schedMonths[month] += schedules[day].map(({period, start, end, selfGrades}) => {
+      if (period.length !== 1) return '';
+      else return (period === 's' ? String.fromCharCode((selfGrades || defaultSelf) + selfCharOffset) : period)
+        + start.toString(12).padStart(3, '0') + end.toString(12).padStart(3, '0')
+    }).join('');
   });
   return Object.values(schedMonths).join('|');
 }
