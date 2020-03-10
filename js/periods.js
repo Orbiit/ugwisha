@@ -50,7 +50,8 @@ function setPdName(pd, newName) {
 }
 function getPdColour(pd) {
   const colour = options['periodColour_' + PERIOD_OPTION_PREFIX + pd];
-  return colour === undefined ? defaultColours[pd] || '000000' : colour;
+  return colour !== undefined ? colour
+    : defaultColours[pd] !== undefined ? defaultColours[pd] : '000000';
 }
 function setPdColour(pd, newColour) {
   return options['periodColour_' + PERIOD_OPTION_PREFIX + pd] = newColour;
