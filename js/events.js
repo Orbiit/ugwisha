@@ -10,12 +10,22 @@ const events = {};
 
 /**
  * Google Calendar API URL for fetching daily events
+ * @return {string}
  */
-const gCalEventsURL = 'https://www.googleapis.com/calendar/v3/calendars/'
-  + encodeURIComponent(EVENTS_CALENDAR_ID)
-  + '/events?singleEvents=true&fields='
-  + encodeURIComponent('items(description,end(date,dateTime),location,start(date,dateTime),summary)')
-  + '&key=' + GOOGLE_API_KEY;
+function getGCalEventsURL ({
+  calendarID = EVENTS_CALENDAR_ID,
+  apiKey = GOOGLE_API_KEY,
+  timeMin,
+  timeMax
+}) {
+  return 'https://www.googleapis.com/calendar/v3/calendars/'
+    + encodeURIComponent(calendarID)
+    + '/events?singleEvents=true&fields='
+    + encodeURIComponent('items(description,end(date,dateTime),location,start(date,dateTime),summary)')
+    + '&key=' + apiKey
+    + '&timeMin=' + encodeURIComponent(timeMin)
+    + '&timeMax=' + encodeURIComponent(timeMax)
+}
 
 /**
  * Converts a Date object to minutes in local time
@@ -54,13 +64,29 @@ async function renderEvents() {
     const dateName = viewingDate.toISOString().slice(0, 10);
     eventsList.innerHTML = `<span class="events-message">Loading...</span>`;
     if (!events[dateName]) {
-      const {items} = await fetch(`${gCalEventsURL}&timeMin=${encodeURIComponent(toLocalTime(viewingDate).toISOString())}&timeMax=${encodeURIComponent(toLocalTime(viewingDate, 1).toISOString())}`)
+      const {items} = await fetch(getGCalEventsURL({
+        timeMin: toLocalTime(viewingDate).toISOString(),
+        timeMax: toLocalTime(viewingDate, 1).toISOString()
+      }))
         .then(r => r.json())
-        .catch(() => {
-          eventsList.innerHTML = `<span class="events-message">Unable to fetch events.</span>`;
-          return {items: null};
-        });
-      if (!items) return;
+        .catch(() => ({items: null}));
+      if (!items) {
+        eventsList.innerHTML = `<span class="events-message">Unable to fetch events.</span>`;
+        return;
+      }
+      // TEMP: For March 11
+      if (toLocalTime(viewingDate).toISOString().slice(0, 10) === '2020-03-11') {
+        await fetch(getGCalEventsURL({
+          calendarID: 'a0id1212epbc9eel40c4mggfkg@group.calendar.google.com',
+          timeMin: toLocalTime(viewingDate).toISOString(),
+          timeMax: toLocalTime(viewingDate, 1).toISOString()
+        }))
+          .then(r => r.json())
+          .then(({items: extraEvents}) => {
+            items.push(...extraEvents);
+          })
+          .catch(() => {});
+      }
       events[dateName] = items;
       if (parseEvents(splitEvents({items}), viewingDate)) {
         storage.setItem(SCHEDULE_DATA_KEY, saveScheduleData());
