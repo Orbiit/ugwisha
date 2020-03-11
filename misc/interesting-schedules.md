@@ -185,6 +185,8 @@ I'm not sure what the best solution is here. Perhaps,
 
 Actually, it turns out that Ugwisha thought the `CAASPP` in the staff meeting period was flex.
 
+And then the school cancelled Clash of the Titans due to the coronavirus so the schedule was reverted to a normal 4-day week day 2 schedule on the correct calendar.
+
 # 2020-04-02 `Alternate Schedule (see below)`
 
 ```html
