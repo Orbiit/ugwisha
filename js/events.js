@@ -74,19 +74,6 @@ async function renderEvents() {
         eventsList.innerHTML = `<span class="events-message">Unable to fetch events.</span>`;
         return;
       }
-      // TEMP: For March 11
-      if (toLocalTime(viewingDate).toISOString().slice(0, 10) === '2020-03-11') {
-        await fetch(getGCalEventsURL({
-          calendarID: 'a0id1212epbc9eel40c4mggfkg@group.calendar.google.com',
-          timeMin: toLocalTime(viewingDate).toISOString(),
-          timeMax: toLocalTime(viewingDate, 1).toISOString()
-        }))
-          .then(r => r.json())
-          .then(({items: extraEvents}) => {
-            items.push(...extraEvents);
-          })
-          .catch(() => {});
-      }
       events[dateName] = items;
       if (parseEvents(splitEvents({items}), viewingDate)) {
         storage.setItem(SCHEDULE_DATA_KEY, saveScheduleData());
