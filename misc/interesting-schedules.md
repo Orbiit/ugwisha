@@ -194,3 +194,7 @@ And then the school cancelled Clash of the Titans due to the coronavirus so the 
 ```
 
 `PeriodG` also does not have a space, like the 2020-03-31 schedule.
+
+# 2020-03-16 to 2020-04-10
+
+PAUSD [announced the closure of schools](https://www.pausd.org/explore-pausd/news/all-pausd-schools-closed-march-16-through-april-10), but no events were put on their Google Calendar for UGWA to detect. UGWA wore a mask instead.
