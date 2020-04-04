@@ -397,16 +397,31 @@ function updateStatus(startInterval = false, nextMinute = 0) {
     } else {
       setFavicon(formatDuration(status.value, true, true));
       if (startInterval && status.secondCounter) {
-        function seconds() {
+        function getSecondsDisplay() {
           const {secondsLeft, stop} = status.secondCounter();
-          if (!stop) {
-            const str = Math.round(secondsLeft * 100) / 100 + '';
-            document.title = (previewTime.textContent = str + (str.includes('.') ? '0'.repeat(3 - str.length + str.indexOf('.')) : '.00') + 's')
-              + ' ' + status.type + ' ' + getPdName(status.period.period) + ' - ' + APP_NAME;
+          if (stop) {
+            return null;
+          } else {
+            return secondsLeft.toFixed(2) + 's';
           }
-          window.requestAnimationFrame(startInterval && !stop ? seconds : updateStatus);
         }
-        seconds();
+        function displayPreview() {
+          const str = getSecondsDisplay();
+          if (str) {
+            previewTime.textContent = str;
+            window.requestAnimationFrame(displayPreview);
+          }
+        }
+        function displayTitle() {
+          const str = getSecondsDisplay();
+          if (str) {
+            document.title = str + ' ' + status.type + ' ' +
+              getPdName(status.period.period) + ' - ' + APP_NAME;
+          }
+          setTimeout(str ? displayTitle : updateStatus, 100);
+        }
+        displayPreview();
+        displayTitle();
       } else {
         document.title = (previewTime.textContent = formatDuration(status.value, true))
           + ' ' + status.type + ' ' + getPdName(status.period.period) + ' - ' + APP_NAME;

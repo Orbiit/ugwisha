@@ -126,7 +126,7 @@ let viewingDate = params.day ? new Date(params.day) : getToday();
  * @return {Date} Today's date
  */
 function getToday() {
-  // return new Date('2019-05-28'); // TEMP
+  // return new Date('2020-03-13'); // TEMP
   return new Date(Date.UTC(...(d => [d.getFullYear(), d.getMonth(), d.getDate()])(new Date())));
 }
 
