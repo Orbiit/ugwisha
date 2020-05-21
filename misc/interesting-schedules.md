@@ -195,6 +195,35 @@ And then the school cancelled Clash of the Titans due to the coronavirus so the 
 
 `PeriodG` also does not have a space, like the 2020-03-31 schedule.
 
-# 2020-03-16 to 2020-04-10
+# 2020-03-16 to ~~2020-04-10~~ the end of the year
 
 PAUSD [announced the closure of schools](https://www.pausd.org/explore-pausd/news/all-pausd-schools-closed-march-16-through-april-10), but no events were put on their Google Calendar for UGWA to detect. UGWA wore a mask instead.
+
+# 2020-06-02 to 2020-06-04 `LAST CLASS MEETING schedule (see below)`
+
+The school is organizing a finals week of Zoom sessions.
+
+## Tuesday
+
+```
+Period B (11am-12noon)
+Period D (1-2pm)
+Periods Zero/H (2-3pm)
+```
+
+## Wednesday
+
+```
+Period A (11am-12noon)
+Period C (1-2pm)
+Period G (2-3pm)
+```
+
+## Thursday
+
+```
+Period E (11am-12noon)
+Period F (1-2pm)
+```
+
+`11am` and `12noon` probably broke Ugwisha. UGWA was only showing the APs, so it didn't even try parsing the new timestamps.
