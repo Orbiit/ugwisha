@@ -8,7 +8,7 @@ const DOUBLE_FLEX_LENGTH = 80; // longer flex might not be double - see 2018-10-
 const HTMLnewlineRegex = /<\/?(p|div|br).*?>|\),? *(?=[A-Z0-9])/g;
 const noHTMLRegex = /<.*?>/g;
 const noNbspRegex = /&nbsp;/g;
-const timeGetterRegex = /\(?(1?[0-9]):([0-9]{2}) *(?:-|–) *(1?[0-9]):([0-9]{2}) *(pm)?\)?/;
+const timeGetterRegex = /\(?(1?[0-9])(?::([0-9]{2}))? *(?:am)? *(?:-|–) *(1?[0-9])(?::([0-9]{2}))? *(noon|pm)?\)?/;
 const newLineRegex = /\r?\n/g;
 // Detect PeriodE etc (2020-03-31)
 const getPeriodLetterRegex = /(?:\b|PERIOD)([A-G])\b/;
@@ -46,11 +46,11 @@ function parseAlternate(summary, description) {
 
       if (!times) return;
 
-      let [, sH, sM, eH, eM, pm] = times;
+      let [, sH, sM = 0, eH, eM = 0, pm] = times;
 
       sH = +sH; sM = +sM; eH = +eH; eM = +eM;
-      if (sH < EARLIEST_AM_HOUR || pm) sH += 12;
-      if (eH < EARLIEST_AM_HOUR || pm) eH += 12;
+      if (sH < EARLIEST_AM_HOUR || pm === 'pm') sH += 12;
+      if (eH < EARLIEST_AM_HOUR || pm === 'pm') eH += 12;
       let startTime = sH * 60 + sM,
       endTime = eH * 60 + eM;
 
@@ -81,10 +81,10 @@ function parseAlternate(summary, description) {
           // same problems here as above
           const beforePart = pd.start - PASSING_PERIOD_LENGTH;
           const afterPart = pd.end + PASSING_PERIOD_LENGTH;
-          if (beforeEnd - startTime > 0) {
-            endTime = beforeEnd;
-          } else if (endTime - afterStart > 0) {
-            startTime = afterStart;
+          if (beforePart - startTime > 0) {
+            endTime = beforePart;
+          } else if (endTime - beforePart > 0) {
+            startTime = beforePart;
           } else {
             return true;
           }
