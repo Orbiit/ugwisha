@@ -7,7 +7,7 @@ window.UgwishaExtensions.register((() => {
     club: {
       name: 'Clubs',
       source: 'https://docs.google.com/spreadsheets/d/1HUaNWegOIk972lGweoSuNcXtfX7XuGBTQU-gcTsvD9s/',
-      sourceDate: new Date(2020, 0, 30),
+      sourceDate: new Date(2020, 7, 4),
       json: 'https://orbiit.github.io/gunn-web-app/json/clubs.json',
       subtext: ['room', 'day'],
       details: [
@@ -25,7 +25,7 @@ window.UgwishaExtensions.register((() => {
     staff: {
       name: 'Staff',
       source: 'https://gunn.pausd.org/connect/staff-directory',
-      sourceDate: new Date(2019, 8, 11),
+      sourceDate: new Date(2020, 7, 4),
       json: 'https://orbiit.github.io/gunn-web-app/json/staff.json',
       subtext: ['jobTitle', 'department'],
       details: [

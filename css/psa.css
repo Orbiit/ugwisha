@@ -29,7 +29,7 @@
 #psa-wrapper > h2 {
   margin-top: 0;
 }
-#psa-wrapper > p {
+#psa-wrapper > .psa-close-wrapper {
   text-align: right;
 }
 #psa-content {

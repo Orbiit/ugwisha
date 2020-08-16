@@ -15,7 +15,7 @@ const getPeriodLetterRegex = /(?:\b|PERIOD)([A-G])\b/;
 const selfGradeRegex = /(1?[9012](?:\s*-\s*1?[9012])?)(?:th)?|(freshmen|sophomore|junior|senior|all)/gi;
 const periodSelfGradeRegex = /self for (.+?) grade|self for (freshmen|sophomore|junior|senior|all)/gi;
 const gradeToInt = {'9': 1, '10': 2, '11': 4, '12': 8, freshmen: 1, sophomore: 2, junior: 4, senior: 8, all: 15};
-const defaultSelf = 0b111;
+const defaultSelf = 0b1111;
 
 function getSELFGrades(text) {
   let grades = 0;
@@ -192,6 +192,7 @@ function parseEvents(events, dateObj) {
     scheduleData[dateName] = alternate;
     return JSON.stringify(oldEntry) !== JSON.stringify(alternate);
   } else {
+    /*
     // this is hardcoded, so if say SELF gets moved to Wednesday, this will need changing
     if (weekDay === 4 && self !== defaultSelf) {
       // if it's freshmen-only SELF or no SELF on Thursday :O
@@ -210,10 +211,10 @@ function parseEvents(events, dateObj) {
       clone[2].selfGrades = self;
       scheduleData[dateName] = clone;
       return !oldEntry;
-    } else {
+    } else { */
       scheduleData[dateName] = null;
       return oldEntry;
-    }
+    // }
   }
 }
 
@@ -269,50 +270,64 @@ function encodeStoredAlternates(schedules) {
 const normalSchedules = [
   [],
   [
-    {period: 'A', start: 505, end: 585},
-    {period: 'b', start: 585, end: 590},
-    {period: 'B', start: 600, end: 675},
-    {period: 'C', start: 685, end: 760},
-    {period: 'l', start: 760, end: 790},
-    {period: 'F', start: 800, end: 875}
-  ], [
-    {period: 'D', start: 505, end: 585},
-    {period: 'b', start: 585, end: 590},
-    {period: 'f', start: 600, end: 650},
-    {period: 'E', start: 660, end: 735},
-    {period: 'l', start: 735, end: 765},
-    {period: 'A', start: 775, end: 855},
-    {period: 'G', start: 865, end: 940}
-  ], [
-    {period: 'B', start: 505, end: 590},
-    {period: 'b', start: 590, end: 595},
-    {period: 'C', start: 605, end: 685},
-    {period: 'D', start: 695, end: 775},
-    {period: 'l', start: 775, end: 805},
-    {period: 'F', start: 815, end: 895}
-  ], [
-    {period: 'E', start: 505, end: 590},
-    {period: 'b', start: 590, end: 595},
-    {period: 's', start: 605, end: 655, selfGrades: defaultSelf},
-    {period: 'B', start: 665, end: 735},
-    {period: 'l', start: 735, end: 765},
-    {period: 'A', start: 775, end: 845},
-    {period: 'G', start: 855, end: 935}
-  ], [
-    {period: 'C', start: 505, end: 580},
-    {period: 'b', start: 580, end: 585},
-    {period: 'D', start: 595, end: 665},
-    {period: 'E', start: 675, end: 745},
-    {period: 'l', start: 745, end: 775},
-    {period: 'F', start: 785, end: 855},
-    {period: 'G', start: 865, end: 935}
+    {period: 'A', start: 10 * 60 + 0, end: 10 * 60 + 30},
+    {period: 'B', start: 10 * 60 + 40, end: 11 * 60 + 10},
+    {period: 'C', start: 11 * 60 + 20, end: 11 * 60 + 50},
+    {period: 'D', start: 12 * 60 + 0, end: 12 * 60 + 35},
+    {period: 'l', start: 12 * 60 + 35, end: 13 * 60 + 5},
+    {period: 'E', start: 13 * 60 + 15, end: 13 * 60 + 45},
+    {period: 'F', start: 13 * 60 + 55, end: 14 * 60 + 25},
+    {period: 'G', start: 14 * 60 + 35, end: 15 * 60 + 5}
+  ],
+  [
+    {period: 'A', start: 9 * 60 + 0, end: 10 * 60 + 15},
+    {period: 'B', start: 10 * 60 + 25, end: 11 * 60 + 40},
+    {period: 'l', start: 11 * 60 + 40, end: 12 * 60 + 10},
+    {period: 'C', start: 12 * 60 + 20, end: 13 * 60 + 35},
+    {period: 'D', start: 13 * 60 + 45, end: 15 * 60 + 0},
+    {period: 'f', start: 15 * 60 + 10, end: 15 * 60 + 40}
+  ],
+  [
+    {period: 'E', start: 9 * 60 + 40, end: 10 * 60 + 55},
+    {
+      period(d) {
+        const week = Math.floor(
+          (d - new Date(2020, 8 - 1, 17)) / 1000 / 60 / 60 / 24 / 7
+        )
+        if (week < 0) return 's'
+        // First week's Gunn together is period 5 for some reason
+        if (week === 0) return 'E'
+        return 'ABCDEFG'[(week - 1) % 7]
+      },
+      start: 11 * 60 + 5,
+      end: 11 * 60 + 40
+    },
+    {period: 'l', start: 11 * 60 + 40, end: 12 * 60 + 10},
+    {period: 'F', start: 12 * 60 + 20, end: 13 * 60 + 35},
+    {period: 'G', start: 13 * 60 + 45, end: 15 * 60 + 0},
+    {period: 'f', start: 15 * 60 + 10, end: 15 * 60 + 40}
+  ],
+  [
+    {period: 'A', start: 9 * 60 + 0, end: 10 * 60 + 15},
+    {period: 'B', start: 10 * 60 + 25, end: 11 * 60 + 40},
+    {period: 'l', start: 11 * 60 + 40, end: 12 * 60 + 10},
+    {period: 'C', start: 12 * 60 + 20, end: 13 * 60 + 35},
+    {period: 'D', start: 13 * 60 + 45, end: 15 * 60 + 0},
+    {period: 'f', start: 15 * 60 + 10, end: 15 * 60 + 40}
+  ],
+  [
+    {period: 'E', start: 9 * 60 + 40, end: 10 * 60 + 55},
+    {period: 's', start: 11 * 60 + 5, end: 11 * 60 + 40, selfGrades: defaultSelf},
+    {period: 'l', start: 11 * 60 + 40, end: 12 * 60 + 10},
+    {period: 'F', start: 12 * 60 + 20, end: 13 * 60 + 35},
+    {period: 'G', start: 13 * 60 + 45, end: 15 * 60 + 0}
   ],
   []
 ];
 
 /* GET SCHEDULE */
-const FIRST_DAY = Date.UTC(2019, 7, 13);
-const LAST_DAY = Date.UTC(2020, 5, 4);
+const FIRST_DAY = Date.UTC(2020, 7, 17);
+const LAST_DAY = Date.UTC(2021, 5, 3);
 let scheduleData = {};
 function getSchedule(dateObj) {
   if (dateObj.getTime() < FIRST_DAY || dateObj.getTime() > LAST_DAY) {
@@ -323,7 +338,10 @@ function getSchedule(dateObj) {
     return schedule;
   }
   const dateName = dateObj.toISOString().slice(5, 10);
-  let schedule = JSON.parse(JSON.stringify(scheduleData[dateName] || normalSchedules[dateObj.getUTCDay()]));
+  let schedule = JSON.parse(JSON.stringify(
+    scheduleData[dateName] || normalSchedules[dateObj.getUTCDay()],
+    (_, value) => typeof value === 'function' ? value(dateObj) : value
+  ));
   if (schedule.length === 0) {
     schedule.noSchool = true;
   } else if (!options.showSELF) {
@@ -355,7 +373,7 @@ window.ugwishaOptions = {
     scheduleData = decodeStoredAlternates(storedSchedules);
   },
 
-  SCHEDULE_DATA_KEY: '[ugwisha] alternates-2019-20', // change when new school year
+  SCHEDULE_DATA_KEY: '[ugwisha] alternates-2020-21', // change when new school year
 
   /* FETCHING */
   SCHEDULES_CALENDAR_ID: 'u5mgb2vlddfj70d7frf3r015h0@group.calendar.google.com',
@@ -369,9 +387,9 @@ window.ugwishaOptions = {
 
   /* DEFAULTS */
   DEFAULT_NAMES: {
-    A: 'A Period', B: 'B Period', C: 'C Period', D: 'D Period',
-    E: 'E Period', F: 'F Period', G: 'G Period',
-    b: 'Brunch', l: 'Lunch', f: 'Flex', s: 'SELF'
+    A: 'Period 1', B: 'Period 2', C: 'Period 3', D: 'Period 4',
+    E: 'Period 5', F: 'Period 6', G: 'Period 7',
+    b: 'Brunch', l: 'Lunch', f: 'Tutorial', s: 'SELF'
   },
   DEFAULT_COLOURS: {
     A: 'de935f', B: '81a2be', C: 'cc6666', D: 'f0c674',
