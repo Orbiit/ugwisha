@@ -25,6 +25,7 @@ function getGCalEventsURL ({
     + '&key=' + apiKey
     + '&timeMin=' + encodeURIComponent(timeMin)
     + '&timeMax=' + encodeURIComponent(timeMax)
+    + '&timeZone=America/Los_Angeles';
 }
 
 /**
@@ -115,7 +116,9 @@ const gCalYearURL = 'https://www.googleapis.com/calendar/v3/calendars/'
   + '/events?singleEvents=true&fields='
   + encodeURIComponent('items(description,end(date,dateTime),start(date,dateTime),summary)')
   + '&key=' + GOOGLE_API_KEY
-  + `&timeMin=${encodeURIComponent(eventsMinDate.toISOString())}&timeMax=${encodeURIComponent(eventsMaxDate.toISOString())}`;
+  + '&timeMin=' + encodeURIComponent(eventsMinDate.toISOString())
+  + '&timeMax=' + encodeURIComponent(eventsMaxDate.toISOString())
+  + '&timeZone=America/Los_Angeles';
 
 /**
  * Fetches, parses, and stores the alternate schedule

@@ -11,7 +11,7 @@ const noNbspRegex = /&nbsp;/g;
 const timeGetterRegex = /\(?(1?[0-9])(?::([0-9]{2}))? *(?:am)? *(?:-|–) *(1?[0-9])(?::([0-9]{2}))? *(noon|pm)?\)?/;
 const newLineRegex = /\r?\n/g;
 // Detect PeriodE etc (2020-03-31)
-const getPeriodLetterRegex = /(?:\b|PERIOD)([A-G])\b/;
+const getPeriodLetterRegex = /(?:\b|PERIOD)([A-G1-7])\b/;
 const selfGradeRegex = /(1?[9012](?:\s*-\s*1?[9012])?)(?:th)?|(freshmen|sophomore|junior|senior|all)/gi;
 const periodSelfGradeRegex = /self for (.+?) grade|self for (freshmen|sophomore|junior|senior|all)/gi;
 const gradeToInt = {'9': 1, '10': 2, '11': 4, '12': 8, freshmen: 1, sophomore: 2, junior: 4, senior: 8, all: 15};
@@ -114,7 +114,7 @@ function parseAlternate(summary, description) {
       delete pd.raw;
       return period;
     }).sort((a, b) => a.start - b.start);
-  } else if (/holiday|no\sstudents|break|development/i.test(summary)) {
+  } else if (/holiday|no\s(students|school)|break|development/i.test(summary)) {
     if (description) return;
     return null;
   }
@@ -124,7 +124,13 @@ function identifyPeriod(name) {
   name = name.toUpperCase();
   if (~name.indexOf('PERIOD')) {
     let letter = getPeriodLetterRegex.exec(name);
-    if (letter) return letter[1];
+    if (letter) {
+      return isNaN(+letter[1])
+        ? // Letter period
+          letter[1]
+        : // Number period
+          ' ABCDEFG'[letter[1]];
+    }
   }
   if (~name.indexOf('SELF')) return 's';
   // Ignore staff classes (for now); should be before flex so that
@@ -140,6 +146,7 @@ function identifyPeriod(name) {
   else if (~name.indexOf('BRUNCH') || ~name.indexOf('BREAK')) return 'b';
   // 'UNCH' intentional - misspelling on 2019-03-26
   else if (~name.indexOf('UNCH') || ~name.indexOf('TURKEY')) return 'l';
+  else if (~name.indexOf('TOGETHER')) return 'g';
   else return name;
 }
 
@@ -220,7 +227,7 @@ function parseEvents(events, dateObj) {
 
 /* ENCODING */
 const selfCharOffset = 72;
-const alternateRegex = /([A-GblfI-W])([\dab]{3})([\dab]{3})/g;
+const alternateRegex = /([A-GblfgI-W])([\dab]{3})([\dab]{3})/g;
 function decodeStoredAlternates(string) {
   const lines = string.split('|');
   const schedules = {};
@@ -283,44 +290,32 @@ const normalSchedules = [
     {period: 'A', start: 9 * 60 + 0, end: 10 * 60 + 15},
     {period: 'B', start: 10 * 60 + 25, end: 11 * 60 + 40},
     {period: 'l', start: 11 * 60 + 40, end: 12 * 60 + 10},
-    {period: 'C', start: 12 * 60 + 20, end: 13 * 60 + 35},
-    {period: 'D', start: 13 * 60 + 45, end: 15 * 60 + 0},
+    {period: 'C', start: 12 * 60 + 20, end: 13 * 60 + 40},
+    {period: 'D', start: 13 * 60 + 50, end: 15 * 60 + 5},
     {period: 'f', start: 15 * 60 + 10, end: 15 * 60 + 40}
   ],
   [
     {period: 'E', start: 9 * 60 + 40, end: 10 * 60 + 55},
-    {
-      period(d) {
-        const week = Math.floor(
-          (d - new Date(2020, 8 - 1, 17)) / 1000 / 60 / 60 / 24 / 7
-        )
-        if (week < 0) return 's'
-        // First week's Gunn together is period 5 for some reason
-        if (week === 0) return 'E'
-        return 'ABCDEFG'[(week - 1) % 7]
-      },
-      start: 11 * 60 + 5,
-      end: 11 * 60 + 40
-    },
+    {period: 'g', start: 11 * 60 + 5, end: 11 * 60 + 40},
     {period: 'l', start: 11 * 60 + 40, end: 12 * 60 + 10},
-    {period: 'F', start: 12 * 60 + 20, end: 13 * 60 + 35},
-    {period: 'G', start: 13 * 60 + 45, end: 15 * 60 + 0},
+    {period: 'F', start: 12 * 60 + 20, end: 13 * 60 + 40},
+    {period: 'G', start: 13 * 60 + 50, end: 15 * 60 + 5},
     {period: 'f', start: 15 * 60 + 10, end: 15 * 60 + 40}
   ],
   [
     {period: 'A', start: 9 * 60 + 0, end: 10 * 60 + 15},
     {period: 'B', start: 10 * 60 + 25, end: 11 * 60 + 40},
     {period: 'l', start: 11 * 60 + 40, end: 12 * 60 + 10},
-    {period: 'C', start: 12 * 60 + 20, end: 13 * 60 + 35},
-    {period: 'D', start: 13 * 60 + 45, end: 15 * 60 + 0},
+    {period: 'C', start: 12 * 60 + 20, end: 13 * 60 + 40},
+    {period: 'D', start: 13 * 60 + 50, end: 15 * 60 + 5},
     {period: 'f', start: 15 * 60 + 10, end: 15 * 60 + 40}
   ],
   [
     {period: 'E', start: 9 * 60 + 40, end: 10 * 60 + 55},
     {period: 's', start: 11 * 60 + 5, end: 11 * 60 + 40, selfGrades: defaultSelf},
     {period: 'l', start: 11 * 60 + 40, end: 12 * 60 + 10},
-    {period: 'F', start: 12 * 60 + 20, end: 13 * 60 + 35},
-    {period: 'G', start: 13 * 60 + 45, end: 15 * 60 + 0}
+    {period: 'F', start: 12 * 60 + 20, end: 13 * 60 + 40},
+    {period: 'G', start: 13 * 60 + 50, end: 15 * 60 + 5}
   ],
   []
 ];
@@ -373,12 +368,12 @@ window.ugwishaOptions = {
     scheduleData = decodeStoredAlternates(storedSchedules);
   },
 
-  SCHEDULE_DATA_KEY: '[ugwisha] alternates-2020-21', // change when new school year
+  SCHEDULE_DATA_KEY: '[ugwisha] alternates-2020-21-v2', // change when new school year
 
   /* FETCHING */
-  SCHEDULES_CALENDAR_ID: 'u5mgb2vlddfj70d7frf3r015h0@group.calendar.google.com',
-  EVENTS_CALENDAR_ID: 'u5mgb2vlddfj70d7frf3r015h0@group.calendar.google.com',
-  CALENDAR_KEYWORDS: ['self', 'schedule', 'extended', 'holiday', 'no students', 'break', 'development'],
+  SCHEDULES_CALENDAR_ID: 'fg978mo762lqm6get2ubiab0mk0f6m2c@import.calendar.google.com',
+  EVENTS_CALENDAR_ID: 'fg978mo762lqm6get2ubiab0mk0f6m2c@import.calendar.google.com',
+  CALENDAR_KEYWORDS: ['self', 'schedule', 'extended', 'holiday', 'no students', 'no school', 'break', 'development'],
 
   // please set this to your own if you fork Ugwisha, thanks
   GOOGLE_API_KEY: 'AIzaSyDBYs4DdIaTjYx5WDz6nfdEAftXuctZV0o',
@@ -389,12 +384,12 @@ window.ugwishaOptions = {
   DEFAULT_NAMES: {
     A: 'Period 1', B: 'Period 2', C: 'Period 3', D: 'Period 4',
     E: 'Period 5', F: 'Period 6', G: 'Period 7',
-    b: 'Brunch', l: 'Lunch', f: 'Tutorial', s: 'SELF'
+    b: 'Brunch', l: 'Lunch', f: 'Tutorial', s: 'SELF', g: 'Gunn Together'
   },
   DEFAULT_COLOURS: {
     A: 'de935f', B: '81a2be', C: 'cc6666', D: 'f0c674',
     E: 'b294bb', F: 'b5bd68', G: '8abeb7',
-    b: null, l: null, f: 'e0e0e0', s: '282a2e'
+    b: null, l: null, f: 'e0e0e0', s: '282a2e', g: '282a2e'
   },
 
   /* THEME */
