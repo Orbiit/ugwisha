@@ -227,3 +227,76 @@ Period F (1-2pm)
 ```
 
 `11am` and `12noon` probably broke Ugwisha. UGWA was only showing the APs, so it didn't even try parsing the new timestamps.
+
+# 2020-12-15 to 2020-12-17 `Alternate Schedule`
+
+Distance learning school year. "Office Hrs" was not recognized by UGWA nor Ugwisha. UGWA supports H period but did not recognize it.
+
+```
+
+ Tuesday, December 15 
+
+Staff/Dept. Meetings (8:30-8:55)
+
+Period 1 FINAL (9:00-10:15)
+
+Lunch (11:40-12:10)
+
+Period 3 FINAL (12:20-1:40)
+
+Office Hrs (3:10-3:40)
+
+Period 8 FINAL (3:45-5:00)
+
+
+
+
+
+
+```
+
+```
+
+ Wednesday, December 16 
+
+Collaboration/Prep (8:30-9:35)
+
+Period 5 FINAL (9:40-10:55)
+
+Office Hrs (11:05-11:40)
+
+Lunch (11:40-12:15)
+
+Period 6 FINAL (12:25-1:40)
+
+
+
+
+
+ 
+
+
+
+
+```
+
+```
+
+ Thursday, December 17 
+
+Staff/Dept. Meetings (8:30-8:55)
+
+Period 2 FINAL (10:25-11:40)
+
+Lunch (11:40-12:10)
+
+Period 4 FINAL (1:50-3:05)
+
+Office Hrs (3:10-3:40)
+
+
+
+
+
+
+```
