@@ -300,3 +300,24 @@ Office Hrs (3:10-3:40)
 
 
 ```
+
+# 2021-04-26 `CAASPP/CAST test alternate schedule`
+
+A typo in the schedule makes periods 6 and 7 overlap. Also, UGWA only identifies period 1 as asynchronous.
+
+```
+* APRIL 26 - asynchronous * Period 1 (10-10:30) ELA PT & (CAST Gunn)
+* Period 2 (10:40-11:10) ELA PT & (CAST Gunn)
+* Period 3 (11:20 - 11:50) ELA PT & (CAST Gunn)
+* Period 4 (12-12:35) ELA PT & (CAST Gunn)
+* Lunch (12:35-1:05)
+* Period 5 (1:15-1:45) ELA CAT 45 minutes
+* Period 6 (1:55- 2:55) ELA CAT 45 minutes (open up ELA PT)
+* Period 7 (2:35-3:05) buffer period
+ 
+*  * 
+ 
+
+
+
+```
