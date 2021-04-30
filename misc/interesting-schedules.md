@@ -321,3 +321,76 @@ A typo in the schedule makes periods 6 and 7 overlap. Also, UGWA only identifies
 
 
 ```
+
+# 2021-06-01 to 2021-06-03 `Finals Schedule (see below)`
+
+A fascinating new format to end off the year! This schedule uses `Per` instead of `Period`, which neither UGWA nor Ugwisha could handle properly; instead, they showed "AM PER 1" etc. Fortunately, the fix is relatively easy.
+
+Also, on Wednesday, "Break" gets identified as "Brunch," which is especially odd on UGWA because brunch is normally internally a hidden period because it doesn't occur during the normal school year.
+
+## Tuesday
+
+```
+
+  Tuesday, June 1st  
+
+9:00-9:40 AM  Flex/Tutorial 
+
+9:50-11:20 AM  Per 1 
+
+11:20-11:50 AM  Lunch 
+
+12:00-1:30 PM  Per 2 
+
+
+
+
+
+
+```
+
+## Wednesday
+
+```
+
+  Wednesday, June 2nd  
+
+9:40-11:10 AM  Per 6 
+
+11:10-11:40 AM  Lunch 
+
+11:50-1:20 PM  Per 3 
+
+1:20-1:50 PM  Break 
+
+2:00-3:30 PM  Per 7 
+
+
+
+
+
+
+```
+
+## Thursday
+
+```
+
+  Thursday, June 3rd  
+
+9:00-9:40 AM  Flex/Tutorial 
+
+9:50-11:20 AM  Per 4 
+
+11:20-11-:50 AM  Lunch 
+
+12:00-1:30 PM  Per 5 
+
+
+
+
+
+
+
+
+```
