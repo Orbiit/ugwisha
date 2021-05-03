@@ -322,6 +322,18 @@ A typo in the schedule makes periods 6 and 7 overlap. Also, UGWA only identifies
 
 ```
 
+# 2021-05-19 `Cap Decorating at Lunch`
+
+Because the event summary contains "lunch," UGWA assumes it's an alternate schedule, but it can't parse any periods from the event description, so UGWA assumes there's no school. Presumably the solution here is to require at least one parsed period for these kinds of keywords.
+
+```
+Join your fellow seniors at lunch around the quad to decorate your cap for Graduation!  Supplies for decorations will be provided.
+ * You must sign up beforehand to participate
+* We will be enforcing social distancing
+* You must sign in to Parent Square before coming on to campus. 
+
+```
+
 # 2021-06-01 to 2021-06-03 `Finals Schedule (see below)`
 
 A fascinating new format to end off the year! This schedule uses `Per` instead of `Period`, which neither UGWA nor Ugwisha could handle properly; instead, they showed "AM PER 1" etc. Fortunately, the fix is relatively easy.
