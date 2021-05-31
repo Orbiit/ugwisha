@@ -340,6 +340,8 @@ A fascinating new format to end off the year! This schedule uses `Per` instead o
 
 Also, on Wednesday, "Break" gets identified as "Brunch," which is especially odd on UGWA because brunch is normally internally a hidden period because it doesn't occur during the normal school year.
 
+And `11:20-11-:50 AM` made Ugwita think lunch was -80 minutes long on Thursday.
+
 ## Tuesday
 
 ```
