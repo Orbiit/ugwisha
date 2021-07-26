@@ -408,3 +408,33 @@ And `11:20-11-:50 AM` made Ugwita think lunch was -80 minutes long on Thursday.
 
 
 ```
+
+# 2021-08-11 `FIRST DAY OF SCHOOL (alternate schedule below)`
+
+Quite unusually, zero period was included in this alternate schedule, which UGWA apparently isn't able to identify.
+
+```
+
+Zero Period (7:55-8:50)
+
+Period 1 (9:00-9:45)
+
+Period 2 (9:55-10:40)
+
+Brunch (10:40-10:55)
+
+Period 3 (10:55-11:40)
+
+Period 4 (11:50-12:35)
+
+Lunch (12:35-1:05)
+
+Period 5 (1:15-2:00)
+
+Period 6 (2:10-2:55)
+
+Period 7 (3:05-3:50)
+ Period 8 (4:00-4:45)
+
+
+```
