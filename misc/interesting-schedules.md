@@ -438,3 +438,30 @@ Period 7 (3:05-3:50)
 
 
 ```
+
+# 2021-10-12 `Alternate Schedule (below)`
+
+The lunch and period 7 times overlap. Fortunately, UGWA's lunch/brunch stretching prevents this from being an issue. Discovered by WATT.
+
+```
+
+Zero Period (7:55-8:50)
+
+Period 5 (9:00-10:35)
+
+Brunch (10:35-10:50)
+
+Period 6 (10:50-12:20)
+
+Lunch (12:20-1:10)
+
+Period 7 (1:00-2:30)
+
+PRIME (2:40-3:30)
+
+PLC (staff only) (3:30-4:10)
+ 
+
+
+
+```
